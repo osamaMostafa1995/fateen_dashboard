@@ -1,0 +1,136 @@
+// If you want to override variables do it here
+@import "variables";
+$enable-ltr: true;
+$enable-rtl: true;
+// Import styles
+@import "~@coreui/coreui/scss/coreui";
+// Import Chart.js Tooltips
+@import "~@coreui/chartjs/scss/tooltips";
+@import "layout";
+@import "example";
+// If you want to add something do it here
+@import "custom";
+  html,body {
+    font-family: 'Tajawal', sans-serif;
+  }
+ 
+  .icard-header {
+    padding: 1rem !important;
+  }
+  
+  .table-responsive-sm {
+    overflow-x: scroll;
+  
+    .table-sm > :not(caption) > * > * {
+      padding: 1rem;
+      min-width: 150px;
+      text-align: center;
+  
+      &:nth-last-of-type(1) ,  &:nth-last-of-type(2) {
+        min-width: 130px;
+      }
+    }
+  }
+  
+  input.form-control , textarea.form-control  , select.form-select {
+    &:focus {
+      box-shadow: none ; 
+      border :1px solid #303c54;
+    }
+  }
+ 
+  .dropdown-item { 
+    text-align: right;
+  }
+
+  div:where(.swal2-container) button:where(.swal2-styled).swal2-default-outline:focus {
+    box-shadow:none !important;
+  }
+
+  .modal-header .btn-close {
+    padding:0px !important;
+  }
+
+  .btn:hover {
+    &:hover {
+      color:#fff ;
+    }
+  }
+
+  .paginated-style{
+    cursor:pointer;
+  }
+
+  .icard-header , .card-header {
+      padding:15px;
+  }
+
+  .icard-header::before, .icard-header::after {
+      box-sizing: content-box;
+  }
+
+  .onError {  
+      position: relative;
+      flex: 1 1 auto;
+      width: 1%;
+      min-width: 0;
+      display: block;
+      width: 100%;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
+      background-color: var(--cui-input-bg, #fff);
+      background-clip: padding-box;
+      border: 1px solid var(--cui-input-border-color, red);
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border-radius: 0.375rem;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .input-group > .onError, .input-group > .form-select {
+      position: relative;
+      flex: 1 1 auto;
+      width: 1%;
+      min-width: 0;
+  }
+
+  .onError:focus{
+      outline: none !important;
+      border: 1.3px solid #eb2b2b;
+      box-shadow: 0 0 4px #eb2b2b;
+  }
+
+  .haveError  {
+    color: #eb2b2b;
+    font-size: 14px;
+  }
+
+  .modal-footer{
+    margin-right: -.73em;
+  } 
+
+  .form-control {  
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
+    background-color: var(--cui-input-bg, #fff);
+    background-clip: padding-box;
+    border: 1px solid var(--cui-input-border-color, #b1b7c1);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
