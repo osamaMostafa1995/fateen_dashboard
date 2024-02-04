@@ -19,7 +19,7 @@
             </CTableHead>
             <CTableBody>
             <CTableRow v-for="summary in summaries" :key="summary">
-                <CTableHeaderCell scope="row">{{summary.id}}</CTableHeaderCell>
+                <CTableHeaderCell scope="row">{{summary.id}} </CTableHeaderCell>
                 <CTableDataCell>{{summary?.book?.book_name || '-'}}</CTableDataCell>
                 <CTableDataCell>{{summary?.book?.author || '-' }}</CTableDataCell>
                 <CTableDataCell>{{summary.from_page}}</CTableDataCell>
@@ -39,10 +39,7 @@
                 <CTableDataCell v-if="summary.status_id == 2">
                     مرفوض
                 </CTableDataCell>
-                <!-- <CTableDataCell>
-                    <CImage class="my-1" v-for="referenceImage in article.reference_images_list" :key="referenceImage" rounded thumbnail :src="referenceImage" width="50" height="50"/>
-                </CTableDataCell> -->
-
+               
                 <CTableDataCell>
                 <CButton
                     color="info"
@@ -57,7 +54,7 @@
                 <CButton
                     color="warning"
                     variant="outline"
-                    @click="() => invokeModal(summary.id, summary?.book?.book_name, summary?.book?.author, summary.from_page, summary.to_page, summary?.book?.book_cover_path, summary?.status_id, summary?.user?.name, summary?.user?.email, summary?.user?.phone)"
+                    @click="() => invokeModal(summary.id, summary?.book?.id, summary?.book?.author, summary?.from_page, summary?.to_page, summary?.book?.book_cover_path, summary?.status_id, summary?.user?.name, summary?.user?.email, summary?.user?.phone)"
                 >
                  <CIcon icon="cil-pencil" size="lg" />
                 </CButton>      
@@ -127,7 +124,7 @@
                         </CCol>
 
                         <CCol :md="12" class="my-5">
-                            <QuillEditor v-model:content="copiedText" theme="snow" contentType="html" id="editor"
+                            <QuillEditor v-model:content="copiedText" theme="snow" contentType="html" id="editor"  
                                 :toolbar="['bold', 'italic', 'underline',
                                 { 'list': 'ordered'}, { 'list': 'bullet' }, { 'direction': 'rtl' }, { 'header': [1, 2, 3, 4, 5, 6, false] }, 
                                 {'color': [] }, { 'background': [] }, { 'font': [] }, { 'align': [] },
@@ -135,34 +132,24 @@
                             />
                             <CFormFeedback :class="{haveError: copiedTextError}" v-if="copiedTextError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                         </CCol>
-                        <CPagination>
-                            <!-- <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(1)">الأولي</CPaginationItem> -->
-                            <div v-if="cdkcurrentPage == 1">
-                                <CPaginationItem disabled>السابقة</CPaginationItem>
+                        <CPagination class="cdk-paginator">
+                            <div class="d-flex">  
+                       
+                                <div  class="mx-1" v-if="cdkcurrentPage == 1">
+                                    <CPaginationItem disabled>السابقة</CPaginationItem>
+                                </div>
+                                <div class="mx-1" v-else>
+                                    <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage--)">السابقة</CPaginationItem>
+                                </div>
+   
+                                <div class="mx-1" v-if="cdkcurrentPage == cdklastPage">
+                                    <CPaginationItem disabled>التالية</CPaginationItem>
+                                </div>
+                                <div class="mx-1" v-else>
+                                    <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage++)">التالية</CPaginationItem>
+                                </div>
+                               
                             </div>
-                            <div v-else>
-                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage--)">السابقة</CPaginationItem>
-                            </div>
-<!--                             
-                            <div v-if="cdkcurrentPage+1 <= cdklastPage">
-                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage+1)">{{cdkcurrentPage+1}}</CPaginationItem>
-                            </div>
-                            <div v-if="cdkcurrentPage+2 <= cdklastPage">
-                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage+2)">{{cdkcurrentPage+2}}</CPaginationItem>
-                            </div>
-
-                            <div v-if="cdkcurrentPage+3 <= cdklastPage">
-                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage+3)">{{cdkcurrentPage+3}}</CPaginationItem>
-                            </div>
-                             -->
-                            <div v-if="cdkcurrentPage == cdklastPage">
-                                <CPaginationItem disabled>التالية</CPaginationItem>
-                            </div>
-                            <div v-else>
-                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage++)">التالية</CPaginationItem>
-                            </div>
-                            <!-- <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdklastPage)">الأخيرة</CPaginationItem> -->
-                     
                             <CButton color="secondary" @click="() =>handlecdkEditPagination('save')"> حفظ الصفحة</CButton>
 
                         </CPagination>
@@ -181,10 +168,10 @@
 
         <CPagination>
             <!-- <CPaginationItem class="paginated-style" @click="handlePagination(1)">الأولي</CPaginationItem> -->
-            <div v-if="currentPage == 1">
+            <div class="mx-1" v-if="currentPage == 1">
                 <CPaginationItem disabled>السابقة</CPaginationItem>
             </div>
-            <div v-else>
+            <div class="mx-1" v-else>
                 <CPaginationItem class="paginated-style" @click="handlePagination(currentPage--)">السابقة</CPaginationItem>
             </div>
             
@@ -199,10 +186,10 @@
                 <CPaginationItem class="paginated-style" @click="handlePagination(currentPage+3)">{{currentPage+3}}</CPaginationItem>
             </div> -->
             
-            <div v-if="currentPage == lastPage">
+            <div class="mx-1" v-if="currentPage == lastPage">
                 <CPaginationItem disabled>التالية</CPaginationItem>
             </div>
-            <div v-else>
+            <div class="mx-1" v-else>
                 <CPaginationItem class="paginated-style" @click="handlePagination(currentPage++)">التالية</CPaginationItem>
             </div>
             <!-- <CPaginationItem class="paginated-style" @click="handlePagination(lastPage)">الأخيرة</CPaginationItem> -->
@@ -235,6 +222,7 @@ export default {
 
             summaries: [],
             bookName: "",
+            bookId:"",
             author: "",
             fromPage: "",
             toPage: "",
@@ -262,8 +250,7 @@ export default {
         }
     },
     methods: {
-        handlePagination(currentPage){
-            // console.log("current", this.currentPage)
+        handlePagination(currentPage){   //page pagination 
             sessionStorage.setItem("summaryCurrentPage", this.currentPage);
             axios.get(`${baseUrl}/admin/book-summaries/all?page=`+this.currentPage, config)
             .then((response) => {
@@ -274,9 +261,10 @@ export default {
                 console.log(error)
             }); 
         },
-        invokeModal(id, bookName, author, fromPage, toPage, bookCoverPath, statusId, userName, userEmail, userPhone){
+        invokeModal(id, bookId, author, fromPage, toPage, bookCoverPath, statusId, userName, userEmail, userPhone){
+            console.log("sssasdasdasdasd",toPage)
             this.currentSummaryId = id
-            this.bookName = bookName
+            this.bookId = bookId
             this.author = author
             this.fromPage = fromPage
             this.toPage = toPage
@@ -288,12 +276,12 @@ export default {
             this.userPhone = userPhone
 
             this.visibleLiveDemo = true
-
-            axios.get(`${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`, config)
+            console.log("invokeModal currentSummaryId" ,this.currentSummaryId)
+            axios.get(`${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${1}`, config) //this.cdkcurrentPage
             .then((response) => {
             console.log("ssss",response.data.data.data[0]) 
-            document.getElementsByClassName('ql-editor')[0].innerHTML  =  response.data.data.data[0]?.page_content
-            document.getElementsByClassName('ql-editor')[0].setAttribute('id',response.data?.data?.data[0]?.id)
+            document.getElementsByClassName('ql-editor')[0].innerHTML  =  response?.data?.data?.data[0]?.page_content || ''
+            document.getElementsByClassName('ql-editor')[0].setAttribute('id',response?.data?.data?.data[0]?.id)
             console.log("summaries",this.summaries)
             // this.cdkcurrentPage+=1
             }).catch(function (error) {
@@ -302,12 +290,29 @@ export default {
  
         },
         updateSummary(){
+            console.log("update whole summary"  , this.savedPages)
+            console.log("update whole summary"  , this.savedPagesIds)
+
             this.isLoading = true
             let requestBody = new FormData();
             requestBody.append('book_summary_id', this.currentSummaryId)
             requestBody.append('status_id', this.statusId)
+            requestBody.append('book_id', this.bookId)
+            requestBody.append('from_page', this.fromPage)
+            requestBody.append('to_page',  this.toPage )
+            if(this.savedPages.length!=0) {
+                for (let i = 0; i < this.savedPages.length; i++) {
+                    requestBody.append('formatted_pages['+i+']',this.savedPages[i])
+                 }
+            }
 
-            axios.post(`${baseUrl}/admin/book-summaries/manage`, requestBody, config).then((response) => {
+            if(this.savedPagesIds.length!=0) {
+                for (let i = 0; i < this.savedPagesIds.length; i++) {
+                    requestBody.append('pages_ids['+i+']',this.savedPagesIds[i])
+                 }
+            }
+           
+            axios.post(`${baseUrl}/admin/book-summary/update`, requestBody, config).then((response) => {
                 if(response.data.status == false){                         
                     this.isLoading = false
                     console.log('error')
@@ -338,43 +343,62 @@ export default {
             })
         },
         downloadSummaries(files){
-            
             if(files.length > 0){
                 for(let i=0;i<files.length;i++){
                     window.open(files[i], "w"+i)
                 }
             }
-            
-        },
-        handlecdkEditPagination(Editpage){
-            console.log(this.cdkcurrentPage)
+       },
+        handlecdkEditPagination(Editpage){   //cdk editor pagination 
+           // console.log(this.cdkcurrentPage)
             axios.get(`${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`, config)
             .then((response) => {
-            console.log("ssss",response.data.data.data[0]) 
-            document.getElementsByClassName('ql-editor')[0].innerHTML  =  response.data.data.data[0]?.page_content
-            document.getElementsByClassName('ql-editor')[0].setAttribute('id',response.data?.data?.data[0]?.id)
-                if(Editpage=='save') {
+            console.log("CDK Edit Pagination",response.data.data.data[0]) 
+               if(Editpage=='save') {
                     this.savedPages.push(document.getElementsByClassName('ql-editor')[0].innerHTML)
                     this.savedPagesIds.push(document.getElementsByClassName('ql-editor')[0].id)
-                    console.log("updated pages"  , this.savedPages)
-                    console.log("updated pages id"  , this.savedPagesIds)
+                    console.log("cdk upload only pages"  , this.savedPages)
+                    console.log("cdk upload only pages id"  , this.savedPagesIds)
+
+                let requestBody = new FormData();
+                requestBody.append('book_summary_id', this.currentSummaryId)
+                for (let i = 0; i < this.savedPages.length; i++) {
+                    requestBody.append('formatted_pages['+i+']',this.savedPages[i])
+                 }
+                 for (let i = 0; i < this.savedPagesIds.length; i++) {
+                    requestBody.append('pages_ids['+i+']',this.savedPagesIds[i])
+                 }
+                axios.post(`${baseUrl}/admin/book-summary/update`, requestBody, config).then((response) => {
+                if(response.data.status == false){                         
+                    // this.$swal({
+                    //     title: 'عذرا, هناك خطأ',
+                    //     text: response.data.errors[0],
+                    //     icon: 'error'
+                    // })
+                }else{
+                    // this.$swal({
+                    //     title: 'تم حفظ الصفحة بنجاح',
+                    //     icon: 'success',
+                    // })
+                }
+                })
+                }
+                else {
+                    document.getElementsByClassName('ql-editor')[0].innerHTML  =  response?.data?.data?.data[0]?.page_content || ''
+                    document.getElementsByClassName('ql-editor')[0].setAttribute('id',response?.data?.data?.data[0]?.id)
                 }
             }).catch(function (error) {
                 console.log(error)
             });
         },
-
-        // savePage(){
-        //    this.savedPages.push(document.getElementsByClassName('ql-editor')[0].innerHTML)
-        // }
     },
     mounted(){
+        console.log("mountaed", this.currentPage )
         axios.get(`${baseUrl}/admin/book-summaries/all?page=`+sessionStorage.getItem("summaryCurrentPage"), config)
         .then((response) => {
             this.summaries = response.data.data.data
             this.currentPage = response.data.data.current_page
             this.lastPage = response.data.data.last_page
-
            console.log("summaries",this.summaries)
         }).catch(function (error) {
             console.log(error)
@@ -441,5 +465,6 @@ export default {
     th:nth-of-type(8){
       min-width:150px !important;
     }
-
+ 
+ 
 </style> 
