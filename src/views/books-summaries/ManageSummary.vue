@@ -10,28 +10,49 @@
                 <!-- <strong>نسخ ملخص</strong> -->
                 <CCol :md="12">
                     <CFormLabel for="inputState">اختيار الملخص بأسم الكتاب</CFormLabel>
-                    <CFormSelect v-model="summaryId" id="inputState"  class="p-2">
+                    <CFormSelect v-model="currentSummaryId" id="inputState"  class="p-2">
                         <option v-for="summary in summaries" :value="summary.id" :key="summary">{{summary.book_name}}</option>
                     </CFormSelect>
                 </CCol>
-                <CCol :md="12" v-if="summaryId != null">                
+                <!-- <CCol :md="12" v-if="currentSummaryId != null">                
                     <CTableDataCell>
-                        <CImage rounded thumbnail :src="summaries[summaryId-1].book_cover_path" width="50" height="50"/>
+                        <CImage rounded thumbnail :src="summaries[currentSummaryId-1].book_cover_path" width="50" height="50"/>
                     </CTableDataCell>
                 </CCol>
-                <CCol :md="12" v-if="summaryId != null">
+                 <CCol :md="12" v-if="currentSummaryId != null">
                     <CFormLabel>صفحات التلخيص</CFormLabel>
-                    <p>من الصفحة: {{summaries[summaryId-1].from_page}}</p>
-                    <p>إلي الصفحة: {{summaries[summaryId-1].to_page}}</p>
-                </CCol> 
+                    <p>من الصفحة: {{summaries[currentSummaryId-1].from_page|| 0}}</p>
+                    <p>إلي الصفحة: {{summaries[currentSummaryId-1].to_page}}</p>
+                </CCol>  -->
                 <CCol :md="12" class="my-5">
-                  <QuillEditor v-model:content="copiedText" theme="snow" contentType="html"
+                  <QuillEditor v-model:content="copiedTextManage" theme="snow" contentType="html" id="editor"
                     :toolbar="['bold', 'italic', 'underline',
                     { 'list': 'ordered'}, { 'list': 'bullet' }, { 'direction': 'rtl' }, { 'header': [1, 2, 3, 4, 5, 6, false] }, 
                     {'color': [] }, { 'background': [] }, { 'font': [] }, { 'align': [] },
                     ]"   
                   />
-                  <CFormFeedback :class="{haveError: copiedTextError}" v-if="copiedTextError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+
+                  <CPagination>
+                        <div v-if="cdkcurrentManagePage == 0" class="my-1 mx-1">
+                            <CPaginationItem disabled>
+                              الصفحة السابقة</CPaginationItem>
+                        </div>
+                        <div v-else class="my-1 mx-1">
+                            <CPaginationItem class="paginated-style" @click="handlecdkPagination('sub')">
+                            الصفحة السابقة</CPaginationItem>
+                        </div>
+                        <div v-if="cdkcurrentManagePage == cdklastManagePage" class="my-1 mx-1">
+                            <CPaginationItem disabled>
+                             صفحة جديدة</CPaginationItem>
+                        </div>
+                        <div v-else class="my-1 mx-1">   
+                            <CPaginationItem class="paginated-style" @click="handlecdkPagination('add')">
+                              صفحة جديدة</CPaginationItem>
+                        </div>
+                      
+                    </CPagination>
+
+                  <CFormFeedback :class="{haveError: copiedTextManageError}" v-if="copiedTextManageError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol><br><br>
 
                 <div class="modal-footer">
@@ -55,70 +76,118 @@ const token = localStorage.token
 const config = {
     headers: { Authorization: `Bearer ${token}` }
 }
-
+// import VueHtml2pdf from 'vue-html2pdf'
 export default {
+
   name: 'Copy Summary',
   data(){
     return {
-        summaryId: null,
+        currentSummaryId: null,
         summaries: [],
-        copiedText: "",
+        copiedTextManage: "<p><bold>this is a book summary with bold text</bold></p>",
         copiedHTML: "",
-
-        copiedTextError: "",
-
+        copiedTextManageError: "",
         isLoading: false,
-        currentPage: null,
-        lastPage: null
+        cdkcurrentManagePage:0 ,
+        cdklastManagePage:50 , 
+        pagesContent:[]
     }
   },
 
   methods: {
-    handleSubmit(){        
-        if(this.copiedText == ""){
-            this.copiedTextError = true
+ 
+    handleSubmit(){      
+      
+      var filtered = this.pagesContent.filter(function (el) {
+          if(el!="<p><br></p>"||el !='') {
+            return el
+          }
+      });
+
+      console.log("filtered",filtered);
+        // if(this.copiedTextManage == ""){
+        //     this.copiedTextManageError = true
+        // }
+        // if(this.copiedTextManage != ""){
+        //     this.copiedTextManageError = false
+        // }
+
+        // if(this.copiedTextManage != ""){
+
+        //   //  console.log(this.copiedTextManage)
+
+        //     let requestBody = new FormData();
+
+        //     requestBody.append('book_summary_id', this.currentSummaryId)
+        //     requestBody.append('book_summary_text', this.copiedTextManage)
+
+        //     axios.post(`${baseUrl}/admin/book-summary/convert`, requestBody, config).then((response) => {
+        //       // console.log(response.data);
+        //       if(response.data.status == false){
+        //         // console.log('error')
+        //         this.$swal({
+        //             title: 'عذرا, هناك خطأ',
+        //             // text: 'Welcome Back, Admin',
+        //             icon: 'error'
+        //         })
+        //       }else{
+        //         this.$swal({
+        //             title: 'تمت الإضافه بنجاح',
+        //             // text: 'Welcome Back, Admin',
+        //             icon: 'success'
+        //         })
+
+        //         this.copiedTextManage = ''
+        //         this.$router.push('/books-summaries/all') 
+
+        //       }
+        //     }).catch(function (error) {
+        //       // console.log(error);
+        //     });
+        // }
+    },
+    addPage(){
+      console.log("pagesContent", this.pagesContent )
+      // document.getElementById('editor').innerHTML ='<p><strong>Hello</strong></p>' 
+    },
+    handlecdkPagination(page){ 
+      if(page=='add') {
+        if(this.cdkcurrentManagePage!=this.cdklastManagePage) { 
+            this.cdkcurrentManagePage+=1 ;
+            if(this.pagesContent.length!=0 && (this.cdkcurrentManagePage-1 <=  this.pagesContent.length-1)){
+              //  document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
+              //  console.log("case 1")
+                if(this.copiedTextManage!=this.pagesContent[this.cdkcurrentManagePage-2]){
+                  this.document.getElementsByClassName('ql-editor')[0].innerHTML  =pagesContent[this.cdkcurrentManagePage-2]=this.copiedTextManage
+                this.pagesContent[this.cdkcurrentManagePage-1] 
+                }
+                else if ( this.pagesContent[this.cdkcurrentManagePage-2]==this.copiedTextManage && this.copiedTextManage!='') {
+                  document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
+                }
+                // console.log("dfdfasdfasf",  this.copiedTextManage ,this.pagesContent[this.cdkcurrentManagePage-2])
+                // console.log("case 1")
+            }
+            else {
+              this.pagesContent.push(this.copiedTextManage)
+              this.copiedTextManage=''
+              document.getElementsByClassName('ql-editor')[0].innerHTML  = ""
+              // console.log("case 2")
+            }
+          //console.log("pagesContent",this.pagesContent)
         }
-        if(this.copiedText != ""){
-            this.copiedTextError = false
+      } 
+      else if(page=='sub') {  
+      // console.log("pagesContent sub",this.pagesContent)
+        if(this.cdkcurrentManagePage-1>0) {  
+          this.cdkcurrentManagePage-=1 ;
+          document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
+          // console.log("prev",this.pagesContent[this.cdkcurrentManagePage])
         }
-
-        if(this.copiedText != ""){
-
-           console.log(this.copiedText)
-
-            let requestBody = new FormData();
-
-            requestBody.append('book_summary_id', this.summaryId)
-            requestBody.append('book_summary_text', this.copiedText)
-
-            axios.post(`${baseUrl}/admin/book-summary/convert`, requestBody, config).then((response) => {
-              console.log(response.data);
-              if(response.data.status == false){
-                console.log('error')
-                this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    // text: 'Welcome Back, Admin',
-                    icon: 'error'
-                })
-              }else{
-                this.$swal({
-                    title: 'تمت الإضافه بنجاح',
-                    // text: 'Welcome Back, Admin',
-                    icon: 'success'
-                })
-
-                this.copiedText = ''
-                this.$router.push('/books-summaries/all') 
-
-              }
-            }).catch(function (error) {
-              console.log(error);
-            });
-        }
+      }
+      console.log("pagesContent",this.pagesContent)
     },
   },
   mounted(){
-
     let data = [];
     axios.get(`${baseUrl}/admin/book-summaries/all?page=`+1, config)
         .then((response) => {
@@ -128,8 +197,7 @@ export default {
 
             while(this.currentPage <= this.lastPage){
               this.currentPage += 1
-              // console.log(this.currentPage)
-                 axios.get(`${baseUrl}/admin/book-summaries/all?page=`+this.currentPage, config)
+               axios.get(`${baseUrl}/admin/book-summaries/all?page=`+this.currentPage, config)
                     .then((response) => {
                         data.push(response.data.data.data)
                         this.currentPage = response.data.data.current_page
@@ -146,7 +214,7 @@ export default {
             this.summaries = JSON.parse(JSON.stringify(formattedData))
 
             if(this.summaries.length > 0){
-              this.summaryId = this.summaries[0].id.toString()
+              this.currentSummaryId = this.summaries[0].id.toString()
             }
             // console.log(JSON.parse(JSON.stringify(this.summaries)))
         }).catch(function (error) {

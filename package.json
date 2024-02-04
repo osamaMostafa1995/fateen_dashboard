@@ -22,6 +22,7 @@
     "coreui_library_short_version": "4.1"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-html-embed": "^41.0.0",
     "@coreui/chartjs": "^3.0.0",
     "@coreui/coreui": "^4.1.0",
     "@coreui/icons": "^2.1.0",
@@ -32,7 +33,9 @@
     "@vueup/vue-quill": "^1.0.0-beta.10",
     "axios": "^0.27.2",
     "core-js": "^3.19.0",
+    "pdf2html": "^3.1.0",
     "vue": "^3.2.23",
+    "vue-html2pdf": "^1.8.0",
     "vue-router": "^4.0.12",
     "vue-sweetalert2": "^5.0.5",
     "vuex": "^4.0.2"

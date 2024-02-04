@@ -20,12 +20,12 @@
             <CTableBody>
             <CTableRow v-for="summary in summaries" :key="summary">
                 <CTableHeaderCell scope="row">{{summary.id}}</CTableHeaderCell>
-                <CTableDataCell>{{summary.book_name}}</CTableDataCell>
-                <CTableDataCell>{{summary.author}}</CTableDataCell>
+                <CTableDataCell>{{summary?.book?.book_name || '-'}}</CTableDataCell>
+                <CTableDataCell>{{summary?.book?.author || '-' }}</CTableDataCell>
                 <CTableDataCell>{{summary.from_page}}</CTableDataCell>
                 <CTableDataCell>{{summary.to_page}}</CTableDataCell>
-                <CTableDataCell v-if="!summary.book_cover_path.includes('null')">
-                    <CImage rounded thumbnail :src='summary.book_cover_path.replace(`"`, ``)' width="50" height="50"/>
+                <CTableDataCell v-if="!summary?.book?.book_cover_path.includes('null')">
+                    <CImage rounded thumbnail :src='summary?.book?.book_cover_path' onerror=" this.src=defaultImage" width="50" height="50"/>  <!--summary?.book?.book_cover_path.replace(`"`, ``)-->
                 </CTableDataCell>
                 <CTableDataCell v-else>
                     <CImage rounded thumbnail :src="defaultImage" width="50" height="50"/>
@@ -57,16 +57,16 @@
                 <CButton
                     color="warning"
                     variant="outline"
-                    @click="() => invokeModal(summary.id, summary.book_name, summary.author, summary.from_page, summary.to_page, summary.book_cover_path, summary.status_id, summary.user.name, summary.user.email, summary.user.phone)"
+                    @click="() => invokeModal(summary.id, summary?.book?.book_name, summary?.book?.author, summary.from_page, summary.to_page, summary?.book?.book_cover_path, summary?.status_id, summary?.user?.name, summary?.user?.email, summary?.user?.phone)"
                 >
-                <CIcon icon="cil-pencil" size="lg" />
+                 <CIcon icon="cil-pencil" size="lg" />
                 </CButton>      
                 </CTableDataCell>
             </CTableRow>
             </CTableBody>
         </CTable>
 
-        <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+        <CModal size="lg" :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
             <CModalHeader>
             <CModalTitle>إدارة ملخص</CModalTitle>
             </CModalHeader>
@@ -125,6 +125,49 @@
                                 <option value="2">رفض</option>
                             </CFormSelect>
                         </CCol>
+
+                        <CCol :md="12" class="my-5">
+                            <QuillEditor v-model:content="copiedText" theme="snow" contentType="html" id="editor"
+                                :toolbar="['bold', 'italic', 'underline',
+                                { 'list': 'ordered'}, { 'list': 'bullet' }, { 'direction': 'rtl' }, { 'header': [1, 2, 3, 4, 5, 6, false] }, 
+                                {'color': [] }, { 'background': [] }, { 'font': [] }, { 'align': [] },
+                                ]"   
+                            />
+                            <CFormFeedback :class="{haveError: copiedTextError}" v-if="copiedTextError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                        </CCol>
+                        <CPagination>
+                            <!-- <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(1)">الأولي</CPaginationItem> -->
+                            <div v-if="cdkcurrentPage == 1">
+                                <CPaginationItem disabled>السابقة</CPaginationItem>
+                            </div>
+                            <div v-else>
+                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage--)">السابقة</CPaginationItem>
+                            </div>
+<!--                             
+                            <div v-if="cdkcurrentPage+1 <= cdklastPage">
+                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage+1)">{{cdkcurrentPage+1}}</CPaginationItem>
+                            </div>
+                            <div v-if="cdkcurrentPage+2 <= cdklastPage">
+                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage+2)">{{cdkcurrentPage+2}}</CPaginationItem>
+                            </div>
+
+                            <div v-if="cdkcurrentPage+3 <= cdklastPage">
+                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage+3)">{{cdkcurrentPage+3}}</CPaginationItem>
+                            </div>
+                             -->
+                            <div v-if="cdkcurrentPage == cdklastPage">
+                                <CPaginationItem disabled>التالية</CPaginationItem>
+                            </div>
+                            <div v-else>
+                                <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdkcurrentPage++)">التالية</CPaginationItem>
+                            </div>
+                            <!-- <CPaginationItem class="paginated-style" @click="handlecdkEditPagination(cdklastPage)">الأخيرة</CPaginationItem> -->
+                     
+                            <CButton color="secondary" @click="() =>handlecdkEditPagination('save')"> حفظ الصفحة</CButton>
+
+                        </CPagination>
+                       
+                       <br><br>
                     </CForm>
                 </CCardBody>
             </CModalBody>
@@ -137,15 +180,15 @@
         </CModal>
 
         <CPagination>
-            <CPaginationItem class="paginated-style" @click="handlePagination(1)">الأولي</CPaginationItem>
+            <!-- <CPaginationItem class="paginated-style" @click="handlePagination(1)">الأولي</CPaginationItem> -->
             <div v-if="currentPage == 1">
                 <CPaginationItem disabled>السابقة</CPaginationItem>
             </div>
             <div v-else>
-                <CPaginationItem class="paginated-style" @click="handlePagination(currentPage-1)">السابقة</CPaginationItem>
+                <CPaginationItem class="paginated-style" @click="handlePagination(currentPage--)">السابقة</CPaginationItem>
             </div>
             
-            <div v-if="currentPage+1 <= lastPage">
+            <!-- <div v-if="currentPage+1 <= lastPage">
                 <CPaginationItem class="paginated-style" @click="handlePagination(currentPage+1)">{{currentPage+1}}</CPaginationItem>
             </div>
             <div v-if="currentPage+2 <= lastPage">
@@ -154,15 +197,15 @@
 
             <div v-if="currentPage+3 <= lastPage">
                 <CPaginationItem class="paginated-style" @click="handlePagination(currentPage+3)">{{currentPage+3}}</CPaginationItem>
-            </div>
+            </div> -->
             
             <div v-if="currentPage == lastPage">
                 <CPaginationItem disabled>التالية</CPaginationItem>
             </div>
             <div v-else>
-                <CPaginationItem class="paginated-style" @click="handlePagination(currentPage+1)">التالية</CPaginationItem>
+                <CPaginationItem class="paginated-style" @click="handlePagination(currentPage++)">التالية</CPaginationItem>
             </div>
-            <CPaginationItem class="paginated-style" @click="handlePagination(lastPage)">الأخيرة</CPaginationItem>
+            <!-- <CPaginationItem class="paginated-style" @click="handlePagination(lastPage)">الأخيرة</CPaginationItem> -->
         </CPagination>
       </CCard>
     </CCol>
@@ -206,23 +249,27 @@ export default {
             currentSummaryId: null,
 
             isLoading: false,
-            currentPage: null,
+            currentPage: 1,
             lastPage: null,
+   
+            cdkcurrentPage:1 ,
+            cdklastPage: 50,
+            
+            savedPages:[],
+            savedPagesIds:[] ,
 
             defaultImage: "https://w7.pngwing.com/pngs/776/145/png-transparent-books-illustration-book-book-rectangle-presentation-desktop-wallpaper-thumbnail.png"
         }
     },
     methods: {
-        handlePagination(id){
-            sessionStorage.setItem("summaryCurrentPage", id);
-            axios.get(`${baseUrl}/book-summaries/all?page=`+id, config)
+        handlePagination(currentPage){
+            // console.log("current", this.currentPage)
+            sessionStorage.setItem("summaryCurrentPage", this.currentPage);
+            axios.get(`${baseUrl}/admin/book-summaries/all?page=`+this.currentPage, config)
             .then((response) => {
-                // console.log(response.data.data)
-                this.articles = response.data.data.data
+                this.summaries = response.data.data.data
                 this.currentPage = response.data.data.current_page
                 this.lastPage = response.data.data.last_page
-                // console.log(this.currentPage)
-                // console.log(this.lastPage)
             }).catch(function (error) {
                 console.log(error)
             }); 
@@ -241,11 +288,21 @@ export default {
             this.userPhone = userPhone
 
             this.visibleLiveDemo = true
+
+            axios.get(`${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`, config)
+            .then((response) => {
+            console.log("ssss",response.data.data.data[0]) 
+            document.getElementsByClassName('ql-editor')[0].innerHTML  =  response.data.data.data[0]?.page_content
+            document.getElementsByClassName('ql-editor')[0].setAttribute('id',response.data?.data?.data[0]?.id)
+            console.log("summaries",this.summaries)
+            // this.cdkcurrentPage+=1
+            }).catch(function (error) {
+                console.log(error)
+            }); 
+ 
         },
         updateSummary(){
-            //   console.log(this.currentSummaryId)
             this.isLoading = true
-
             let requestBody = new FormData();
             requestBody.append('book_summary_id', this.currentSummaryId)
             requestBody.append('status_id', this.statusId)
@@ -288,7 +345,28 @@ export default {
                 }
             }
             
-        }
+        },
+        handlecdkEditPagination(Editpage){
+            console.log(this.cdkcurrentPage)
+            axios.get(`${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`, config)
+            .then((response) => {
+            console.log("ssss",response.data.data.data[0]) 
+            document.getElementsByClassName('ql-editor')[0].innerHTML  =  response.data.data.data[0]?.page_content
+            document.getElementsByClassName('ql-editor')[0].setAttribute('id',response.data?.data?.data[0]?.id)
+                if(Editpage=='save') {
+                    this.savedPages.push(document.getElementsByClassName('ql-editor')[0].innerHTML)
+                    this.savedPagesIds.push(document.getElementsByClassName('ql-editor')[0].id)
+                    console.log("updated pages"  , this.savedPages)
+                    console.log("updated pages id"  , this.savedPagesIds)
+                }
+            }).catch(function (error) {
+                console.log(error)
+            });
+        },
+
+        // savePage(){
+        //    this.savedPages.push(document.getElementsByClassName('ql-editor')[0].innerHTML)
+        // }
     },
     mounted(){
         axios.get(`${baseUrl}/admin/book-summaries/all?page=`+sessionStorage.getItem("summaryCurrentPage"), config)
@@ -297,7 +375,7 @@ export default {
             this.currentPage = response.data.data.current_page
             this.lastPage = response.data.data.last_page
 
-            // console.log(this.facts)
+           console.log("summaries",this.summaries)
         }).catch(function (error) {
             console.log(error)
         }); 
@@ -358,5 +436,10 @@ export default {
     .haveError {
         color: red;
     }
+    
 
-</style>
+    th:nth-of-type(8){
+      min-width:150px !important;
+    }
+
+</style> 
