@@ -12,6 +12,7 @@
       button {
         height: 40px !important;
         padding: 10px 20px;
+        margin-top: 8px;
       }
   }
 }
@@ -24,4 +25,7 @@ td button{
   padding:10px 15px 0px 15px !important ;
 }
 
+.modal-footer {
+   border: none !important;
+}
 </style>

@@ -7,23 +7,14 @@
         </CCardHeader>
         <CCardBody>
             <CForm class="row g-3">
-                <!-- <strong>نسخ ملخص</strong> -->
+                
                 <CCol :md="12">
                     <CFormLabel for="inputState">اختيار الملخص بأسم الكتاب</CFormLabel>
                     <CFormSelect v-model="currentSummaryId" id="inputState"  class="p-2">
                         <option v-for="summary in summaries" :value="summary.id" :key="summary">{{summary.book_name}}</option>
                     </CFormSelect>
                 </CCol>
-                <!-- <CCol :md="12" v-if="currentSummaryId != null">                
-                    <CTableDataCell>
-                        <CImage rounded thumbnail :src="summaries[currentSummaryId-1].book_cover_path" width="50" height="50"/>
-                    </CTableDataCell>
-                </CCol>
-                 <CCol :md="12" v-if="currentSummaryId != null">
-                    <CFormLabel>صفحات التلخيص</CFormLabel>
-                    <p>من الصفحة: {{summaries[currentSummaryId-1].from_page|| 0}}</p>
-                    <p>إلي الصفحة: {{summaries[currentSummaryId-1].to_page}}</p>
-                </CCol>  -->
+              
                 <CCol :md="12" class="my-5">
                   <QuillEditor v-model:content="copiedTextManage" theme="snow" contentType="html" id="editor"
                     :toolbar="['bold', 'italic', 'underline',
@@ -32,30 +23,34 @@
                     ]"   
                   />
 
-                  <CPagination>
-                        <div v-if="cdkcurrentManagePage == 0" class="my-1 mx-1">
+                  <CPagination class="cdk-paginator">
+                    <div class="d-flex  my-2" >  
+                        <div v-if="cdkcurrentManagePage == 0" class=" mx-1">
                             <CPaginationItem disabled>
                               الصفحة السابقة</CPaginationItem>
                         </div>
-                        <div v-else class="my-1 mx-1">
-                            <CPaginationItem class="paginated-style" @click="handlecdkPagination('sub')">
+                        <div v-else class=" mx-1">
+                            <CPaginationItem class="paginated-style" @click="handlecdkAddPagination('sub')">
                             الصفحة السابقة</CPaginationItem>
                         </div>
-                        <div v-if="cdkcurrentManagePage == cdklastManagePage" class="my-1 mx-1">
+                        <div v-if="cdkcurrentManagePage == cdklastManagePage" class=" mx-1">
                             <CPaginationItem disabled>
                              صفحة جديدة</CPaginationItem>
                         </div>
-                        <div v-else class="my-1 mx-1">   
-                            <CPaginationItem class="paginated-style" @click="handlecdkPagination('add')">
-                              صفحة جديدة</CPaginationItem>
+                        <div v-else class="  mx-1">   
+                            <CPaginationItem class="paginated-style" @click="handlecdkAddPagination('add')">
+                              صفحة جديدة </CPaginationItem>
                         </div>
-                      
+                    </div>
+                    <div class="my-2 pt-2"> رقم الصفحة {{cdkcurrentManagePage}}</div>
+                    <CButton color="secondary" @click="() =>handlecdkAddPagination('save')"> حفظ الصفحة</CButton>
+
                     </CPagination>
 
-                  <CFormFeedback :class="{haveError: copiedTextManageError}" v-if="copiedTextManageError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                  <CFormFeedback class="my-2" :class="{haveError: copiedTextManageError}" v-if="copiedTextManageError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol><br><br>
 
-                <div class="modal-footer">
+                <div class="modal-footer my-5">
                   <CButton @click="handleSubmit"  class="py-2 px-5" color="primary">إضافة</CButton>
                 </div>
             </CForm>
@@ -88,8 +83,10 @@ export default {
         copiedHTML: "",
         copiedTextManageError: "",
         isLoading: false,
-        cdkcurrentManagePage:0 ,
-        cdklastManagePage:50 , 
+        cdkcurrentManagePage:1,
+        cdklastManagePage:50, 
+
+        pageNum:0,
         pagesContent:[]
     }
   },
@@ -146,46 +143,79 @@ export default {
         //     });
         // }
     },
-    addPage(){
-      console.log("pagesContent", this.pagesContent )
-      // document.getElementById('editor').innerHTML ='<p><strong>Hello</strong></p>' 
-    },
-    handlecdkPagination(page){ 
-      if(page=='add') {
-        if(this.cdkcurrentManagePage!=this.cdklastManagePage) { 
-            this.cdkcurrentManagePage+=1 ;
-            if(this.pagesContent.length!=0 && (this.cdkcurrentManagePage-1 <=  this.pagesContent.length-1)){
-              //  document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
-              //  console.log("case 1")
-                if(this.copiedTextManage!=this.pagesContent[this.cdkcurrentManagePage-2]){
-                  this.document.getElementsByClassName('ql-editor')[0].innerHTML  =pagesContent[this.cdkcurrentManagePage-2]=this.copiedTextManage
-                this.pagesContent[this.cdkcurrentManagePage-1] 
-                }
-                else if ( this.pagesContent[this.cdkcurrentManagePage-2]==this.copiedTextManage && this.copiedTextManage!='') {
-                  document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
-                }
-                // console.log("dfdfasdfasf",  this.copiedTextManage ,this.pagesContent[this.cdkcurrentManagePage-2])
-                // console.log("case 1")
-            }
-            else {
-              this.pagesContent.push(this.copiedTextManage)
-              this.copiedTextManage=''
-              document.getElementsByClassName('ql-editor')[0].innerHTML  = ""
-              // console.log("case 2")
-            }
-          //console.log("pagesContent",this.pagesContent)
-        }
-      } 
+   
+    handlecdkAddPagination(page){ 
+      if(page=='save') {
+        if((this.copiedTextManage != '<p><br></p>')){
+          if((this.pagesContent.length!=0) && ((this.pagesContent.length-1) == (this.cdkcurrentManagePage-1)))
+           console.log("sasdsdasdasdasd",this.pagesContent[this.cdkcurrentManagePage-1])
+          this.pagesContent[this.cdkcurrentManagePage-1]=this.copiedTextManage
+        } 
+        // document.getElementsByClassName('ql-editor')[0].innerHTML  = ""
+      }
       else if(page=='sub') {  
-      // console.log("pagesContent sub",this.pagesContent)
         if(this.cdkcurrentManagePage-1>0) {  
           this.cdkcurrentManagePage-=1 ;
-          document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
-          // console.log("prev",this.pagesContent[this.cdkcurrentManagePage])
+          console.log("prev",this.cdkcurrentManagePage)
+          if(this.pagesContent[this.cdkcurrentManagePage-1]) {
+            document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
+          }
+          else {
+            document.getElementsByClassName('ql-editor')[0].innerHTML  ='' ;
+          }
         }
       }
-      console.log("pagesContent",this.pagesContent)
+      else if(page=='add')  {
+        if(this.cdkcurrentManagePage!=this.cdklastManagePage) { 
+            this.cdkcurrentManagePage+=1 ;
+            if( this.pagesContent[this.cdkcurrentManagePage-1]){
+              document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1]  
+            }else {
+              document.getElementsByClassName('ql-editor')[0].innerHTML  ='' ;
+            }
+            console.log("next",this.cdkcurrentManagePage.length)
+          }
+      } 
+    
+
+      var filteredPages = this.pagesContent.filter(function (el) {
+        if(el) {
+          return el != null;
+        }
+      });
+      console.log("filteredPages",filteredPages)
     },
+
+    // handlecdkAddPagination(page){ 
+    //   if(page=='add') {
+    //     if(this.cdkcurrentManagePage!=this.cdklastManagePage) { 
+    //         this.cdkcurrentManagePage+=1 ;
+    //         if(this.pagesContent.length!=0 && (this.cdkcurrentManagePage-1 <=  this.pagesContent.length-1)){
+    //             if(this.copiedTextManage!=this.pagesContent[this.cdkcurrentManagePage-2]){
+    //               this.document.getElementsByClassName('ql-editor')[0].innerHTML  =pagesContent[this.cdkcurrentManagePage-2]=this.copiedTextManage
+    //             this.pagesContent[this.cdkcurrentManagePage-1] 
+    //             }
+    //             else if ( this.pagesContent[this.cdkcurrentManagePage-2]==this.copiedTextManage && this.copiedTextManage!='') {
+    //               document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
+    //             }
+             
+    //         }
+    //         else {
+    //           this.pagesContent.push(this.copiedTextManage)
+    //           this.copiedTextManage=''
+    //           document.getElementsByClassName('ql-editor')[0].innerHTML  = ""
+           
+    //         }
+    //      }
+    //   } 
+    //   else if(page=='sub') {  
+    //     if(this.cdkcurrentManagePage-1>0) {  
+    //       this.cdkcurrentManagePage-=1 ;
+    //       document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
+    //     }
+    //   }
+    //   console.log("pagesContent",this.pagesContent)
+    // },
   },
   mounted(){
     let data = [];

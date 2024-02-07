@@ -1,6 +1,5 @@
 import { h, resolveComponent } from 'vue'
 import { createRouter, createWebHistory  } from 'vue-router'
-
 import DefaultLayout from '@/layouts/DefaultLayout'
 
 
@@ -182,13 +181,34 @@ const routes = [
             name: 'عرض الملخصات',
             component: () => import('@/views/books-summaries/ShowSummaries'),
           },
-          {
-            path: 'manage',
-            name: 'نسخ الملخصات',
-            component: () => import('@/views/books-summaries/ManageSummary'),
-          },
+          // {
+          //   path: 'manage',
+          //   name: 'نسخ الملخصات',
+          //   component: () => import('@/views/books-summaries/ManageSummary'),
+          // },
         ],
       },
+      {
+        path: '/awareness',
+        name: 'قسم وعي',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        children: [
+          {
+            path: 'all',
+            name: 'عرض قسم وعي',
+            component: () => import('@/views/awareness/ShowAwareness'),
+          },
+          // {
+          //   path: 'manage',
+          //   name: 'نسخ الملخصات',
+          //   component: () => import('@/views/books-summaries/ManageSummary'),
+          // },
+        ]
+      }
     ],
   },
   {

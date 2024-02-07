@@ -77,11 +77,29 @@ export default [
         name: 'عرض الملخصات',
         to: '/books-summaries/all',
       },
+      // {
+      //   component: 'CNavItem',
+      //   name: 'نسخ الملخصات',
+      //   to: '/books-summaries/manage',
+      // },
+    ],   
+  },
+  {
+    component: 'CNavGroup',
+    name: 'قسم وعي',
+    to: '/awareness/all',
+    icon: 'cilBook',
+    items: [
       {
         component: 'CNavItem',
-        name: 'نسخ الملخصات',
-        to: '/books-summaries/manage',
+        name: 'عرض قسم وعي',
+        to: '/awareness/all',
       },
+      // {
+      //   component: 'CNavItem',
+      //   name: 'نسخ الملخصات',
+      //   to: '/books-summaries/manage',
+      // },
     ],
   },
   {
