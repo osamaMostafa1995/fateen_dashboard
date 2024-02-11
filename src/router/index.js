@@ -202,11 +202,11 @@ const routes = [
             name: 'عرض قسم وعي',
             component: () => import('@/views/awareness/ShowAwareness'),
           },
-          // {
-          //   path: 'manage',
-          //   name: 'نسخ الملخصات',
-          //   component: () => import('@/views/books-summaries/ManageSummary'),
-          // },
+          {
+            path: 'manage',
+            name: 'إضافة قسم وعي ',
+            component: () => import('@/views/awareness/Managewareness'),
+          },
         ]
       }
     ],

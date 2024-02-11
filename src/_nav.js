@@ -95,11 +95,11 @@ export default [
         name: 'عرض قسم وعي',
         to: '/awareness/all',
       },
-      // {
-      //   component: 'CNavItem',
-      //   name: 'نسخ الملخصات',
-      //   to: '/books-summaries/manage',
-      // },
+       {
+        component: 'CNavItem',
+        name: 'إضافة قسم وعي ',
+        to: '/awareness/manage',
+       },
     ],
   },
   {

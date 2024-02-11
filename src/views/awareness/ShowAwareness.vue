@@ -207,7 +207,7 @@
                   </CCardBody>
               </CModalBody>
               <CModalFooter>
-                 <CButton color="primary" @click="updateSummary">تعديل</CButton>
+                 <CButton color="primary" @click="updateBlog">تعديل</CButton>
               </CModalFooter>
           </CModal>
      
@@ -237,7 +237,7 @@
               </CModalBody>
               <CModalFooter>
                   <div class="modal-footer">
-                    <CButton @click="addFormattedSummary" class="px-5" color="primary">إضافة</CButton>
+                    <CButton @click="addFormattedBlog" class="px-5" color="primary">إضافة</CButton>
                   </div>
               </CModalFooter>
           </CModal>
@@ -329,7 +329,7 @@
               savedPagesIds:[] ,
               cdkType:'edit' , 
                /////add model/////
-              currentAddSummaryId:0,
+              currentAddBlogId:0,
               copiedTextManage: "<p><bold>this is a book summary with bold text</bold></p>",
               copiedHTML: "",
               copiedTextManageError: "",
@@ -371,7 +371,7 @@
            
           },
 
-          updateSummary(){
+          updateBlog(){
             this.copiedText = document.getElementsByClassName('ql-editor')[0].innerHTML 
              console.log("copiedText" ,this.copiedText )
               this.isLoading = true
@@ -433,14 +433,14 @@
           },
       
           invokeAddModal(id){
-            //  this.currentAddSummaryId = id
+            //  this.currentAddBlogId = id
             //  this.cdkcurrentManagePage =1 ;
             //  this.visibleAddModel = true
           },
    
-          addFormattedSummary(){      
+          addFormattedBlog(){      
             //  let requestBody = new FormData();
-            //  requestBody.append('book_summary_id', this.currentAddSummaryId)
+            //  requestBody.append('book_summary_id', this.currentAddBlogId)
             //  if(this.pagesContent.length!=0) {
             //       for (let i = 0; i < this.pagesContent.length; i++) {
             //           requestBody.append('formatted_pages['+i+']',this.pagesContent[i])
@@ -494,25 +494,25 @@
             {id:1 , name_ar:'أصلي '} ,  
         ]
 
-         sessionStorage.setItem("awarenessCurrentPage", this.currentPage);
+        sessionStorage.setItem("awarenessCurrentPage", this.currentPage);
           axios.get(`${baseUrl}/admin/blog/all?page=`+sessionStorage.getItem("awarenessCurrentPage"), config)
-          .then((response) => {
-              this.blogs = response.data.data.data
-              this.currentPage = response.data.data.current_page
-              this.lastPage = response.data.data.last_page
-          //    console.log("blogs",this.blogs)
-          }).catch(function (error) {
-              // console.log(error)
-          }); 
+            .then((response) => {
+                this.blogs = response.data.data.data
+                this.currentPage = response.data.data.current_page
+                this.lastPage = response.data.data.last_page
+            //    console.log("blogs",this.blogs)
+            }).catch(function (error) {
+                // console.log(error)
+            }); 
     
 
           axios.get(`${baseUrl}/category/all`, config)
             .then((response) => {
                 this.categories = response.data.data
                 console.log("categories",this.categories)
-          }).catch(function (error) {
+            }).catch(function (error) {
                     // console.log(error)
-          }); 
+            }); 
 
        }
   }
