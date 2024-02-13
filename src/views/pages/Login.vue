@@ -2,10 +2,20 @@
   <div class="bg-light min-vh-100 d-flex flex-row align-items-center">
     <CContainer>
       <CRow class="justify-content-center">
-        <CCol :md="8">
+        <CCol :md="6"> 
           <CCardGroup>
             <CCard class="p-4">
               <CCardBody>
+                 <!-- <CImage  src="../../assets/images/avatars/login.jpeg" /> -->
+                 <img src="../../assets/images/avatars/login.jpeg"> 
+              </CCardBody>
+              </CCard>
+          </CCardGroup>
+        </CCol>
+        <CCol :md="6" class="align-self-center">
+          <CCardGroup>
+            <CCard class="row justify-content-center p-4">
+              <CCardBody class="col-10 m-auto">
                 <!-- <FlashMessage position="center top" time="3000" /> -->
                 <CForm>
                   <h1>تسجيل الدخول إلى الحساب</h1>
@@ -46,7 +56,8 @@
                       :class="{onError: passwordError, 'form-control' : !passwordError}"
                       @keyup.enter="login"
                     />
-                    <CButton type="button" color="info" @click="togglePassword">
+ 
+                    <CButton type="button" color="primary" @click="togglePassword">
                         <span class="password-toggler py-1" v-if="showPassword == false"><strong>عرض</strong></span>
                         <span class="password-toggler py-1" v-if="showPassword == true"><strong>إخفاء</strong></span>
                     </CButton>
@@ -60,21 +71,9 @@
                 </CForm>
               </CCardBody>
             </CCard>
-            <!-- <CCard class="text-white bg-primary py-5" style="width: 44%">
-              <CCardBody class="text-center">
-                <div>
-                  <h2>Sign up</h2>
-                  <p>
-                    If you didn't have an account, Sign up an account
-                  </p>
-                  <CButton color="light" variant="outline" class="mt-3">
-                    Register Now!
-                  </CButton>
-                </div>
-              </CCardBody>
-            </CCard> -->
-          </CCardGroup>
+           </CCardGroup>
         </CCol>
+ 
       </CRow>
     </CContainer>
   </div>
@@ -161,6 +160,10 @@ export default {
     togglePassword(){
       this.showPassword = !this.showPassword
     }
+  },
+  mounted(){
+    this.email= "admin@admin.com",
+    this.password= "123456" 
   }
 
 }
@@ -188,54 +191,32 @@ export default {
 	    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
-  .input-group > .form-control, .input-group > .form-select {
+   .input-group > .form-control, .input-group > .form-select {
     position: relative;
     flex: 1 1 auto;
     width: 1%;
     min-width: 0;
   }
-
-  .onError {  
-    position: relative;
-    flex: 1 1 auto;
-    width: 1%;
-    min-width: 0;
-    display: block;
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-    background-color: var(--cui-input-bg, #fff);
-    background-clip: padding-box;
-    border: 1px solid var(--cui-input-border-color, red);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border-radius: 0.375rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-
-  .input-group > .onError, .input-group > .form-select {
-    position: relative;
-    flex: 1 1 auto;
-    width: 1%;
-    min-width: 0;
-  }
-
-  .onError:focus{
-    outline: none !important;
-    border: 1.3px solid red;
-    box-shadow: 0 0 4px red;
-  }
-  .haveError {
-    color: red;
-  }
+ 
   .password-toggler{
     color: white;
     cursor: pointer;
+  }  
+
+  .bg-light {
+    background-color: #ebedef ;
+  }
+  .container {
+    background-color: #fff;
+  }
+  .card {
+    border: none !important;
   }
 
+  img  {
+    width: 80%;
+    display: flex;
+    margin: auto ;
+  }
  
 </style>

@@ -198,7 +198,7 @@ export default {
     mounted(){
         axios.get(`${baseUrl}/cities/all`)
         .then((response) => {
-            // console.log(response.data.data)
+           console.log("cities",response.data.data)
             this.cities = response.data.data
             this.isLoading = false
             // console.log(this.cities)

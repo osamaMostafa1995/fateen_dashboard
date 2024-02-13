@@ -40,6 +40,7 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
         beforeEnter: guard,
+       
       },
       {
         path: '/cities',

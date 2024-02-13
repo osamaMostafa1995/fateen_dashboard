@@ -5,8 +5,9 @@
       :key="item"
       :href="item.active ? '' : item.path"
       :active="item.active"
+     
     >
-      {{ item.name }}
+    {{ item.name }}   
     </CBreadcrumbItem>
   </CBreadcrumb>
 </template>
@@ -17,17 +18,22 @@ import router from '@/router'
 
 export default {
   name: 'AppBreadcrumb',
+ 
   setup() {
+   
     const breadcrumbs = ref()
 
     const getBreadcrumbs = () => {
+      router.replace()
       return router.currentRoute.value.matched.map((route) => {
         return {
           active: route.path === router.currentRoute.value.fullPath,
           name: route.name,
           path: `${router.options.history.base}${route.path}`,
+         
         }
       })
+    
     }
 
     router.afterEach(() => {
@@ -36,8 +42,9 @@ export default {
 
     onMounted(() => {
       breadcrumbs.value = getBreadcrumbs()
+     
     })
-
+  
     return {
       breadcrumbs,
     }

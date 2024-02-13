@@ -27,6 +27,4 @@ app.component('CIcon', CIcon)
 app.component('DocsCallout', DocsCallout)
 app.component('DocsExample', DocsExample)
 app.component('QuillEditor', QuillEditor)
-
-
 app.mount('#app')

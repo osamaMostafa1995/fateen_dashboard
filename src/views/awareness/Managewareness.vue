@@ -6,6 +6,10 @@
                 <div class="icard-header"><strong>جدول الملخصات</strong></div>
             </CCardHeader>
                 <CCardBody>
+                    <CButton disabled v-show="isLoading">
+                       <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+                       Loading...
+                    </CButton>
                     <CForm class="row g-3">
                         <h5 class="fw-bold">بيانات قسم الوعي</h5>
                         
