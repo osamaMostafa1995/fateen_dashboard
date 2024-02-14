@@ -84,15 +84,9 @@
             requestBody.append('category_name_ar', this.name_ar)
             requestBody.append('category_name_en', this.name_en)
             axios.post(`${baseUrl}/admin/category/create`, requestBody , config).then((response) => {
-              // console.log(response.data);
-              if(response.data.status == false){
-                console.log('error')
-                this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    icon: 'error',
-                    confirmButtonColor:'#eb2b2b'
-                })
-              }else{
+             console.log(response.data);
+              if(response.data.status == true){
+              
                 this.$swal({
                     title: 'تمت الإضافه بنجاح',
                     icon: 'success',
@@ -104,9 +98,21 @@
                
                 this.$router.push('/categories/all') 
 
+               
               }
-            }).catch(function (error) {
-              console.log(error);
+              else{
+                this.$swal({
+                      title: 'عذرا, هناك خطأ',
+                      text: response.data.errors[0],
+                      icon: 'error'
+                  })
+              }
+            }).catch((error)=>{
+              this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: error.errors[0],
+                    icon: 'error'
+                 })
             });
         }
       },
@@ -117,18 +123,6 @@
   </script>
   
   <style scoped>
-    .input-group > .form-control, .input-group > .form-select {
-          position: relative;
-          flex: 1 1 auto;
-          width: 1%;
-          min-width: 0;
-      }
-  
-     
-      .modal-footer{
-        margin-right: -.73em;
-      }
-  
-  
+ 
   </style>
   

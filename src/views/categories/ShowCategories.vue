@@ -125,87 +125,102 @@
             },
 
             updateSummary(){
-            // console.log(this.currentCategoryId)
-            this.isLoading = true
-            let requestBody = new FormData();
-            requestBody.append('category_id', this.currentCategoryId)
-            requestBody.append('category_name_ar', this.name_ar)
-            requestBody.append('category_name_en', this.name_en)
-            axios.post(`${baseUrl}/admin/category/update`, requestBody, config).then((response) => {
-                if(response.data.status == false){                         
-                    this.isLoading = false
-                    // console.log('error')
+                let requestBody = new FormData();
+                requestBody.append('category_id', this.currentCategoryId)
+                requestBody.append('category_name_ar', this.name_ar)
+                requestBody.append('category_name_en', this.name_en)
+                this.isLoading = true
+                axios.post(`${baseUrl}/admin/category/update`, requestBody, config).then((response) => {
+                this.isLoading = false
+                if(response.data.status == true){                         
                     this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    text: response.data.errors[0],
-                    icon: 'error',
-                    confirmButtonColor:'#eb2b2b'
+                        title: 'تم التعديل بنجاح',
+                        icon: 'success',
+                        confirmButtonColor: "#303c54",
                     })
+                    this.allCategories() 
                 }
-                else{
+               else{
+                    this.$swal({
+                        title: 'عذرا, هناك خطأ',
+                        text: response.data.errors[0],
+                        icon: 'error',
+                        confirmButtonColor:'#eb2b2b'
+                   })
+                }
+                }).catch((error) => { 
                     this.isLoading = false
                     this.$swal({
-                    title: 'تم التعديل بنجاح',
-                    icon: 'success',
-                    confirmButtonColor: "#303c54",
-                    })
-                }
-                }).then( () => {
-                axios.get(`${baseUrl}/category/all`, config)
-                        .then((response) => {
-                        this.categories = response.data.data                        
-                        }).catch(function (error) {                                                        
-                        // console.log(error)
-                    });
-                }).catch(function (error) {                                                
-                // console.log(error);
-                })
+                        title: 'عذرا, هناك خطأ',
+                        text: error.errors[0],
+                        icon: 'error',
+                        confirmButtonColor:'#eb2b2b'
+                   })
+                })                                           
             },
 
             deleteCategory(category_id){
-                this.isLoading = true
-                axios.delete(`${baseUrl}/admin/category/delete?category_id=${category_id}` , config).then((response) => {
-                        if(response.data.status == false){                         
-                            this.isLoading = false
+                this.$swal({
+                title: "الحذف",
+                text: "هل تريد حذف القسم الرئيسي ؟",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonColor:  "#3085d6",
+                confirmButtonText: "حذف", 
+                cancelButtonText: "إلغاء", 
+
+                  }).then((isConfirm)=> {
+                    if(isConfirm.value == true) {
+                      this.isLoading = true
+                      axios.delete(`${baseUrl}/admin/category/delete?category_id=${category_id}`,config).then((response) => {
+                       this.isLoading = false
+                        if(response.data.status == true){
                             this.$swal({
+                              title: 'تم الحذف بنجاح',
+                              icon: 'success'
+                          })
+                          this.allCategories();
+                        }else {
+                            this.$swal({
+                                title: 'عذرا, هناك خطأ',
+                                text: response.data.errors[0],
+                                icon: 'error',
+                                confirmButtonColor:'#eb2b2b'
+                            })
+                        }
+                     }).catch((error)=>{
+                        this.isLoading = false
+                        this.$swal({
                             title: 'عذرا, هناك خطأ',
-                            text: response.data.errors[0],
+                            text: error.errors[0],
                             icon: 'error',
                             confirmButtonColor:'#eb2b2b'
-                            })
-                        }
-                        else{
-                            this.isLoading = false
-                            this.$swal({
-                            title: 'تم الحذف بنجاح',
-                            icon: 'success',
-                            confirmButtonColor: "#303c54",
-                            })
-                        }
-                        }).then( () => {
-                        axios.get(`${baseUrl}/category/all`, config)
-                                .then((response) => {
-                                this.categories = response.data.data                        
-                                }).catch(function (error) {                                                        
-                                // console.log(error)
-                            });
-                        }).catch(function (error) {                                                
-                        // console.log(error);
-                        })
-                        //.catch(function (error) {                                                
-                        // // console.log(error);
-                        // })
+                       })
+                     })
+                   }
+                })
+            } ,
+
+            allCategories() {
+                axios.get(`${baseUrl}/category/all`, config)
+                .then((response) => {
+                this.categories = response.data.data                        
+                }).catch((error)=> {                                                        
+              });
             }
        },
 
        mounted(){
-        console.log("mounted")
-            axios.get(`${baseUrl}/category/all`, config)
+          axios.get(`${baseUrl}/category/all`, config)
             .then((response) => {
                 this.categories = response.data.data   
-                // console.log(this.categories)
-            }).catch(function (error) {
-                // console.log(error)
+            }).catch((error)=> {
+                this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: error.errors[0],
+                    icon: 'error',
+                    confirmButtonColor:'#eb2b2b'
+               })
             }); 
        }
   }

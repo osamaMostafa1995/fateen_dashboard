@@ -29,9 +29,13 @@ td button{
    border: none !important;
 }
 
-div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm ,  div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel   {
   background-color:#303c54!important; 
   padding: 15px 20px 10px 20px !important; 
   box-shadow:  none !important;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel  {
+  background-color:#c50c0c !important;
 }
 </style>

@@ -19,6 +19,20 @@
                     />
                     <CFormFeedback :class="{haveError: periodError}" v-if="periodError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
+
+                <CCol :md="12">                
+                    <p for="days"> الأيام</p>
+                    <input 
+                        id="days" 
+                        type="text" 
+                        class="p-2"
+                        :class="{onError: daysError, 'form-control' : !daysError}"
+                        v-model="days"
+                    />
+                    <CFormFeedback :class="{haveError: daysError}" v-if="daysError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                </CCol>
+
+
                 <CCol :md="12">                         
                     <p for="price">السعر</p>
                     <input 
@@ -59,16 +73,17 @@ export default {
       return {
         period: "",
         price: "",
+        days:"",
         periodError: "",
         priceError: "",
+        daysError:""
     }
   },
 
   methods : {
       handleSubmit(){        
         if(this.period == ""){
-            this.periodError = true
-            console.log(this.periodError)
+         this.periodError = true
         }
         if(this.period != ""){
             this.periodError = false
@@ -79,34 +94,48 @@ export default {
         if(this.price != ""){
           this.priceError = false
         }
-        if(this.period && this.price){
+
+        if(this.days == ""){
+          this.daysError = true
+        }
+        if(this.days != ""){
+          this.daysError = false
+        }
+        
+        if(this.period && this.price && this.days){
             axios.post(`${baseUrl}/admin/subscription-plan/create`, {
               'period' : this.period,
-              'price' : this.price
+              'price' : this.price ,
+              'days':this.days
             }, config).then((response) => {
-              // console.log(response.data);
-              if(response.data.status == false){
-                this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    // text: 'Welcome Back, Admin',
-                    icon: 'error'
-                })
-              }else{
+            
+              if(response.data.status == true){
                 this.$swal({
                     title: 'تمت الإضافه بنجاح',
-                    // text: 'Welcome Back, Admin',
                     icon: 'success'
                 })
 
                 this.period = ''
+                this.days = ''
                 this.price = ''
 
                 this.$router.push('/subscription-plans/all') 
-
+    
+              }else{
+                this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: response.data.errors[0],
+                    icon: 'error'
+                })
               }
-            }).catch(function (error) {
+            }).catch((error) =>  {
               console.log(error);
-            });
+              this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: error.errors[0],
+                    icon: 'error'
+                })
+              });
         }
     }
   }
@@ -114,76 +143,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .form-control {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, #b1b7c1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .form-control, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, red);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .onError, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError:focus{
-        outline: none !important;
-        border: 1.3px solid red;
-        box-shadow: 0 0 4px red;
-    }
-    .haveError {
-        color: red;
-    }
-
-    .modal-footer{
-      margin-right: -.73em;
-    }
-  
+ 
 </style>

@@ -80,10 +80,7 @@
         </CCardBody>
     </CModalBody>
     <CModalFooter>
-      <CButton color="secondary" @click="() => { visibleLiveDemo = false }">
-        غلق
-      </CButton>
-      <CButton color="primary" @click="updateCity">تعديل</CButton>
+       <CButton color="primary" @click="updateCity">تعديل</CButton>
     </CModalFooter>
   </CModal>
 
@@ -102,7 +99,7 @@ const config = {
 }
 
 export default {
-    name: 'Tables',
+    name: 'City',
     data(){
         return {
             cities: [],
@@ -117,41 +114,54 @@ export default {
     },
     methods: {
         deleteCity(id) {
-            if(confirm("هل متأكد من عملية الحذف؟")){
-                axios.delete(`${baseUrl}/admin/city/delete?city_id=${id}`, config)
-                .then(response => {
-                    this.$swal({
-                        title: 'تم الحذف بنجاح',
-                        icon: 'success'
-                    })
-                }).then( () => {
-                    axios.get(`${baseUrl}/cities/all`)
-                    .then((response) => {
-                        this.cities = response.data.data
-                    }).catch(function (error) {
-                        console.log(error)
-                    });
+          this.$swal({
+                    title: "الحذف",
+                    text: "هل تريد حذف المدينة ؟",
+                    type: "warning",
+                    showCancelButton: true,
+                    cancelButtonColor:  "#3085d6",
+                    confirmButtonText: "حذف", 
+                    cancelButtonText: "إلغاء", 
+
+                  }).then((isConfirm)=> {
+                    if(isConfirm.value == true) {
+                     axios.delete(`${baseUrl}/admin/city/delete?city_id=${id}`, config).then((response) => {
+                       if(response.data.status == true){ 
+                          this.$swal({
+                              title: 'تم الحذف بنجاح',
+                              icon: 'success'
+                          })
+                          this.allCities();
+                        }
+                        else {
+                          this.$swal({
+                          title: 'عذرا, هناك خطأ',
+                          text: response.data.errors[0],
+                          icon: 'error'
+                          })
+                        }
+                     }).catch(()=>{
+                      this.$swal({
+                          title: 'عذرا, هناك خطأ',
+                          text: error.errors[0],
+                          icon: 'error'
+                          })
+                     }) 
+                   }
                 })
-                .catch(error => {
-                    // console.log(error);
-                    this.$swal({
-                      title: 'عذرا, هناك خطأ',
-                      icon: 'error'
-                    })
-                })
-            }
+           
         },
+
         invokeModal(id, name_ar, name_en){
           this.currentCityId = id
           this.name_ar = name_ar
           this.name_en = name_en
           this.visibleLiveDemo = true
         },
+
         updateCity(){
-          // console.log(this.currentCityId)
           if(this.name_ar == ""){
-              this.nameARError = true
-              console.log(this.nameARError)
+             this.nameARError = true
           }
           if(this.name_ar != ""){
               this.nameARError = false
@@ -163,121 +173,68 @@ export default {
             this.nameENError = false
           }
           if(this.name_ar && this.name_en){
+            this.isLoading = true
               axios.post(`${baseUrl}/admin/city/update`, {
                 'city_id' : this.currentCityId,
                 'name_ar' : this.name_ar,
                 'name_en' : this.name_en
               }, config).then((response) => {
-                // console.log(response.data);
-                if(response.data.status == false){
+                this.isLoading = false
+                if(response.data.status == true){
+                  this.$swal({
+                      title: 'تم التعديل بنجاح',
+                      icon: 'success'
+                  })
+                  this.allCities();
+                }
+                else {
                   console.log('error')
                   this.$swal({
                       title: 'عذرا, هناك خطأ',
+                      text: response.data.errors[0],
                       icon: 'error'
                   })
-                }else{
-                  this.$swal({
-                      title: 'تم التعديل بنجاح',
-                      // text: 'Welcome Back, Admin',
-                      icon: 'success'
-                  })
                 }
-              }).then( () => {
-                    axios.get(`${baseUrl}/cities/all`)
-                    .then((response) => {
-                        this.cities = response.data.data
-                    }).catch(function (error) {
-                        console.log(error)
-                    });
-                }).catch(function (error) {
-                  console.log(error);
+              }).catch((error)=> {
+                this.isLoading = false
+                this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: error.errors[0],
+                    icon: 'error'
+                 })
               });
-          }
+           }
+        },
+
+        allCities(){
+          this.isLoading = true
+          axios.get(`${baseUrl}/cities/all`).then((response) => {
+              console.log("cities",response.data.data)
+              this.cities = response.data.data
+              this.isLoading = false
+           }).catch((error)=> {
+            this.$swal({
+                title: 'عذرا, هناك خطأ',
+                text: error.errors[0],
+                icon: 'error'
+             })
+            this.isLoading = false
+          }); 
         }
     },
     mounted(){
-        axios.get(`${baseUrl}/cities/all`)
-        .then((response) => {
+       axios.get(`${baseUrl}/cities/all`).then((response) => {
            console.log("cities",response.data.data)
             this.cities = response.data.data
             this.isLoading = false
-            // console.log(this.cities)
-        }).catch(function (error) {
-            console.log(error)
+         }).catch((error) => {
             this.isLoading = false
-        }); 
+         }); 
     }
 }
 </script>
 
 <style scoped>
-
-    .form-control {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, #b1b7c1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .form-control, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, red);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .onError, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError:focus{
-        outline: none !important;
-        border: 1.3px solid red;
-        box-shadow: 0 0 4px red;
-    }
-    .haveError {
-        color: red;
-    }
   
 </style>
 
