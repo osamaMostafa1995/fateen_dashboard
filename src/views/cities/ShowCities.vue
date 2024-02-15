@@ -1,61 +1,89 @@
 <template>
+
   <CRow>
+
     <CCol :xs="12">
+
       <CCard class="mb-4">
+
         <CCardHeader>
+
           <strong>جدول المدن</strong>
+
         </CCardHeader>
+       
         <CButton disabled v-show="isLoading">
+
             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
             Loading...
+
         </CButton>
+
         <CTable hover small responsive="sm">
+
               <CTableHead>
+
                 <CTableRow color="dark">
+
                   <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>
+
                   <CTableHeaderCell scope="col">الاسم بالعربية</CTableHeaderCell>
+
                   <CTableHeaderCell scope="col">الاسم بالإنجليزية</CTableHeaderCell>
+
                   <CTableHeaderCell scope="col">إعدادات</CTableHeaderCell>
+
                 </CTableRow>
+
               </CTableHead>
+
               <CTableBody>
+
                 <CTableRow v-for="city in cities" :key="city">
+
                   <CTableHeaderCell scope="row">{{city.id}}</CTableHeaderCell>
+
                   <CTableDataCell>{{city.name_ar}}</CTableDataCell>
+
                   <CTableDataCell>{{city.name_en}}</CTableDataCell>
+
                   <CTableDataCell>
-                     <CButton
-                      color="warning"
-                      variant="outline"
-                      @click="() => invokeModal(city.id, city.name_ar, city.name_en)"
-                    >
-                    <CIcon icon="cil-pencil" size="lg" />
-                    </CButton>
+
+                    <CButton color="warning" variant="outline" @click="() => invokeModal(city.id, city.name_ar, city.name_en)"> <CIcon icon="cil-pencil" size="lg" /> </CButton>
+                  
                     &nbsp;
-                    <CButton
-                      color="danger"
-                      variant="outline"
-                      @click="deleteCity(city.id)"
-                    >              
-                    <CIcon icon="cil-basket" size="lg" />
-                    </CButton>
-                   
+
+                    <CButton  color="danger"   variant="outline"  @click="deleteCity(city.id)" >  <CIcon icon="cil-basket" size="lg" /> </CButton>
+                  
                   </CTableDataCell>
+
                 </CTableRow>
+
               </CTableBody>
+
         </CTable>
+
       </CCard>
+     
     </CCol>
+
   </CRow>
 
   <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+
     <CModalHeader>
+
       <CModalTitle>تعديل مدينة</CModalTitle>
+      
     </CModalHeader>
+
     <CModalBody>
+
           <CCardBody>
+
             <!-- <FlashMessage position="center top" time="3000" /> -->
             <CForm class="row g-3">
+
                 <CCol :md="12">                
                     <p for="inputNameAR">الاسم بالعربية</p>
                     <input 
@@ -66,6 +94,7 @@
                     />
                     <CFormFeedback :class="{haveError: nameARError}" v-if="nameARError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
+
                 <CCol :md="12">                         
                     <p for="inputNameEN">الاسم بالإنجليزية</p>
                     <input 
@@ -76,12 +105,19 @@
                     />
                     <CFormFeedback :class="{haveError: nameARError}" v-if="nameENError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
+
             </CForm>
+
         </CCardBody>
+
     </CModalBody>
-    <CModalFooter>
+
+    <div class="modal-footer">
+
        <CButton color="primary" @click="updateCity">تعديل</CButton>
-    </CModalFooter>
+
+    </div>
+
   </CModal>
 
 </template>
@@ -99,7 +135,7 @@ const config = {
 }
 
 export default {
-    name: 'City',
+    name: 'Cities',
     data(){
         return {
             cities: [],
@@ -212,17 +248,18 @@ export default {
               console.log("cities",response.data.data)
               this.cities = response.data.data
               this.isLoading = false
-           }).catch((error)=> {
-            this.$swal({
-                title: 'عذرا, هناك خطأ',
-                text: error.errors[0],
-                icon: 'error'
-             })
-            this.isLoading = false
-          }); 
-        }
+          }).catch((error)=> {
+          this.isLoading = false
+          this.$swal({
+              title: 'عذرا, هناك خطأ',
+              text: error.errors[0],
+              icon: 'error'
+          })
+        }); 
+      }
     },
     mounted(){
+      this.isLoading = true
        axios.get(`${baseUrl}/cities/all`).then((response) => {
            console.log("cities",response.data.data)
             this.cities = response.data.data

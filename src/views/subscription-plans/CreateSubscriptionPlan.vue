@@ -1,13 +1,28 @@
 <template>
+
   <CRow>
+
     <CCol :xs="12">
+
       <CCard class="mb-4">
+
         <CCardHeader>
+
           <strong>إضافة باقة إشتراك</strong>
+
         </CCardHeader>
+
+        <CButton disabled v-show="isLoading">
+
+          <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+          تحميل ...
+
+        </CButton> 
+
         <CCardBody>
             <!-- <FlashMessage position="center top" time="3000" /> -->
             <CForm class="row g-3">
+
                 <CCol :md="12">                
                     <p for="period">مدة الباقة (شهري/سنوي)</p>
                     <input 
@@ -44,15 +59,23 @@
                     />
                     <CFormFeedback :class="{haveError: periodError}" v-if="priceError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
+
                 <div class="modal-footer">
+
                   <CButton @click="handleSubmit"  class="py-2 px-5" color="primary">إضافة</CButton>
+
                 </div>
                 
             </CForm>
+
         </CCardBody>
+
       </CCard>
+
     </CCol>
+
   </CRow>
+
 </template>
 
 <script>
@@ -81,7 +104,7 @@ export default {
   },
 
   methods : {
-      handleSubmit(){        
+    handleSubmit(){        
         if(this.period == ""){
          this.periodError = true
         }
@@ -108,34 +131,33 @@ export default {
               'price' : this.price ,
               'days':this.days
             }, config).then((response) => {
-            
-              if(response.data.status == true){
-                this.$swal({
-                    title: 'تمت الإضافه بنجاح',
-                    icon: 'success'
-                })
+                if(response.data.status == true){
+                  this.$swal({
+                      title: 'تمت الإضافه بنجاح',
+                      icon: 'success'
+                  })
 
-                this.period = ''
-                this.days = ''
-                this.price = ''
+                  this.period = ''
+                  this.days = ''
+                  this.price = ''
 
-                this.$router.push('/subscription-plans/all') 
-    
-              }else{
-                this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    text: response.data.errors[0],
-                    icon: 'error'
-                })
-              }
+                  this.$router.push('/subscription-plans/all') 
+      
+                }else{
+                  this.$swal({
+                      title: 'عذرا, هناك خطأ',
+                      text: response.data.errors[0],
+                      icon: 'error'
+                  })
+                }
             }).catch((error) =>  {
               console.log(error);
               this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    text: error.errors[0],
-                    icon: 'error'
+                  title: 'عذرا, هناك خطأ',
+                  text: error.errors[0],
+                  icon: 'error'
                 })
-              });
+            });
         }
     }
   }

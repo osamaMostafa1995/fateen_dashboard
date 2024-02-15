@@ -1,61 +1,85 @@
 <template>
+
   <CRow>
+
     <CCol :xs="12">
+
       <CCard class="mb-4">
+
         <CCardHeader>
+
           <strong>جدول باقات الإشتراك</strong>
+
         </CCardHeader>
+
         <CButton disabled v-show="isLoading">
             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
             Loading...
         </CButton>
-        <CTable hover small responsive="sm">
+
+        <CTable hover small responsive="sm" class="mb-0 pb-0">
+
               <CTableHead>
+
                 <CTableRow color="dark">
+
                   <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>
+
                   <CTableHeaderCell scope="col">مدة الباقة</CTableHeaderCell>
+
                   <CTableHeaderCell scope="col">السعر</CTableHeaderCell>
+
                   <CTableHeaderCell scope="col">إعدادات</CTableHeaderCell>
+
                 </CTableRow>
+
               </CTableHead>
+
               <CTableBody>
+
                 <CTableRow v-for="subscriptionPlan in subscriptionPlans" :key="subscriptionPlan">
+
                   <CTableHeaderCell scope="row">{{subscriptionPlan.id}}</CTableHeaderCell>
+
                   <CTableDataCell>{{subscriptionPlan.period}}</CTableDataCell>
+
                   <CTableDataCell>{{subscriptionPlan.price}}</CTableDataCell>
+
                   <CTableDataCell>
-                     <CButton
-                      color="warning"
-                      variant="outline"
-                      @click="() => invokeModal(subscriptionPlan.id, subscriptionPlan.period, subscriptionPlan.price)"
-                    >
-                    <CIcon icon="cil-pencil" size="lg" />
-                    </CButton>
+                     <CButton  color="warning"   variant="outline"  @click="() => invokeModal(subscriptionPlan.id, subscriptionPlan.period, subscriptionPlan.price , subscriptionPlan.days)" > <CIcon icon="cil-pencil" size="lg" /></CButton>
+                 
                     &nbsp;
-                    <CButton
-                      color="danger"
-                      variant="outline"
-                      @click="deleteSubscriptionPlan(subscriptionPlan.id)"
-                    >              
-                    <CIcon icon="cil-basket" size="lg" />
-                    </CButton>
-                   
+
+                    <CButton color="danger"  variant="outline"  @click="deleteSubscriptionPlan(subscriptionPlan.id)" > <CIcon icon="cil-basket" size="lg" /> </CButton>
+                 
                   </CTableDataCell>
+
                 </CTableRow>
+
               </CTableBody>
+
         </CTable>
+
       </CCard>
+ 
     </CCol>
+
   </CRow>
 
   <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+
     <CModalHeader>
-      <CModalTitle>تعديل الباقة</CModalTitle>
+
+      <CModalTitle>تعديل  بيانات الباقة</CModalTitle>
+
     </CModalHeader>
+
     <CModalBody>
+
           <CCardBody>
             <!-- <FlashMessage position="center top" time="3000" /> -->
             <CForm class="row g-3">
+
                 <CCol :md="12">                
                     <p for="period">مدة الباقة (شهري/سنوي)</p>
                     <input 
@@ -66,6 +90,19 @@
                     />
                     <CFormFeedback :class="{haveError: periodError}" v-if="periodError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
+
+                <CCol :md="12">                
+                    <p for="days"> الأيام</p>
+                    <input 
+                        id="days" 
+                        type="text" 
+                        class="p-2"
+                        :class="{onError: daysError, 'form-control' : !daysError}"
+                        v-model="days"
+                    />
+                    <CFormFeedback :class="{haveError: daysError}" v-if="daysError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                </CCol>
+
                 <CCol :md="12">                         
                     <p for="price">السعر</p>
                     <input 
@@ -76,15 +113,20 @@
                     />
                     <CFormFeedback :class="{haveError: periodError}" v-if="priceError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
+
             </CForm>
+
         </CCardBody>
+
     </CModalBody>
-    <CModalFooter>
-      <CButton color="secondary" @click="() => { visibleLiveDemo = false }">
-        غلق
-      </CButton>
-      <CButton color="primary" @click="updateSubscriptionPlan">تعديل</CButton>
-    </CModalFooter>
+
+    <!-- <CModalFooter> -->
+      <div class="modal-footer">
+
+       <CButton color="primary" @click="updateSubscriptionPlan">تعديل</CButton>
+
+      </div>
+    <!-- </CModalFooter> -->
   </CModal>
 
 </template>
@@ -102,13 +144,15 @@ const config = {
 }
 
 export default {
-    name: 'Tables',
+    name: 'Subscription Plans',
     data(){
         return {
             subscriptionPlans: [],
             visibleLiveDemo: false,
             period: "",
             price: "",
+            days: "" ,
+            daysError:"",
             periodError: "",
             priceError: "",
             currentId: null,
@@ -117,39 +161,54 @@ export default {
     },
     methods: {
         deleteSubscriptionPlan(id) {
-            if(confirm("هل متأكد من عملية الحذف؟")){
-                axios.delete(`${baseUrl}/admin/subscription-plan/delete?subscription_plan_id=${id}`, config)
-                .then(response => {
-                    this.$swal({
-                        title: 'تم الحذف بنجاح',
-                        icon: 'success'
-                    })
-                }).then( () => {
-                    axios.get(`${baseUrl}/subscription-plans/all`)
-                    .then((response) => {
-                        this.subscriptionPlans = response.data.data
-                    }).catch(function (error) {
-                        console.log(error)
-                    });
+          this.$swal({
+                    title: "الحذف",
+                    text: "هل تريد حذف خطة الإشتراك ؟",
+                    type: "warning",
+                    showCancelButton: true,
+                    cancelButtonColor:  "#3085d6",
+                    confirmButtonText: "حذف", 
+                    cancelButtonText: "إلغاء", 
+
+                  }).then((isConfirm)=> {
+                    if(isConfirm.value == true) {
+                      axios.delete(`${baseUrl}/admin/subscription-plan/delete?subscription_plan_id=${id}`, config).then((response) => {
+                       if(response.data.status == true){ 
+                          this.$swal({
+                              title: 'تم الحذف بنجاح',
+                              icon: 'success'
+                          })
+                          this.allPlans();
+                        }
+                        else {
+                          this.$swal({
+                          title: 'عذرا, هناك خطأ',
+                          text: response.data.errors[0],
+                          icon: 'error'
+                          })
+                        }
+                     }).catch(()=>{
+                      this.$swal({
+                          title: 'عذرا, هناك خطأ',
+                          text: error.errors[0],
+                          icon: 'error'
+                          })
+                     }) 
+                   }
                 })
-                .catch(error => {
-                    // console.log(error);
-                    this.$swal({
-                      title: 'عذرا, هناك خطأ',
-                      icon: 'error'
-                    })
-                })
-            }
+
         },
-        invokeModal(id, period, price){
+
+        invokeModal(id, period, price , days){
           this.currentId = id
           this.period = period
           this.price = price
+          this.days = days
           this.visibleLiveDemo = true
         },
+
         updateSubscriptionPlan(){
-          // console.log(this.currentId)
-          if(this.period == ""){
+         if(this.period == ""){
               this.periodError = true
               console.log(this.periodError)
           }
@@ -162,123 +221,79 @@ export default {
           if(this.price != ""){
             this.priceError = false
           }
-          if(this.period && this.price){
+          if(this.days == ""){
+            this.daysError = true
+          }
+          if(this.days != ""){
+            this.daysError = false
+          }
+
+          if(this.period && this.price && this.days){
+            this.isLoading = true
               axios.post(`${baseUrl}/admin/subscription-plan/update`, {
                 'subscription_plan_id' : this.currentId,
                 'period' : this.period,
                 'price' : this.price
               }, config).then((response) => {
-                // console.log(response.data);
+                this.isLoading = false
                 if(response.data.status == false){
                   console.log('error')
                   this.$swal({
                       title: 'عذرا, هناك خطأ',
+                      text: response.data.errors[0],
                       icon: 'error'
                   })
                 }else{
-                  this.$swal({
+                 this.$swal({
                       title: 'تم التعديل بنجاح',
-                      // text: 'Welcome Back, Admin',
                       icon: 'success'
                   })
+                  this.allPlans()
                 }
-              }).then( () => {
-                    axios.get(`${baseUrl}/subscription-plans/all`)
-                    .then((response) => {
-                        this.subscriptionPlans = response.data.data
-                    }).catch(function (error) {
-                        console.log(error)
-                    });
-                }).catch(function (error) {
-                  console.log(error);
+                }).catch((error)=> {
+                  this.isLoading = false
+                  this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: error.errors[0],
+                    icon: 'error'
+                 })
               });
           }
-        }
+        }, 
+
+        allPlans() {
+          this.isLoading = true
+          axios.get(`${baseUrl}/subscription-plans/all`).then((response) => {
+            this.isLoading = false
+              console.log("cities",response.data.data)
+              this.subscriptionPlans = response.data.data
+           }).catch((error)=> {
+            this.isLoading = false
+            this.$swal({
+                title: 'عذرا, هناك خطأ',
+                text: error.errors[0],
+                icon: 'error'
+             })
+           }); 
+        }, 
     },
+
     mounted(){
-        axios.get(`${baseUrl}/subscription-plans/all`)
-        .then((response) => {
-            // console.log(response.data.data)
-            this.subscriptionPlans = response.data.data
-            this.isLoading = false
-            // console.log(this.subscriptionPlans)
-        }).catch(function (error) {
-            console.log(error)
-            this.isLoading = false
+      this.isLoading = true
+      axios.get(`${baseUrl}/subscription-plans/all`)
+      .then((response) => {
+          this.isLoading = false
+          this.subscriptionPlans = response.data.data
+          }).catch((error)=> {
+          this.isLoading = false
+          console.log(error)
         }); 
     }
 }
 </script>
 
 <style scoped>
-
-    .form-control {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, #b1b7c1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .form-control, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, red);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .onError, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError:focus{
-        outline: none !important;
-        border: 1.3px solid red;
-        box-shadow: 0 0 4px red;
-    }
-    .haveError {
-        color: red;
-    }
-  
+ 
 </style>
 
 

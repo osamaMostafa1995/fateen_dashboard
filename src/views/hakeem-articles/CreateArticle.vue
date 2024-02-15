@@ -241,7 +241,7 @@ export default {
                 this.$router.push('/hakeem-articles/all') 
 
               }
-            }).catch(function (error) {
+            }).catch((error) => {
               console.log(error);
             });
         }

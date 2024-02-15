@@ -225,7 +225,7 @@ export default {
                     axios.get(`${baseUrl}/awards/show`)
                     .then((response) => {
                         this.awards = response.data.data
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         console.log(error)
                     });
                 })
@@ -316,10 +316,10 @@ export default {
                         axios.get(`${baseUrl}/awards/show`)
                         .then((response) => {
                             this.awards = response.data.data
-                        }).catch(function (error) {
+                        }).catch((error) => {
                             console.log(error)
                         });
-                    }).catch(function (error) {
+                    }).catch((error) => {
                     console.log(error);
                 });
             }
@@ -333,7 +333,7 @@ export default {
             this.awards = response.data.data
             this.isLoading = false
             // console.log(this.cities)
-        }).catch(function (error) {
+        }).catch((error) => {
             console.log(error)
             this.isLoading = false
         }); 

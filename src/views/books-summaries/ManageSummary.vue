@@ -5,6 +5,12 @@
         <CCardHeader>
           <strong>نسخ ملخص</strong>
         </CCardHeader>
+       
+        <CButton disabled v-show="isLoading">
+            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+            تحميل ...
+        </CButton> 
+
         <CCardBody>
             <CForm class="row g-3">
                 
@@ -74,7 +80,7 @@ const config = {
 // import VueHtml2pdf from 'vue-html2pdf'
 export default {
 
-  name: 'Copy Summary',
+  name: 'Format Summaries',
   data(){
     return {
         currentSummaryId: null,
@@ -95,13 +101,13 @@ export default {
  
     handleSubmit(){      
       
-      var filtered = this.pagesContent.filter(function (el) {
+      var filtered = this.pagesContent.filter((el)=> {
           if(el!="<p><br></p>"||el !='') {
             return el
           }
       });
 
-      console.log("filtered",filtered);
+      // console.log("filtered",filtered);
         // if(this.copiedTextManage == ""){
         //     this.copiedTextManageError = true
         // }
@@ -111,7 +117,7 @@ export default {
 
         // if(this.copiedTextManage != ""){
 
-        //   //  console.log(this.copiedTextManage)
+        //    // console.log(this.copiedTextManage)
 
         //     let requestBody = new FormData();
 
@@ -138,8 +144,8 @@ export default {
         //         this.$router.push('/books-summaries/all') 
 
         //       }
-        //     }).catch(function (error) {
-        //       // console.log(error);
+        //     }).catch((error)=> {
+        //      // console.log(error);
         //     });
         // }
     },
@@ -148,7 +154,7 @@ export default {
       if(page=='save') {
         if((this.copiedTextManage != '<p><br></p>')){
           if((this.pagesContent.length!=0) && ((this.pagesContent.length-1) == (this.cdkcurrentManagePage-1)))
-           console.log("sasdsdasdasdasd",this.pagesContent[this.cdkcurrentManagePage-1])
+           // console.log("pagesContent",this.pagesContent[this.cdkcurrentManagePage-1])
           this.pagesContent[this.cdkcurrentManagePage-1]=this.copiedTextManage
         } 
         // document.getElementsByClassName('ql-editor')[0].innerHTML  = ""
@@ -156,7 +162,7 @@ export default {
       else if(page=='sub') {  
         if(this.cdkcurrentManagePage-1>0) {  
           this.cdkcurrentManagePage-=1 ;
-          console.log("prev",this.cdkcurrentManagePage)
+          // console.log("prev",this.cdkcurrentManagePage)
           if(this.pagesContent[this.cdkcurrentManagePage-1]) {
             document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
           }
@@ -173,17 +179,17 @@ export default {
             }else {
               document.getElementsByClassName('ql-editor')[0].innerHTML  ='' ;
             }
-            console.log("next",this.cdkcurrentManagePage.length)
+            // console.log("next",this.cdkcurrentManagePage.length)
           }
       } 
     
 
-      var filteredPages = this.pagesContent.filter(function (el) {
+      var filteredPages = this.pagesContent.filter((el)=> {
         if(el) {
           return el != null;
         }
       });
-      console.log("filteredPages",filteredPages)
+      // console.log("filteredPages",filteredPages)
     },
 
     // handlecdkAddPagination(page){ 
@@ -214,7 +220,7 @@ export default {
     //       document.getElementsByClassName('ql-editor')[0].innerHTML  = this.pagesContent[this.cdkcurrentManagePage-1] 
     //     }
     //   }
-    //   console.log("pagesContent",this.pagesContent)
+    //   // console.log("pagesContent",this.pagesContent)
     // },
   },
   mounted(){
@@ -232,8 +238,8 @@ export default {
                         data.push(response.data.data.data)
                         this.currentPage = response.data.data.current_page
                         this.lastPage = response.data.data.last_page
-                    }).catch(function (error) {
-                  console.log(error)
+                    }).catch((error)=> {
+                  // console.log(error)
               }); 
             }
 
@@ -247,85 +253,13 @@ export default {
               this.currentSummaryId = this.summaries[0].id.toString()
             }
             // console.log(JSON.parse(JSON.stringify(this.summaries)))
-        }).catch(function (error) {
-            console.log(error)
+        }).catch((error)=> {
+            // console.log(error)
         }); 
   }
 }
 </script>
 
 <style scoped>
-
-    .form-control {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, #b1b7c1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .form-control, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, red);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .onError, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError:focus{
-        outline: none !important;
-        border: 1.3px solid red;
-        box-shadow: 0 0 4px red;
-    }
-    .haveError {
-        color: red;
-    }
-
-    .modal-footer{
-      margin-right: -.73em;
-    }
-
-
+    
 </style>

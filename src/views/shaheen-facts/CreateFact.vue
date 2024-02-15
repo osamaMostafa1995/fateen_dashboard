@@ -182,7 +182,7 @@ export default {
                       this.$router.push('/shaheen-facts/all') 
                     
                     }
-                  }).catch(function (error) {
+                  }).catch((error) => {
                     console.log(error);
                   });
             }

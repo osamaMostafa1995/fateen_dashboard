@@ -145,13 +145,13 @@ export default {
                     // console.log(response.data.data)
                     localStorage.setItem('users_count', response.data.data.count)
                     this.$router.push('/dashboard')
-                }).catch(function (error) {
+                }).catch((error) => {
                     console.log(error)
                 }); 
 
                 // this.$router.push('/dashboard')
               }
-            }).catch(function (error) {
+            }).catch((error) => {
               console.log(error);
             });
         }

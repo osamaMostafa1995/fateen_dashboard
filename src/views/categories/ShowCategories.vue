@@ -1,55 +1,83 @@
 <template>
+
     <CRow>
+
       <CCol :xs="12">
+
         <CCard class="mb-4">
-          <div class="icard-header"><strong>جدول الأقسام الرئيسية</strong></div>
+        
+          <CCardHeader>
+                <strong> جدول الأقسام الرئيسية </strong>
+            </CCardHeader>
+
+            <CButton disabled v-show="isLoading">
+                <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+                Loading...
+            </CButton>
+
+
            <CTable hover small responsive="sm">
+
               <CTableHead>
+
                 <CTableRow color="dark">
+
                     <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>
+
                     <CTableHeaderCell scope="col">اسم الفئة باللغة العربية</CTableHeaderCell>
+
                     <CTableHeaderCell scope="col">اسم الفئة باللغة الإنجليزية</CTableHeaderCell>
+
                     <CTableHeaderCell scope="col">الإعدادات</CTableHeaderCell>
+
                 </CTableRow>
+
               </CTableHead>
+
               <CTableBody>
+
               <CTableRow v-for="category in categories" :key="category.id">
+
                   <CTableHeaderCell scope="row">{{category.id}}</CTableHeaderCell>
+
                   <CTableDataCell>{{category.name_ar}}</CTableDataCell>
+
                   <CTableDataCell>{{category.name_en}}</CTableDataCell>
+
                   <CTableDataCell>
-                <CButton
-                    color="warning"
-                    variant="outline"
-                    @click="() => invokeModal(category.id,  category.name_ar ,category.name_en )"
-                >
-                <CIcon icon="cil-pencil" size="lg" />
-                </CButton>
-                &nbsp;
-                <CButton
-                    color="danger"
-                    variant="outline"
-                    @click="deleteCategory(category.id)"
-                >              
-                <CIcon icon="cil-basket" size="lg" />
-                </CButton>
+
+                   <CButton color="warning" variant="outline" @click="() => invokeModal(category.id,  category.name_ar ,category.name_en )">    <CIcon icon="cil-pencil" size="lg" />   </CButton>
+                    &nbsp;
+                   <CButton color="danger" variant="outline"  @click="deleteCategory(category.id)" >  <CIcon icon="cil-basket" size="lg" /> </CButton>
+                
                 </CTableDataCell>
+
               </CTableRow>
+
               </CTableBody>
+
           </CTable>
   
           <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
               <CModalHeader>
-              <CModalTitle>إدارة القسم الرئيسي</CModalTitle>
+
+                 <CModalTitle>إدارة القسم الرئيسي</CModalTitle>
+
               </CModalHeader>
+
               <CButton disabled v-show="isLoading">
                   <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
                   Loading...
               </CButton>
+
               <CModalBody>
+
                   <CCardBody>
+
                       <CForm class="row g-3">
+
                           <h4>بيانات الأقسام الرئيسية</h4>
+
                           <CCol :md="12">                
                               <strong><label class="mb-1">الاسم باللغة العربية </label></strong> : 
                               <input 
@@ -61,6 +89,7 @@
                               />
                               <CFormFeedback :class="{haveError: NameArabicError}" v-if="NameArabicError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>           
                           </CCol>
+
                           <CCol :md="12">                         
                               <strong><label class="mb-1">الاسم باللغة الإنجليزية</label></strong> : 
                               <input 
@@ -74,17 +103,23 @@
                           </CCol>
                          
                       </CForm>
+
                   </CCardBody>
+
               </CModalBody>
+
               <CModalFooter>
-              <!-- <CButton color="secondary" @click="() => { visibleLiveDemo = false }">
-                  غلق
-              </CButton> -->
+           
               <CButton class="py-2 px-4" color="primary" @click="updateSummary">تعديل</CButton>
+
               </CModalFooter>
+
           </CModal>
+
        </CCard>
+
       </CCol>
+      
     </CRow>
   
   </template>
@@ -202,19 +237,23 @@
             } ,
 
             allCategories() {
-                axios.get(`${baseUrl}/category/all`, config)
-                .then((response) => {
+                this.isLoading = true
+                axios.get(`${baseUrl}/category/all`, config).then((response) => {
+                 this.isLoading = false
                 this.categories = response.data.data                        
-                }).catch((error)=> {                                                        
+                }).catch((error)=> {     
+                this.isLoading = false                                                   
               });
             }
        },
 
        mounted(){
-          axios.get(`${baseUrl}/category/all`, config)
-            .then((response) => {
-                this.categories = response.data.data   
+          this.isLoading = true
+          axios.get(`${baseUrl}/category/all`, config).then((response) => {
+            this.isLoading = false
+            this.categories = response.data.data   
             }).catch((error)=> {
+                this.isLoading = false
                 this.$swal({
                     title: 'عذرا, هناك خطأ',
                     text: error.errors[0],

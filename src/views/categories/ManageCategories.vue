@@ -5,6 +5,12 @@
           <CCardHeader>
             <strong> إضافة القسم الرئيسي </strong>
           </CCardHeader>
+
+          <CButton disabled v-show="isLoading">
+            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+            تحميل ...
+          </CButton> 
+
           <CCardBody>
               <CForm class="row g-3">
                 <CCol :md="12">                
@@ -51,7 +57,7 @@
   }
   
   export default {
-    name: 'Add Category',
+    name: 'Create Category',
     data(){
       return {
         name_ar: "",

@@ -265,7 +265,7 @@ export default {
                 this.lastPage = response.data.data.last_page
                 // console.log(this.currentPage)
                 // console.log(this.lastPage)
-            }).catch(function (error) {
+            }).catch((error) => {
                 console.log(error)
             }); 
         },
@@ -283,7 +283,7 @@ export default {
                         this.articles = response.data.data.data
                         this.currentPage = response.data.data.current_page
                         this.lastPage = response.data.data.last_page
-                    }).catch(function (error) {
+                    }).catch( (error) =>{
                         console.log(error)
                     });
                 })
@@ -402,10 +402,10 @@ export default {
                                 this.files = []
                                 this.tmpReferenceImages = []
                                 this.totalReferencesImages = []
-                            }).catch(function (error) {
+                            }).catch( (error) =>{
                                 console.log(error)
                             });
-                        }).catch(function (error) {
+                        }).catch((error) =>  {
                         console.log(error);
                     });
 
@@ -413,7 +413,7 @@ export default {
                     this.isLoading = false
                 }
          
-                }).catch(function (error) {
+                }).catch((error) => {
                     console.log(error);
             });
                 
@@ -493,12 +493,12 @@ export default {
                             this.files = []
                             this.tmpReferenceImages = []
                             this.totalReferencesImages = []                        
-                        }).catch(function (error) {                                                        
+                        }).catch( (error) => {                                                        
                             console.log(error)
                         });
-                    }).catch(function (error) {                                                
+                    }).catch( (error) =>{                                                
                     console.log(error);
-                }).catch(function (error) {                                                
+                }).catch( (error) => {                                                
                     console.log(error);
                 })
             }else{
@@ -534,7 +534,7 @@ export default {
             this.lastPage = response.data.data.last_page
 
             // console.log(this.facts)
-        }).catch(function (error) {
+        }).catch( (error) => {
             console.log(error)
         }); 
     }
