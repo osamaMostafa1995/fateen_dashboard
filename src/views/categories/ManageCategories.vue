@@ -5,12 +5,7 @@
           <CCardHeader>
             <strong> إضافة القسم الرئيسي </strong>
           </CCardHeader>
-
-          <CButton disabled v-show="isLoading">
-            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-            تحميل ...
-          </CButton> 
-
+  
           <CCardBody>
               <CForm class="row g-3">
                 <CCol :md="12">                
@@ -56,6 +51,26 @@
       headers: { Authorization: `Bearer ${token}` }
   }
   
+  // data: () => ({
+  //   form: {
+  //      name_ar: "",
+  //       name_en:"", 
+  //       NameArabicError:"",
+  //       NameEnglishError:"",
+  //       isLoading: false,
+  //   }
+  // }),
+  // setup: () => ({ v$: useVuelidate() }),
+  // validations () {
+  //     return {
+  //       form: {
+  //       name_ar: {required},
+  //       name_en: {required},
+  //       NameArabicError: {required},
+  //       NameEnglishError: {required}, 
+  //    }
+  //    }
+  // },
   export default {
     name: 'Create Category',
     data(){

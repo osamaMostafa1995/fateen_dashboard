@@ -17,7 +17,7 @@
         :icon="logoNegative"
         :height="35"
       />  -->
-       <h2 class="text-center"> فطين </h2>
+       <h2 class="text-center"> فطين  <small> v1.0</small></h2>
        <!-- <CCardImage orientation="top" :src="mainLogo" /> -->
 
       <CIcon

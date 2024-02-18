@@ -18,12 +18,30 @@
             <CCardBody>
  
                 <CForm class="row g-3">
-
-                    <CCol :md="12">                
-                        <CTableDataCell>
-                            <CImage rounded thumbnail :src="this.blogCoverImagePath" width="100" height="100"/>
-                        </CTableDataCell>
+ 
+                    <CCol :md="12">
+                        <p>تحميل الصورة الرئيسية</p>
+                        <div>
+                            <div class="dropzone dz-clickable">
+                                <div class="dz-message needsclick ng-star-inserted">
+                                    <span class="note needsclick">
+                                        (يمكن تحديد صورة تحتوي علي الامتدادات <strong>TIFF</strong> 
+                                        ,<strong _ngcontent-vma-c163="">JPG</strong> , <strong>GIF</strong> ,
+                                        <strong _ngcontent-vma-c163="">PNG</strong> )
+                                    </span>
+                                </div>
+                                <br>
+                                
+                               <CFormLabel for="mainfile" style="border:1px solid #3c4b64 ; margin: auto;border-radius: 5px; ">
+                                    <span class=" " style="position: relative; top:25px;  "> انقر هنا لتحميل الصورة الرئيسية <CIcon size="lg" icon="cil-cloud-upload" class="mx-2" style="vertical-align: middle;"/> </span> 
+                                    <CFormInput type="file" size="lg" id="mainfile" @change="onMainImageUpload" style="visibility: hidden; "/> 
+                               </CFormLabel>
+                               <p class="mt-2"> {{ blogCoverImageName }}</p>
+                               <CFormFeedback :class="{haveError: blogCoverImagePathError}" v-if="blogCoverImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                            </div>
+                        </div>
                     </CCol>
+
 
                     <CCol :md="12">                
                         <strong><label class="mb-1">العنوان </label></strong> : 
@@ -33,6 +51,7 @@
                         class="p-2" 
                         :class="{onError: titleError, 'form-control' : !titleError}"
                         v-model="blogTitle"
+                         
                         />
                         <CFormFeedback :class="{haveError: titleError}" v-if="titleError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>           
                     </CCol>
@@ -119,7 +138,7 @@
   </template>
   
   <script>
-  
+ 
   import axios from "axios"
   import env from '../../env'
   
@@ -135,6 +154,7 @@
   export default {
       name: 'Create Blog',
       data(){
+      
          return {
             currentBolgId: null,  
             types: [],
@@ -147,9 +167,12 @@
             blogOriginalContent: "",
             blogReferences: "",
             blogCoverImagePath: " " , 
+            blogCoverImageName:"" ,
             // blogHideLikesCount :"",
             // blogStatusId: null,
             // copiedText :"",
+
+            blogCoverImagePathError:"" ,
             typeError:"",
             categoryError:"",
             titleError:"",
@@ -165,6 +188,21 @@
       },
       methods: {
           addBlog(){
+
+            if(this.blogCoverImagePath == ""){
+            this.blogCoverImagePathError = true
+            }
+            if(this.blogCoverImagePath != ""){
+            this.blogCoverImagePathError = false
+            }
+
+            // if(this.blogCoverImagePath == ""){
+            // this.blogCoverImagePathError = true
+            // }
+            // if(this.blogCoverImagePath != ""){
+            // this.blogCoverImagePathError = false
+            // }
+
             this.copiedText = document.getElementsByClassName('ql-editor')[0].innerHTML 
             //  console.log("copiedText" ,this.copiedText )
               this.isLoading = true
@@ -201,7 +239,12 @@
                   // console.log(error);
               })
           },
-      
+          onMainImageUpload(event) {
+            console.log(event.target.files[0])
+            this.blogCoverImagePath = event.target.files[0]
+            this.blogCoverImageName= event.target.files[0]?.name
+            // imgInput = event.target
+        },
        },
       mounted(){
         this.types =[ 
@@ -226,5 +269,31 @@
   </script>
   
   <style scoped>
-     
+       .dropzone.dz-clickable {
+    /* cursor: pointer; */
+    text-align: center;
+    text-align: center;
+    margin: 25px 0;
+    border-radius: 5px;
+
+    opacity: 1;
+    -ms-filter: none;
+    -webkit-filter: none;
+    filter: none;
+}
+
+.dropzone {
+  margin-right: auto;
+  margin-left: auto;
+  padding: 50px;
+  border: 2px dashed var(--theme-deafult);
+  border-radius: 15px;
+  -o-border-image: none;
+  border-image: none;
+  background: rgba(115, 102, 255, 0.1);
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  min-height: 150px;
+  position: relative;
+}
   </style> 

@@ -46,6 +46,7 @@
                   <CTableDataCell>{{subscriptionPlan.price}}</CTableDataCell>
 
                   <CTableDataCell>
+                    
                      <CButton  color="warning"   variant="outline"  @click="() => invokeModal(subscriptionPlan.id, subscriptionPlan.period, subscriptionPlan.price , subscriptionPlan.days)" > <CIcon icon="cil-pencil" size="lg" /></CButton>
                  
                     &nbsp;

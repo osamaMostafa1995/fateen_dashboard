@@ -220,7 +220,19 @@
 
             </div>
 
-            <div class="my-2 mx-4 pt-2"> رقم الصفحة {{currentPage}}</div>
+            <!-- <div class="my-2 mx-4 pt-2"> رقم الصفحة {{currentPage}}</div> -->
+
+            <div class="my-2 mx-4 pt-2"> 
+                <span v-if="listSpinner"> 
+                    جاري التحميل
+                    <CSpinner style="vertical-align: middle; height:20px ;width:20px;padding-bottom: 10px; color:#9da5b1" />   
+                </span>
+
+                <span v-else="!listSpinner"> 
+                    رقم الصفحة {{currentPage}}
+                </span>
+            </div>
+
 
           </CPagination>
 
@@ -250,6 +262,7 @@
     name: 'Blogs',
     data(){
             return {
+              listSpinner:false ,
               currentBolgId: null,  
               visibleEditModel: false,
               visibleAddModel: false,
@@ -378,9 +391,11 @@
          
             allBlogs(page) {
                 this.isLoading = true
+                this.listSpinner=true
                 axios.get(`${baseUrl}/admin/blog/all?page=`+page, config)
                 .then((response) => {
                     this.isLoading = false
+                    this.listSpinner=false
                     this.blogs = response.data.data.data
                     this.currentPage = response.data.data.current_page
                     this.lastPage = response.data.data.last_page

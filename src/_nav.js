@@ -102,42 +102,42 @@ export default [
        },
     ],
   },
-  {
-    component: 'CNavGroup',
-    name: 'قسم شاهين',
-    to: '/shaheen-facts/all',
-    icon: 'cil-star',
-    items: [
-      {
-        component: 'CNavItem',
-        name: 'عرض الحقائق',
-        to: '/shaheen-facts/all',
-      },
-      {
-        component: 'CNavItem',
-        name: 'إضافة حقيقة',
-        to: '/shaheen-facts/create',
-      },
-    ],
-  },
-  {
-    component: 'CNavGroup',
-    name: 'قسم حكيم',
-    to: '/hakeem-articles/all',
-    icon: 'cil-star',
-    items: [
-      {
-        component: 'CNavItem',
-        name: 'عرض المقالات',
-        to: '/hakeem-articles/all',
-      },
-      {
-        component: 'CNavItem',
-        name: 'إضافة مقالة',
-        to: '/hakeem-articles/create',
-      },
-    ],
-  },
+  // {
+  //   component: 'CNavGroup',
+  //   name: 'قسم شاهين',
+  //   to: '/shaheen-facts/all',
+  //   icon: 'cil-star',
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'عرض الحقائق',
+  //       to: '/shaheen-facts/all',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'إضافة حقيقة',
+  //       to: '/shaheen-facts/create',
+  //     },
+  //   ],
+  // },
+  // {
+  //   component: 'CNavGroup',
+  //   name: 'قسم حكيم',
+  //   to: '/hakeem-articles/all',
+  //   icon: 'cil-star',
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'عرض المقالات',
+  //       to: '/hakeem-articles/all',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'إضافة مقالة',
+  //       to: '/hakeem-articles/create',
+  //     },
+  //   ],
+  // },
   {
     component: 'CNavGroup',
     name: 'قسم الجوائز',

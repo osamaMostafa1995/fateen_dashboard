@@ -38,7 +38,7 @@
 
                     <CTableHeaderCell scope="col">إدارة الملخص</CTableHeaderCell>
 
-                    <CTableHeaderCell scope="col">تنسيق الملخص</CTableHeaderCell>
+                    <!-- <CTableHeaderCell scope="col">تنسيق الملخص</CTableHeaderCell> -->
 
                 </CTableRow>
 
@@ -88,14 +88,14 @@
                         </CButton>      
                     </CTableDataCell>
 
-                    <CTableDataCell>
+                    <!-- <CTableDataCell>
                         <CButton
                             color="success"
                             variant="outline"
                             @click="() => invokeAddModal(summary.id , summary.book.book_name , summary.book.author ,summary.from_page ,summary.to_page , summary.book.book_cover_path)"> 
                             <CIcon icon="cil-book" size="lg" />
                         </CButton>      
-                    </CTableDataCell>
+                    </CTableDataCell> -->
 
                 </CTableRow>
 
@@ -205,18 +205,28 @@
                                     <CPaginationItem disabled>السابقة</CPaginationItem>
                                 </div>
                                 <div class="mx-1 my-2" v-else>
-                                    <CPaginationItem class="paginated-style" @click="handleCdkEditPagination(cdkcurrentPage--)">السابقة</CPaginationItem>
-                                </div>
+                                    <CPaginationItem class="paginated-style" @click="handleCdkEditPagination(cdkcurrentPage--)">السابقة   </CPaginationItem>
+                               </div>
    
                                 <div class="mx-1 my-2" v-if="cdkcurrentPage == cdklastPage">
-                                    <CPaginationItem disabled>التالية</CPaginationItem>
+                                    <CPaginationItem disabled>التالية </CPaginationItem>
                                 </div>
                                 <div class="mx-1 my-2" v-else>
                                     <CPaginationItem class="paginated-style" @click="handleCdkEditPagination(cdkcurrentPage++)">التالية</CPaginationItem>
                                 </div>
                                
                             </div>
-                            <div class="my-2 mx-4 pt-2"> رقم الصفحة {{cdkcurrentPage}}</div>
+                            <div class="my-2 mx-4 pt-2"> 
+                                <span v-if="editSpinner"> 
+                                    جاري التحميل
+                                    <CSpinner style="vertical-align: middle; height:20px ;width:20px;padding-bottom: 10px; color:#9da5b1" />   
+                                </span>
+
+                                <span v-else="!editSpinner"> 
+                                    رقم الصفحة {{cdkcurrentPage}}
+                                </span>
+                               
+                            </div>
                             <CButton color="secondary" @click="() =>handleCdkEditPagination('save')"> حفظ الصفحة</CButton>
 
                         </CPagination>
@@ -232,7 +242,7 @@
 
         </CModal>
 
-        <CModal size="lg" :visible="visibleAddModel" @close="() => { visibleAddModel = false }">
+        <!-- <CModal size="lg" :visible="visibleAddModel" @close="() => { visibleAddModel = false }">
 
             <CModalHeader>
                <CModalTitle> تنسيق الملخص </CModalTitle>
@@ -319,7 +329,7 @@
                 </div>
             </CModalFooter>
 
-        </CModal>
+        </CModal> -->
 
         <CPagination  class="cdk-paginator">
             <div class="d-flex  my-2" >  
@@ -337,7 +347,15 @@
                     <CPaginationItem class="paginated-style" @click="handleListPagePagination(currentPage++)">التالية</CPaginationItem>
                 </div>
             </div>
-            <div class="my-2 mx-4 pt-2"> رقم الصفحة {{currentPage}}</div>
+            <div class="my-2 mx-4 pt-2"> 
+                <span  v-if="listSpinner"> 
+                    جاري التحميل 
+                     <CSpinner style="vertical-align: middle; height:20px ;width:20px;padding-bottom: 10px; color:#9da5b1"/> 
+                </span>
+                <span  v-else="!listSpinner"> 
+                 رقم الصفحة {{currentPage}} 
+                </span>
+            </div>
       
         </CPagination>
 
@@ -370,6 +388,8 @@ export default {
     data(){
 
         return {
+            editSpinner :false ,
+            listSpinner :false ,
             visibleEditModel: false,
             visibleAddModel: false,
             summaries: [],
@@ -514,7 +534,9 @@ export default {
         },
 
         handleCdkEditPagination(Editpage){ 
+            this.editSpinner=true
             axios.get(`${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`, config).then((response) => {
+            this.editSpinner=false
             this.cdklastPage=response?.data?.data.last_page
                if(Editpage=='save') { 
                     this.savedPages.push(document.getElementsByClassName('ql-editor')[0].innerHTML)
@@ -529,24 +551,24 @@ export default {
                     }
                     axios.post(`${baseUrl}/admin/book-summary/update`, requestBody, config).then((response) => {
                         if(response.data.status == false){                         
-                            this.$swal({
-                                title: 'عذرا, هناك خطأ',
-                                text: response.data.errors[0],
-                                icon: 'error'
-                            })
+                            // this.$swal({
+                            //     title: 'عذرا, هناك خطأ',
+                            //     text: response.data.errors[0],
+                            //     icon: 'error'
+                            // })
                         }
                         else{
-                            this.$swal({
-                                title: 'تم حفظ الصفحة بنجاح',
-                                icon: 'success',
-                            })
+                            // this.$swal({
+                            //     title: 'تم حفظ الصفحة بنجاح',
+                            //     icon: 'success',
+                            // })
                         }
                     }).catch((error)=>{
-                        this.$swal({
-                            title: 'عذرا, هناك خطأ',
-                            text: response.data.errors[0],
-                            icon: 'error'
-                        })
+                        // this.$swal({
+                        //     title: 'عذرا, هناك خطأ',
+                        //     text: response.data.errors[0],
+                        //     icon: 'error'
+                        // })
                     })
                 } 
                 else {  
@@ -650,7 +672,9 @@ export default {
 
         allBookSummaries(page){
             this.isLoading = true
+            this.listSpinner= true
             axios.get(`${baseUrl}/admin/book-summaries/all?page=`+page, config).then((response) => {
+                this.listSpinner= false
                 this.isLoading = false
                 this.summaries = response.data.data.data
                 this.currentPage = response.data.data.current_page

@@ -247,7 +247,6 @@ export default {
         }
     },
     onMainImageUpload(event) {
-        // console.log(event.target.files[0])
         this.mainImage = event.target.files[0]
         imgInput = event.target
     },
@@ -333,7 +332,7 @@ export default {
       margin-right: -.73em;
     }
 
-     .dropzone.dz-clickable {
+  .dropzone.dz-clickable {
     /* cursor: pointer; */
     text-align: center;
     text-align: center;

@@ -6,7 +6,7 @@
       </CHeaderToggler>
       <!-- <CHeaderBrand class="mx-auto d-lg-none" to="/">
         <CIcon :icon="logo" height="48" alt="Logo" />
-      </CHeaderBrand> -->
+      </CHeaderBrand> --> 
       <CHeaderNav>
         <AppHeaderDropdownAccnt />
       </CHeaderNav>
