@@ -14,7 +14,7 @@
              تحميل ...
          </CButton>
 
-         <CTable hover small responsive="sm">
+         <CTable hover small responsive="sm" striped >
            
             <CTableHead>
 
@@ -720,9 +720,16 @@ export default {
         box-sizing: content-box;
     }
   
-    td:nth-of-type(1) {
+    th:nth-of-type(1)  {
       min-width:170px !important; 
     }
+    th:nth-of-type(2) {
+     min-width:260px !important; 
+    }
+
+    /* th:nth-of-type(4) ,  th:nth-of-type(5) {
+     min-width:100px !important; 
+    } */
 
     th:nth-of-type(8) , th:nth-of-type(10) {
       min-width:150px !important;

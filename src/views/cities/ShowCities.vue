@@ -19,7 +19,7 @@
 
         </CButton>
 
-        <CTable hover small responsive="sm">
+        <CTable hover small responsive="sm" striped >
 
               <CTableHead>
 

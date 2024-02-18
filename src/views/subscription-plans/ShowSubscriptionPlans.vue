@@ -17,7 +17,7 @@
             Loading...
         </CButton>
 
-        <CTable hover small responsive="sm" class="mb-0 pb-0">
+        <CTable  hover small responsive="sm" striped  class="mb-0 pb-0">
 
               <CTableHead>
 

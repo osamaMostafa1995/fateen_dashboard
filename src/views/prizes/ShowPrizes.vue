@@ -9,7 +9,7 @@
             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
             Loading...
         </CButton>
-        <CTable hover small responsive="sm">
+        <CTable hover small responsive="sm" striped >
               <CTableHead>
                 <CTableRow color="dark">
                   <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>

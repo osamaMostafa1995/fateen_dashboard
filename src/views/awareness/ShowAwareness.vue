@@ -15,7 +15,7 @@
               تحميل ...
             </CButton>
 
-            <CTable hover small responsive="sm">
+            <CTable hover small responsive="sm" striped >
 
                 <CTableHead>
 
@@ -444,6 +444,9 @@
   </script>
   
   <style scoped>
+    th:nth-of-type(3) {
+       min-width: 280px  !important; 
+    }
     th:nth-of-type(9) {
        min-width:170px !important; 
     }

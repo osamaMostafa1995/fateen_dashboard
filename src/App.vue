@@ -42,6 +42,10 @@
   padding: 10px 20px 5px 20px;
 }
 
+td {
+  vertical-align: middle !important;
+}
+
 td button{ 
   padding:10px 15px 0px 15px !important ;
 }

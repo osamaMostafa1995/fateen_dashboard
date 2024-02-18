@@ -3,7 +3,7 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <div class="icard-header"><strong>جدول المقالات</strong></div>
-         <CTable hover small responsive="sm">
+         <CTable  hover small responsive="sm" striped >
             <CTableHead>
             <CTableRow color="dark">
                 <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>
