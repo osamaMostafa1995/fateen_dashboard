@@ -3,6 +3,7 @@
 $enable-ltr: true;
 $enable-rtl: true;
 // Import styles
+@import url('https://fonts.googleapis.com/css?family=Cairo&display=swap');
 @import "~@coreui/coreui/scss/coreui";
 // Import Chart.js Tooltips
 @import "~@coreui/chartjs/scss/tooltips";
@@ -10,8 +11,9 @@ $enable-rtl: true;
 @import "example";
 // If you want to add something do it here
 @import "custom";
+ 
   html,body {
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Cairo', sans-serif;
   }
  
   .icard-header {

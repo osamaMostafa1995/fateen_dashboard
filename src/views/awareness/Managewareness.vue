@@ -7,14 +7,13 @@
         <CCard class="mb-4">
 
             <CCardHeader>
-                <div class="icard-header"><strong>إضافة قسم الوعي </strong></div>
-            </CCardHeader>
-            
-            <CButton disabled v-show="isLoading">
+              <strong>إضافة قسم الوعي </strong> 
+              <!-- <CButton disabled v-show="isLoading">
                     <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
                     تحميل ...
-           </CButton> 
-
+           </CButton>  -->
+            </CCardHeader>
+           
             <CCardBody>
  
                 <CForm class="row g-3">

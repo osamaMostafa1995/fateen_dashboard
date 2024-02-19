@@ -9,17 +9,15 @@
         <CCardHeader>
 
           <strong>جدول المدن</strong>
-
+          <CButton disabled v-show="isLoading">
+             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+             جاري التحميل ... 
+          </CButton>
         </CCardHeader>
        
-        <CButton disabled v-show="isLoading">
+        
 
-            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-            Loading...
-
-        </CButton>
-
-        <CTable hover small responsive="sm" striped >
+        <CTable hover small responsive="sm" striped v-if="!isLoading">
 
               <CTableHead>
 
@@ -63,12 +61,34 @@
 
         </CTable>
 
+        <CTable hover small responsive="sm" class="placeholder-table" striped v-if="isLoading"> 
+          <CTableHead>  
+            <CTableRow>
+                <CTableHeaderCell scope="col"  v-for="  head in header"> {{head}}</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead> 
+          <CTableBody>  
+            <CTableRow class="text-center" v-for=" row in [].constructor(8)"> 
+                <CTableHeaderCell scope="col" v-for="  column in [].constructor(4)"> 
+                    <div class="ph-item">
+                        <div class="ph-col-12">
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                    </div>    
+              </CTableHeaderCell>
+            </CTableRow>
+          </CTableBody>
+        </CTable>
+   
+
       </CCard>
      
     </CCol>
 
   </CRow>
-
+  
   <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
 
     <CModalHeader>
@@ -138,6 +158,7 @@ export default {
     name: 'Cities',
     data(){
         return {
+            header:['الرقم التعريفي' , 'الاسم بالعربية ' , ' الاسم بالإنجليزية' , ' إعدادات'],
             cities: [],
             visibleLiveDemo: false,
             name_ar: "",
@@ -245,9 +266,9 @@ export default {
         allCities(){
           this.isLoading = true
           axios.get(`${baseUrl}/cities/all`).then((response) => {
-              console.log("cities",response.data.data)
-              this.cities = response.data.data
-              this.isLoading = false
+            console.log("cities",response.data.data)
+            this.cities = response.data.data
+            this.isLoading = false
           }).catch((error)=> {
           this.isLoading = false
           this.$swal({

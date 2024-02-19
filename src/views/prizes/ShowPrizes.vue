@@ -4,12 +4,15 @@
       <CCard class="mb-4">
         <CCardHeader>
           <strong>جدول الجوائز</strong>
+
+          <CButton disabled v-show="isLoading">
+             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+             جاري التحميل ... 
+          </CButton>
+
         </CCardHeader>
-        <CButton disabled v-show="isLoading">
-            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-            Loading...
-        </CButton>
-        <CTable hover small responsive="sm" striped >
+      
+        <CTable hover small responsive="sm" striped v-if="!isLoading">
               <CTableHead>
                 <CTableRow color="dark">
                   <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>
@@ -76,6 +79,27 @@
                 </CTableRow>
               </CTableBody>
         </CTable>
+
+        <CTable hover small responsive="sm" class="placeholder-table" striped v-if="isLoading"> 
+            <CTableHead>  
+                <CTableRow>
+                    <CTableHeaderCell scope="col"  v-for="  head in header"> {{head}}</CTableHeaderCell>
+                </CTableRow>
+            </CTableHead> 
+            <CTableBody>  
+                <CTableRow class="text-center" v-for=" row in [].constructor(10)"> 
+                    <CTableHeaderCell scope="col" v-for="  column in [].constructor(10)"> 
+                        <div class="ph-item">
+                            <div class="ph-col-12">
+                                <div class="ph-row">
+                                    <div class="ph-col-12 big"></div>
+                                </div>
+                            </div>
+                        </div>    
+                </CTableHeaderCell>
+                </CTableRow>
+            </CTableBody>
+         </CTable>
       </CCard>
     </CCol>
   </CRow>
@@ -193,6 +217,7 @@ export default {
     name: 'Tables',
     data(){
         return {
+            header:['الرقم التعريفي'  ,'العنوان', 'الوصف' , 'الشرح ' , 'الشروط و الأحكام', 'الكود', ' نسبة الخصم', ' النوع', 'تاريخ انتهاء الصلاحية',' إعدادات'],
             awards: [],
             visibleLiveDemo: false,
 
@@ -343,7 +368,7 @@ export default {
 
 <style scoped>
 
-    .form-control {  
+    /* .form-control {  
         position: relative;
         flex: 1 1 auto;
         width: 1%;
@@ -416,9 +441,7 @@ export default {
 
     p{
         width:250px;
-  
-        /**Major Properties**/
-        overflow:hidden;
+       overflow:hidden;
         line-height: 2rem;
         max-height: 8rem;
         -webkit-box-orient: vertical;
@@ -427,8 +450,17 @@ export default {
         overflow: hidden !important;
         text-overflow: ellipsis;
         -webkit-line-clamp: 4;
-    }
-  
+    } */
+  th:nth-of-type(3) , th:nth-of-type(4), th:nth-of-type(5) {
+    min-width:300px;
+  }
+ 
+  th:nth-of-type(9) {
+    min-width: 165px !important;
+   }
+  th:nth-of-type(10) {
+    min-width:150px !important;
+  }
 </style>
 
 

@@ -8,13 +8,15 @@
         
        <CCardHeader>
             <strong>جدول الملخصات</strong>
-        </CCardHeader>
-        <CButton disabled v-show="isLoading">
-            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-             تحميل ...
-         </CButton>
 
-         <CTable hover small responsive="sm" striped >
+            <CButton disabled v-show="isLoading">
+             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+             جاري التحميل ... 
+          </CButton>
+          
+        </CCardHeader>
+        
+         <CTable hover small responsive="sm" striped v-if="!isLoading">
            
             <CTableHead>
 
@@ -72,7 +74,7 @@
                     
                     <CTableDataCell>
                         <CButton
-                            color="info"
+                            color="primary"
                             variant="outline"
                             @click="() => downloadSummaries(summary.summary_files_list)">  
                            <CIcon icon="cil-cloud-download" size="lg" />
@@ -87,21 +89,33 @@
                             <CIcon icon="cil-pencil" size="lg" />
                         </CButton>      
                     </CTableDataCell>
-
-                    <!-- <CTableDataCell>
-                        <CButton
-                            color="success"
-                            variant="outline"
-                            @click="() => invokeAddModal(summary.id , summary.book.book_name , summary.book.author ,summary.from_page ,summary.to_page , summary.book.book_cover_path)"> 
-                            <CIcon icon="cil-book" size="lg" />
-                        </CButton>      
-                    </CTableDataCell> -->
-
+ 
                 </CTableRow>
 
             </CTableBody>
 
         </CTable>
+
+        <CTable hover small responsive="sm" class="placeholder-table" striped v-if="isLoading"> 
+          <CTableHead>  
+            <CTableRow>
+                <CTableHeaderCell scope="col"  v-for="  head in header"> {{head}}</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead> 
+          <CTableBody>  
+            <CTableRow class="text-center" v-for=" row in [].constructor(10)"> 
+                <CTableHeaderCell scope="col" v-for="  column in [].constructor(9)"> 
+                    <div class="ph-item">
+                        <div class="ph-col-12">
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                    </div>    
+              </CTableHeaderCell>
+            </CTableRow>
+          </CTableBody>
+         </CTable>
 
         <CModal size="lg" :visible="visibleEditModel" @close="() => { visibleEditModel = false }">
            
@@ -111,7 +125,7 @@
 
             <CButton disabled v-show="isLoading">
                 <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-                Loading...
+                جاري التحميل ... 
             </CButton>
 
             <CModalBody>
@@ -218,8 +232,8 @@
                             </div>
                             <div class="my-2 mx-4 pt-2"> 
                                 <span v-if="editSpinner"> 
-                                    جاري التحميل
-                                    <CSpinner style="vertical-align: middle; height:20px ;width:20px;padding-bottom: 10px; color:#9da5b1" />   
+                                    جاري التحميل  
+                                    <CSpinner  class="spinner" />   
                                 </span>
 
                                 <span v-else="!editSpinner"> 
@@ -227,7 +241,7 @@
                                 </span>
                                
                             </div>
-                            <CButton color="secondary" @click="() =>handleCdkEditPagination('save')"> حفظ الصفحة</CButton>
+                            <CButton class="btn btn-outline-primary py-2 px-3" @click="() =>handleCdkEditPagination('save')"> حفظ الصفحة</CButton>
 
                         </CPagination>
                        
@@ -250,7 +264,7 @@
 
             <CButton disabled v-show="isLoading">
                 <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-                Loading...
+                جاري التحميل ... 
             </CButton>
 
             <CModalBody>
@@ -349,8 +363,8 @@
             </div>
             <div class="my-2 mx-4 pt-2"> 
                 <span  v-if="listSpinner"> 
-                    جاري التحميل 
-                     <CSpinner style="vertical-align: middle; height:20px ;width:20px;padding-bottom: 10px; color:#9da5b1"/> 
+                    جاري التحميل  
+                     <CSpinner class="spinner"/> 
                 </span>
                 <span  v-else="!listSpinner"> 
                  رقم الصفحة {{currentPage}} 
@@ -388,6 +402,7 @@ export default {
     data(){
 
         return {
+            header:['الرقم التعريفي'  ,' اسم الكتاب', 'المؤلف ' , 'من الصفحة ' , ' إلي الصفحة' , 'صورة الغلاف' , 'الحالة' , 'تحميل الملفات' , 'إدارة الملخص'],
             editSpinner :false ,
             listSpinner :false ,
             visibleEditModel: false,
@@ -726,12 +741,13 @@ export default {
     th:nth-of-type(2) {
      min-width:260px !important; 
     }
-
-    /* th:nth-of-type(4) ,  th:nth-of-type(5) {
-     min-width:100px !important; 
-    } */
-
+ 
     th:nth-of-type(8) , th:nth-of-type(10) {
       min-width:150px !important;
+    }
+
+    .cdk-paginator ul.pagination button { 
+        height: 45px;
+        margin-top: 8px;
     }
 </style> 

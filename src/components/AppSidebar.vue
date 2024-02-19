@@ -17,14 +17,13 @@
         :icon="logoNegative"
         :height="35"
       />  -->
-       <h2 class="text-center"> فطين  <small> v1.0</small></h2>
-       <!-- <CCardImage orientation="top" :src="mainLogo" /> -->
-
-      <CIcon
+      <CCardImage class="logo" orientation="top" :src="mainLogo" style="  "/>  
+       <h3 class="text-center mb-0"> فطين </h3>
+      <!-- <CIcon
         custom-class-name="sidebar-brand-narrow"
         :icon="sygnet"
         :height="35"
-      />
+      /> -->
     </CSidebarBrand>
     <AppSidebarNav />
     <!-- <CSidebarToggler
@@ -35,6 +34,14 @@
 </template>
 
 <style scoped>
+ .logo {
+  height: 40px;
+  width: 40px; 
+  /* margin-bottom: 10px;  */
+  margin-left: 5px;
+  filter: brightness(0) saturate(100%) invert(93%) sepia(9%) saturate(249%) hue-rotate(131deg) brightness(83%) contrast(83%);
+ }
+
  
 </style>
 <script>
@@ -42,7 +49,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { AppSidebarNav } from './AppSidebarNav'
 // import { logoNegative } from '@/assets/brand/logo-negative'
-import mainLogo from '@/assets/images/main-logo.png'
+import mainLogo from '@/assets/images/pngegg.png'
 
 import { sygnet } from '@/assets/brand/sygnet'
 export default {

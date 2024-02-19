@@ -9,15 +9,15 @@
         <CCardHeader>
 
            <strong>إضافة مدينة</strong>
-
-        </CCardHeader>
-
-        <CButton disabled v-show="isLoading">
+           <!-- <CButton disabled v-show="isLoading">
 
             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-            تحميل ...
+            جاري التحميل ... 
 
-        </CButton> 
+            </CButton>  -->
+        </CCardHeader>
+
+        
 
         <CCardBody>
             <!-- <FlashMessage position="center top" time="3000" /> -->

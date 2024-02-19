@@ -8,14 +8,16 @@
 
             <CCardHeader>
                 <strong>جدول قسم الوعي</strong>
+
+                <CButton disabled v-show="isLoading">
+                  <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+                   جاري التحميل ... 
+                </CButton>
+
             </CCardHeader>
 
-            <CButton disabled v-show="isLoading">
-             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-              تحميل ...
-            </CButton>
-
-            <CTable hover small responsive="sm" striped >
+            
+            <CTable hover small responsive="sm" striped  v-if="!isLoading">
 
                 <CTableHead>
 
@@ -69,6 +71,27 @@
 
            </CTable>
          
+           <CTable hover small responsive="sm" class="placeholder-table" striped v-if="isLoading"> 
+            <CTableHead>  
+                <CTableRow>
+                    <CTableHeaderCell scope="col"  v-for="  head in header"> {{head}}</CTableHeaderCell>
+                </CTableRow>
+            </CTableHead> 
+            <CTableBody>  
+                <CTableRow class="text-center" v-for=" row in [].constructor(10)"> 
+                    <CTableHeaderCell scope="col" v-for="  column in [].constructor(10)"> 
+                        <div class="ph-item">
+                            <div class="ph-col-12">
+                                <div class="ph-row">
+                                    <div class="ph-col-12 big"></div>
+                                </div>
+                            </div>
+                        </div>    
+                </CTableHeaderCell>
+                </CTableRow>
+            </CTableBody>
+         </CTable>
+
           <!-- Edit Modal -->
 
            <CModal size="lg" :visible="visibleEditModel" @close="() => { visibleEditModel = false }">
@@ -77,10 +100,10 @@
                     <CModalTitle>إدارة قسم الوعي</CModalTitle>
                 </CModalHeader>
 
-                <CButton disabled v-show="isLoading">
+                <!-- <CButton disabled v-show="isLoading">
                     <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-                    Loading...
-                </CButton>
+                    جاري التحميل ... 
+                </CButton> -->
 
                 <CModalBody>
                     <CCardBody>
@@ -224,8 +247,8 @@
 
             <div class="my-2 mx-4 pt-2"> 
                 <span v-if="listSpinner"> 
-                    جاري التحميل
-                    <CSpinner style="vertical-align: middle; height:20px ;width:20px;padding-bottom: 10px; color:#9da5b1" />   
+                    جاري التحميل  
+                    <CSpinner  class="spinner" />   
                 </span>
 
                 <span v-else="!listSpinner"> 
@@ -262,6 +285,7 @@
     name: 'Blogs',
     data(){
             return {
+              header:['الرقم التعريفي'  ,' صورة الغلاف ', 'العنوان ' , 'اسم القسم ' , 'صورة الكاتب ' , 'اسم الكاتب' , 'الحالة' , 'عدد الإعجابات' , 'إخفاء عدد الإعجابات', 'إدارة الملخص'],
               listSpinner:false ,
               currentBolgId: null,  
               visibleEditModel: false,

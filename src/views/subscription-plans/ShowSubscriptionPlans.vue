@@ -9,21 +9,23 @@
         <CCardHeader>
 
           <strong>جدول باقات الإشتراك</strong>
-
+          
+          <CButton disabled v-show="isLoading">
+             <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+             جاري التحميل ... 
+          </CButton>
+          
         </CCardHeader>
-
-        <CButton disabled v-show="isLoading">
-            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-            Loading...
-        </CButton>
-
-        <CTable  hover small responsive="sm" striped  class="mb-0 pb-0">
+ 
+        <CTable  hover small responsive="sm" striped  class="mb-0 pb-0" v-if="!isLoading">
 
               <CTableHead>
 
                 <CTableRow color="dark">
 
                   <CTableHeaderCell scope="col">الرقم التعريفي</CTableHeaderCell>
+
+                  <CTableHeaderCell scope="col"> عدد الأيام</CTableHeaderCell>
 
                   <CTableHeaderCell scope="col">مدة الباقة</CTableHeaderCell>
 
@@ -40,6 +42,8 @@
                 <CTableRow v-for="subscriptionPlan in subscriptionPlans" :key="subscriptionPlan">
 
                   <CTableHeaderCell scope="row">{{subscriptionPlan.id}}</CTableHeaderCell>
+
+                  <CTableHeaderCell scope="row">{{subscriptionPlan.days}}</CTableHeaderCell>
 
                   <CTableDataCell>{{subscriptionPlan.period}}</CTableDataCell>
 
@@ -61,6 +65,26 @@
 
         </CTable>
 
+        <CTable hover small responsive="sm" class="placeholder-table" striped v-if="isLoading"> 
+          <CTableHead>  
+            <CTableRow>
+                <CTableHeaderCell scope="col"  v-for="  head in header"> {{head}}</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead> 
+          <CTableBody>  
+            <CTableRow class="text-center" v-for=" row in [].constructor(1)"> 
+                <CTableHeaderCell scope="col" v-for="  column in [].constructor(5)"> 
+                    <div class="ph-item">
+                        <div class="ph-col-12">
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                    </div>    
+              </CTableHeaderCell>
+            </CTableRow>
+          </CTableBody>
+         </CTable>
       </CCard>
  
     </CCol>
@@ -148,6 +172,7 @@ export default {
     name: 'Subscription Plans',
     data(){
         return {
+            header:['الرقم التعريفي'  ,'عدد الأيام', 'مدة الباقة ' , 'السعر ' , ' إعدادات'],
             subscriptionPlans: [],
             visibleLiveDemo: false,
             period: "",
@@ -266,7 +291,7 @@ export default {
           this.isLoading = true
           axios.get(`${baseUrl}/subscription-plans/all`).then((response) => {
             this.isLoading = false
-              console.log("cities",response.data.data)
+              console.log("plans",response.data.data)
               this.subscriptionPlans = response.data.data
            }).catch((error)=> {
             this.isLoading = false
@@ -285,6 +310,7 @@ export default {
       .then((response) => {
           this.isLoading = false
           this.subscriptionPlans = response.data.data
+          console.log("plans",response.data.data)
           }).catch((error)=> {
           this.isLoading = false
           console.log(error)

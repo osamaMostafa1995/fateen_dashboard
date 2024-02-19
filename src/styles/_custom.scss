@@ -1,6 +1,150 @@
 // Here you can add other styles
+ 
 .sidebar  , .sidebar-nav .nav-link , .table-sm > :not(caption) { background-color: #3c6264 !important }
-
+  
 .sidebar-brand {
-   background: #395859;
+   background: #395859  !important;
 }
+ 
+.cdk-paginator {
+ul.pagination {
+ justify-content: space-between !important;
+ button {
+   height: 40px !important;
+   padding: 10px 20px;
+   margin-top: 8px;
+ }
+}
+}
+
+.page-link  , .modal-footer button { 
+padding: 10px 20px 5px 20px;
+}
+
+td {
+vertical-align: middle !important;
+}
+
+td button{ 
+padding:10px 15px 0px 15px !important ;
+}
+
+.modal-footer {
+border: none !important;
+} 
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm ,  div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel   {
+// background-color:#303c54!important; 
+background-color: #395859 !important;  
+padding: 15px 20px 10px 20px !important; 
+box-shadow:  none !important;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel  {
+background-color:#c50c0c !important;
+}
+
+.sidebar {
+
+.sidebar-nav {
+
+&::-webkit-scrollbar {
+    width: 5px !important;
+    }
+
+    &::-webkit-scrollbar-track {
+    background: #3c6264  !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+    background:transparent !important;
+    border-radius: 30px !important;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+    background: #7b8d8d  !important;
+    }
+}
+   
+}
+
+.table-dark {
+--cui-table-color: rgba(255, 255, 255, 0.87);
+--cui-table-bg: #395859;
+--cui-table-border-color: #395859;
+}
+
+.table {
+   margin-bottom:0px ;
+}
+
+tbody {
+   border-color: transparent !important;
+}
+
+td button {
+   padding: 10px 15px 8px 15px !important;
+}
+
+.icard-header, .card-header {
+padding: 20px;
+}
+
+.header {
+   border-bottom: none !important;
+}
+
+.btn:disabled, .btn.disabled {
+   border: none;   
+   background: transparent;
+   float: left;
+}
+
+.page-link, .modal-footer button {
+   padding: 10px 20px;
+}
+
+.spinner {
+   vertical-align: middle; 
+   height:20px ;
+   width:20px;
+   padding-bottom: 10px;
+   color:#3c6264;
+}
+
+thead
+.ph-item {
+   position: relative;
+   padding: 0px 0px 0px 0px;
+   overflow: hidden;
+   border: none;
+   border-radius: 2px;
+   *{
+      margin-top: 0px;
+      padding-left: 0px;
+      padding-right: 5px;
+      margin-bottom: 0px;
+      background: #ced4da;
+   }
+ 
+   .ph-avatar {
+     padding-left: 0px;
+     padding-right: 5px;
+     position: relative;
+     width: 100%;
+     min-width: 40px !important;
+     overflow: hidden;
+   //   background-color: #ced4da;
+     border-radius: 50%;
+   }
+ }
+
+ .placeholder-table {
+   thead {
+      th {
+         background-color: #395859;
+         color:#e8ebeb ;
+      }
+    }
+ }
+ 

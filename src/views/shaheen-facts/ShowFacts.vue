@@ -59,11 +59,14 @@
         <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
             <CModalHeader>
             <CModalTitle>تعديل حقيقة</CModalTitle>
-            </CModalHeader>
             <CButton disabled v-show="isLoading">
-                <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-                Loading...
-            </CButton>
+
+            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+            جاري التحميل ... 
+
+            </CButton> 
+            </CModalHeader>
+          
             <CModalBody>
                 <CCardBody>
                     <CForm class="row g-3">

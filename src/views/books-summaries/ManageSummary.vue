@@ -4,13 +4,14 @@
       <CCard class="mb-4">
         <CCardHeader>
           <strong>نسخ ملخص</strong>
-        </CCardHeader>
-       
-        <CButton disabled v-show="isLoading">
-            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-            تحميل ...
-        </CButton> 
 
+          <!-- <CButton disabled v-show="isLoading">
+            <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
+            جاري التحميل ... 
+        </CButton>  -->
+
+        </CCardHeader>
+        
         <CCardBody>
             <CForm class="row g-3">
                 
@@ -57,7 +58,7 @@
                 </CCol><br><br>
 
                 <div class="modal-footer my-5">
-                  <CButton @click="handleSubmit"  class="py-2 px-5" color="primary">إضافة</CButton>
+                  <CButton @click="handleSubmit"  class=" py-2 px-5" color="primary">إضافة</CButton>
                 </div>
             </CForm>
         </CCardBody>
