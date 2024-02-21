@@ -30,7 +30,7 @@
                         <CTableHeaderCell scope="col">اسم الكاتب</CTableHeaderCell>       
                         <CTableHeaderCell scope="col">الحالة</CTableHeaderCell>              
                         <CTableHeaderCell scope="col">عدد الإعجابات</CTableHeaderCell>                
-                        <CTableHeaderCell scope="col">إخفاء عدد الإعجابات</CTableHeaderCell>                
+                        <CTableHeaderCell scope="col">إخفاء الإعجابات</CTableHeaderCell>                
                         <CTableHeaderCell scope="col">إدارة الملخص</CTableHeaderCell>
                 
                     </CTableRow>
@@ -60,7 +60,7 @@
                         <CTableDataCell v-if="blog.hide_likes_count == 0">  إظهار </CTableDataCell>    <CTableDataCell v-else="blog.hide_likes_count == 1">إخفاء  </CTableDataCell>
                         
                         <CTableDataCell>
-                            <CButton color="warning" variant="outline" @click="() => invokeEditModal(blog.id, blog?.category_id, blog?.type, blog?.title, blog?.content , blog?.original_content, blog?.references , blog?.cover_image_path, blog?.hide_likes_count, blog?.status_id)">   
+                            <CButton color="warning" variant="outline" @click="() => invokeEditModal(blog.id, blog?.category_id, blog?.type, blog?.title, blog?.content , blog?.original_content, blog?.references , blog?.cover_image_path, blog?.hide_likes_count, blog?.status_id , blog?.formatted_content)">   
                                <CIcon icon="cil-pencil" size="lg" />  
                             </CButton> 
                         </CTableDataCell>
@@ -69,7 +69,7 @@
 
                 </CTableBody>
 
-           </CTable>
+            </CTable>
          
            <CTable hover small responsive="sm" class="placeholder-table" striped v-if="isLoading"> 
             <CTableHead>  
@@ -90,7 +90,7 @@
                 </CTableHeaderCell>
                 </CTableRow>
             </CTableBody>
-         </CTable>
+           </CTable>
 
           <!-- Edit Modal -->
 
@@ -124,7 +124,7 @@
                                 :class="{onError: titleError, 'form-control' : !titleError}"
                                 v-model="blogTitle"
                                 />
-                                <CFormFeedback :class="{haveError: titleError}" v-if="titleError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>           
+                                <CFormFeedback :class="{haveError: titleError}" v-if="titleError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback> <br>           
                             </CCol>
 
                             <CCol :md="12">                
@@ -163,15 +163,15 @@
                                 <strong><span> الحالة</span></strong> : 
                                 <br>
                                 <CFormLabel for="inputState">اختيار الحالة</CFormLabel>
-                                <CFormSelect v-model="statusId" id="inputState"  :class="{onError: statusError, 'form-control' : !statusError}">
-                                    <option value="1">قبول</option>
-                                    <option value="2">رفض</option>
+                                <CFormSelect v-model="blogStatusId" id="inputState"  :class="{onError: statusError, 'form-control' : !statusError}">
+                                    <option value=1>قبول</option>
+                                    <option value=2>رفض</option>
                                 </CFormSelect>
                                 <CFormFeedback :class="{haveError: statusError}" v-if="statusError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br> 
                             </CCol>
 
                             <CCol :md="12">
-                                <strong><span> إخفاء عدد الإعجابات</span></strong> : 
+                                <strong><span> إخفاء الإعجابات</span></strong> : 
                                 <br>
                                 <CFormLabel for="blogHideLikesCount">اختيار حالة إخفاء عدد الإعجابات</CFormLabel>
                                 <CFormSelect v-model="blogHideLikesCount" id="blogHideLikesCount"  :class="{onError: likesCountError, 'form-control' : !likesCountError}">
@@ -285,7 +285,7 @@
     name: 'Blogs',
     data(){
             return {
-              header:['الرقم التعريفي'  ,' صورة الغلاف ', 'العنوان ' , 'اسم القسم ' , 'صورة الكاتب ' , 'اسم الكاتب' , 'الحالة' , 'عدد الإعجابات' , 'إخفاء عدد الإعجابات', 'إدارة الملخص'],
+              header:['الرقم التعريفي'  ,' صورة الغلاف ', 'العنوان ' , 'اسم القسم ' , 'صورة الكاتب ' , 'اسم الكاتب' , 'الحالة' , 'عدد الإعجابات' , 'إخفاء الإعجابات', 'إدارة الملخص'],
               listSpinner:false ,
               currentBolgId: null,  
               visibleEditModel: false,
@@ -325,6 +325,7 @@
 
 
               ///////////old /////////
+
               FromPageError :"",
               ToPageError :"",
               cdkcurrentPage:1 ,
@@ -332,7 +333,9 @@
               savedPages:[],
               savedPagesIds:[] ,
               cdkType:'edit' , 
+
                /////add model/////
+
               currentAddBlogId:0,
               copiedTextManage: "<p><bold>this is a book summary with bold text</bold></p>",
               copiedHTML: "",
@@ -351,7 +354,7 @@
                 this.allBlogs(this.currentPage)
             },
           
-            invokeEditModal(id, categoryId, bolgType, blogTitle, blogContent, blogOriginalContent, blogReferences, blogCoverImagePath, blogHideLikesCount, blogStatusId){
+            invokeEditModal(id, categoryId, bolgType, blogTitle, blogContent, blogOriginalContent, blogReferences, blogCoverImagePath, blogHideLikesCount, blogStatusId , formattedContent){
                 this.currentBolgId = id
                 this.categoryId = categoryId
                 this.bolgType = bolgType
@@ -359,11 +362,11 @@
                 this.blogContent = blogContent
                 this.blogOriginalContent = blogOriginalContent
                 this.blogReferences = blogReferences
-        
+               
                 this.blogCoverImagePath = blogCoverImagePath
                 this.blogHideLikesCount = blogHideLikesCount
                 this.blogStatusId = blogStatusId
-    
+                this.copiedText=formattedContent
                 this.visibleEditModel = true
            
             },
@@ -380,7 +383,7 @@
                 requestBody.append('original_content',  this.blogOriginalContent)
                 requestBody.append('references', this.blogReferences)
                 requestBody.append('hide_likes_count',this.blogHideLikesCount )
-                requestBody.append('status_id', this.statusId)
+                requestBody.append('status_id', this.blogStatusId)
 
                 this.isLoading = true
 
@@ -423,6 +426,7 @@
                     this.blogs = response.data.data.data
                     this.currentPage = response.data.data.current_page
                     this.lastPage = response.data.data.last_page
+                    console.log("bb",this.blogs)
                 }).catch((error) => {
                     this.isLoading = false
                     // console.log(error)
@@ -468,11 +472,16 @@
   </script>
   
   <style scoped>
+    th:nth-of-type(1) ,  th:nth-of-type(2) {
+       min-width: 130px  !important; 
+    }
+
     th:nth-of-type(3) {
        min-width: 280px  !important; 
     }
+
     th:nth-of-type(9) {
-       min-width:170px !important; 
-    }
+       min-width: 133px  !important; 
+    }  
   
   </style> 

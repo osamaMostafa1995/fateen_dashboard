@@ -99,17 +99,18 @@
                 </CTableHeaderCell>
                 </CTableRow>
             </CTableBody>
-         </CTable>
+        </CTable>
+
       </CCard>
     </CCol>
   </CRow>
 
-  <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+  <CModal size="lg" :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
     <CModalHeader>
-      <CModalTitle>تعديل جائزة</CModalTitle>
+       <CModalTitle>تعديل جائزة</CModalTitle>
     </CModalHeader>
     <CModalBody>
-          <CCardBody>
+        <CCardBody>
             <CForm class="row g-3">
                 <CCol :md="12">                
                     <p for="title">العنوان</p>
@@ -182,19 +183,19 @@
                     <p for="expirationDate">تاريخ انتهاء الصلاحية</p>
                     <input 
                         id="expirationDate" 
-                        type="text" 
+                        type="date" 
                         class="form-control"
                         v-model="expirationDate"
-                        placeholder="مثال: 30 نوفمبر 2022"
-                    />
+                      
+                    /> <!--   placeholder="مثال: 30 نوفمبر 2022"-->
                 </CCol> 
             </CForm>
         </CCardBody>
     </CModalBody>
     <CModalFooter>
-      <CButton color="secondary" @click="() => { visibleLiveDemo = false }">
+      <!-- <CButton color="secondary" @click="() => { visibleLiveDemo = false }">
         غلق
-      </CButton>
+      </CButton> -->
       <CButton color="primary" @click="updateAward">تعديل</CButton>
     </CModalFooter>
   </CModal>
@@ -239,30 +240,36 @@ export default {
     },
     methods: {
         deleteAward(id) {
-            if(confirm("هل متأكد من عملية الحذف؟")){
+            this.$swal({
+                title: "الحذف",
+                text: "هل تريد حذف الجائزة ؟",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonColor:  "#3085d6",
+                confirmButtonText: "حذف", 
+                cancelButtonText: "إلغاء", 
+
+              }).then((isConfirm)=> {
+                if(isConfirm.value == true) {  
                 axios.delete(`${baseUrl}/admin/award/delete?award_id=${id}`, config)
                 .then(response => {
                     this.$swal({
                         title: 'تم الحذف بنجاح',
                         icon: 'success'
                     })
-                }).then( () => {
-                    axios.get(`${baseUrl}/awards/show`)
-                    .then((response) => {
-                        this.awards = response.data.data
-                    }).catch((error) => {
-                        console.log(error)
-                    });
-                })
-                .catch(error => {
+                    this.allPrizes();
+                }).catch(error => {
                     // console.log(error);
                     this.$swal({
                       title: 'عذرا, هناك خطأ',
+                      text: error.errors[0],
                       icon: 'error'
                     })
                 })
             }
+          })
         },
+
         invokeModal(id, title, description, explanation, terms, code, discount_percent, type, expiration_date){
 
           this.currentAwardId = id
@@ -277,6 +284,7 @@ export default {
 
           this.visibleLiveDemo = true
         },
+
         updateAward(){
 
             if( isNaN (parseInt (this.discountPercent))){
@@ -328,27 +336,36 @@ export default {
                 if(response.data.status == false){
                     this.$swal({
                         title: 'عذرا, هناك خطأ',
+                        text: response.data.errors[0],
                         icon: 'error'
                     })
-                }else{
+                }
+                else{
                     this.$swal({
                         title: 'تم التعديل بنجاح',
                         // text: 'Welcome Back, Admin',
                         icon: 'success'
                     })
+                   this.allPrizes() ;
                 }
-                }).then( () => {
-                        axios.get(`${baseUrl}/awards/show`)
-                        .then((response) => {
-                            this.awards = response.data.data
-                        }).catch((error) => {
-                            console.log(error)
-                        });
-                    }).catch((error) => {
-                    console.log(error);
+                }).catch((error) => {
+                    this.$swal({
+                        title: 'عذرا, هناك خطأ',
+                        text: error.errors[0],
+                        icon: 'error'
+                    })
                 });
             }
                 
+        },
+
+        allPrizes() {
+            axios.get(`${baseUrl}/awards/show`)
+            .then((response) => {
+                this.awards = response.data.data
+            }).catch((error) => {
+                console.log(error)
+            }); 
         }
     },
     mounted(){
@@ -367,90 +384,7 @@ export default {
 </script>
 
 <style scoped>
-
-    /* .form-control {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, #b1b7c1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .icard-header::before, .icard-header::after {
-        box-sizing: content-box;
-    }
-
-    .input-group > .form-control, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError {  
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: var(--cui-input-color, rgba(44, 56, 74, 0.95));
-        background-color: var(--cui-input-bg, #fff);
-        background-clip: padding-box;
-        border: 1px solid var(--cui-input-border-color, red);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .input-group > .onError, .input-group > .form-select {
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
-        min-width: 0;
-    }
-
-    .onError:focus{
-        outline: none !important;
-        border: 1.3px solid red;
-        box-shadow: 0 0 4px red;
-    }
-    .haveError {
-        color: red;
-    }
-
-    p{
-        width:250px;
-       overflow:hidden;
-        line-height: 2rem;
-        max-height: 8rem;
-        -webkit-box-orient: vertical;
-        display: block;
-        display: -webkit-box;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-        -webkit-line-clamp: 4;
-    } */
+ 
   th:nth-of-type(3) , th:nth-of-type(4), th:nth-of-type(5) {
     min-width:300px;
   }
@@ -458,6 +392,7 @@ export default {
   th:nth-of-type(9) {
     min-width: 165px !important;
    }
+
   th:nth-of-type(10) {
     min-width:150px !important;
   }

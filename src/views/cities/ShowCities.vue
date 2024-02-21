@@ -81,15 +81,11 @@
             </CTableRow>
           </CTableBody>
         </CTable>
-   
-
       </CCard>
-     
     </CCol>
-
   </CRow>
   
-  <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+  <CModal size="lg" :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
 
     <CModalHeader>
 
@@ -151,7 +147,7 @@ const baseUrl = env.baseUrl
 
 const token = localStorage.token
 const config = {
-    headers: { Authorization: `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` }
 }
 
 export default {

@@ -2,23 +2,21 @@
   <div class="bg-light min-vh-100 d-flex flex-row align-items-center">
     <CContainer>
       <CRow class="justify-content-center">
-        <CCol :md="6"> 
-          <CCardGroup>
-            <CCard class="p-4">
-              <CCardBody>
-                 <!-- <CImage  src="../../assets/images/avatars/login.jpeg" /> -->
-                 <img src="../../assets/images/avatars/login.jpeg"> 
-              </CCardBody>
-              </CCard>
-          </CCardGroup>
+         <CCol :md="6" class="m-0 p-0" style="border-radius:5px !important"> 
+          <img src="../../assets/images/avatars/hope.jpeg" style="width:100%" class="m-0"> 
         </CCol>
-        <CCol :md="6" class="align-self-center">
+        <CCol :md="6" class="align-self-center" style="border-radius:5px !important">
+          <CCol :md="12"> 
+            <h1 class="text-center mb-4"> فطين</h1>
+          </CCol>
+          
           <CCardGroup>
             <CCard class="row justify-content-center p-4">
-              <CCardBody class="col-10 m-auto">
-                <!-- <FlashMessage position="center top" time="3000" /> -->
+             
+              <CCardBody class="col-12 m-auto">
+              <!-- <FlashMessage position="center top" time="3000" /> -->
                 <CForm>
-                  <h1>تسجيل الدخول إلى الحساب</h1>
+                  <h4>تسجيل الدخول إلى الحساب</h4>
                   <p class="text-medium-emphasis">أدخل البريد الالكتروني وكلمة المرور لتسجيل الدخول</p>
                                   
                   <p>البريد الالكتروني</p>
@@ -29,6 +27,7 @@
                     <input
                       placeholder="example@gmail.com"
                       autocomplete="email"
+                      class="p-2"
                       v-model="email"
                       :class="{onError: emailError, 'form-control' : !emailError}"
                     />
@@ -40,10 +39,21 @@
                       <CIcon icon="cil-lock-locked" />
                     </CInputGroupText>
                     
-                    <input v-if="showPassword == false"
+                    <input 
+                      :type="type"
+                      placeholder="*********"
+                      autocomplete="current-password"
+                      class="p-2"
+                      v-model="password"
+                      :class="{onError: passwordError, 'form-control' : !passwordError}"
+                      @keyup.enter="login"  
+                    />
+
+                    <!-- <input v-if="showPassword == false"
                       type="password"
                       placeholder="*********"
                       autocomplete="current-password"
+                      class="p-2"
                       v-model="password"
                       :class="{onError: passwordError, 'form-control' : !passwordError}"
                       @keyup.enter="login"
@@ -55,7 +65,7 @@
                       v-model="password"
                       :class="{onError: passwordError, 'form-control' : !passwordError}"
                       @keyup.enter="login"
-                    />
+                    /> -->
  
                     <CButton type="button" color="primary" @click="togglePassword">
                         <span class="password-toggler py-1" v-if="showPassword == false"><strong>عرض</strong></span>
@@ -65,7 +75,7 @@
                   <CFormFeedback :class="{'haveError': passwordError}" v-if="passwordError">يجب ألا يكون الحقل المطلوب فارغاً</CFormFeedback><br>
                   <CRow class=" d-flex justify-content-center">
                     <CCol :xs="12">
-                      <CButton @click="login" color="primary" class="w-100"> تسجيل الدخول </CButton>
+                      <CButton @click="login" color="primary" class="w-100 p-2"> تسجيل الدخول </CButton>
                     </CCol>
                   </CRow>
                 </CForm>
@@ -91,15 +101,29 @@ export default {
 
   data(){
       return {
+        type:"",
         email: "",
         password: "",
         emailError: "",
         passwordError: "",
-        showPassword: false
+        showPassword: ""
       }
   },
 
   methods : {
+    // showPass(){
+    //   console.log ("showPassword" ,this.showPassword)
+   
+    //   if(showPassword==true) {
+    //     this.type='text'
+    //     this.showPassword=false
+    //   }
+    //   else {
+    //     this.type='password'
+    //     this.showPassword=true
+    //   }
+    // } ,
+
     login(){
         // console.log(this.email, this.password)
         var re = /\S+@\S+\.\S+/;
@@ -158,12 +182,24 @@ export default {
     },
 
     togglePassword(){
-      this.showPassword = !this.showPassword
+      // this.showPassword = !this.showPassword
+      console.log ("showPassword" ,this.showPassword)
+   
+   if(this.showPassword==true) {
+     this.type='text'
+     this.showPassword=false
+   }
+   else {
+     this.type='password'
+     this.showPassword=true
+   }
     }
   },
   mounted(){
     this.email= "admin@admin.com",
     this.password= "123456" 
+    this.type='password'
+    this.showPassword=false
   }
 
 }

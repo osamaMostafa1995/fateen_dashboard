@@ -84,14 +84,15 @@
               </CTableHeaderCell>
             </CTableRow>
           </CTableBody>
-         </CTable>
+        </CTable>
+
       </CCard>
  
     </CCol>
 
   </CRow>
 
-  <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+  <CModal size="lg" :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
 
     <CModalHeader>
 
@@ -106,18 +107,26 @@
             <CForm class="row g-3">
 
                 <CCol :md="12">                
-                    <p for="period">مدة الباقة (شهري/سنوي)</p>
+                    <!-- <p for="period">مدة الباقة (شهري/سنوي)</p>
                     <input 
                         id="period" 
                         type="text" 
                         :class="{onError: periodError, 'form-control' : !periodError}"
                         v-model="period"
                     />
-                    <CFormFeedback :class="{haveError: periodError}" v-if="periodError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                    <CFormFeedback :class="{haveError: periodError}" v-if="periodError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>  -->
+
+                    <CFormLabel for="period"> مدة الباقة (شهري/سنوي) </CFormLabel>
+                      <CFormSelect  v-model="period" id="period"  :class="{onError: periodError, 'form-control' : !periodError}">
+                          <option v-for="period in periods" :key="period" :value="period.name_en" > {{ period.name_ar }}</option>
+                      </CFormSelect>
+                    <CFormFeedback :class="{haveError: periodError}" v-if="periodError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback> <br> 
+
                 </CCol>
 
                 <CCol :md="12">                
-                    <p for="days"> الأيام</p>
+                    <!-- <p for="days"> الأيام</p> -->
+                    <CFormLabel for="days"> الأيام</CFormLabel>
                     <input 
                         id="days" 
                         type="text" 
@@ -129,14 +138,15 @@
                 </CCol>
 
                 <CCol :md="12">                         
-                    <p for="price">السعر</p>
+                    <!-- <p for="price">السعر</p> -->
+                    <CFormLabel for="price"> السعر</CFormLabel>
                     <input 
                         id="price" 
                         type="text" 
                         :class="{onError: priceError, 'form-control' : !priceError}"
                         v-model="price"
                     />
-                    <CFormFeedback :class="{haveError: periodError}" v-if="priceError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
+                    <CFormFeedback :class="{haveError: priceError}" v-if="priceError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>
 
             </CForm>
@@ -175,7 +185,8 @@ export default {
             header:['الرقم التعريفي'  ,'عدد الأيام', 'مدة الباقة ' , 'السعر ' , ' إعدادات'],
             subscriptionPlans: [],
             visibleLiveDemo: false,
-            period: "",
+            periods:[{ id:1,name_en:'daily' , name_ar:'يوميا' }, { id:2 , name_en:'monthly' , name_ar:'شهريا' }],
+            period: "", 
             price: "",
             days: "" ,
             daysError:"",
@@ -259,7 +270,8 @@ export default {
               axios.post(`${baseUrl}/admin/subscription-plan/update`, {
                 'subscription_plan_id' : this.currentId,
                 'period' : this.period,
-                'price' : this.price
+                'price' : this.price ,
+                'days' : this.days
               }, config).then((response) => {
                 this.isLoading = false
                 if(response.data.status == false){

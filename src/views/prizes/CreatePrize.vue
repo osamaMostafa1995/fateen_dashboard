@@ -84,11 +84,10 @@
                     <p for="expirationDate">تاريخ انتهاء الصلاحية</p>
                     <input 
                         id="expirationDate" 
-                        type="text" 
+                        type="date" 
                         class="p-2"
                         :class="{onError: expirationDateError, 'form-control' : !expirationDateError}"
                         v-model="expirationDate"
-                        placeholder="مثال: 30 نوفمبر 2022"
                     />
                     <CFormFeedback :class="{haveError: expirationDateError}" v-if="expirationDateError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                 </CCol>

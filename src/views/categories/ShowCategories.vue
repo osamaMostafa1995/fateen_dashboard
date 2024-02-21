@@ -78,7 +78,7 @@
           </CTableBody>
          </CTable>
 
-          <CModal :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
+          <CModal size="lg" :visible="visibleLiveDemo" @close="() => { visibleLiveDemo = false }">
               <CModalHeader>
 
                  <CModalTitle>إدارة القسم الرئيسي</CModalTitle>
