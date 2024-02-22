@@ -8,10 +8,6 @@
 
             <CCardHeader>
               <strong>إضافة قسم الوعي </strong> 
-              <!-- <CButton disabled v-show="isLoading">
-                    <CSpinner component="span" size="sm" variant="grow" aria-hidden="true"/>
-                    تحميل ...
-           </CButton>  -->
             </CCardHeader>
            
             <CCardBody>
@@ -22,7 +18,7 @@
                         <p>تحميل الصورة الرئيسية</p>
                         <div>
                             <div class="dropzone dz-clickable">
-                                <img :src="blogCoverImagePath"  class="cover"/> 
+                                <img :src="'https://backend.fateen.info/public/'+blogCoverImagePath "  class="cover" v-if="blogCoverImagePath"/> 
                                 <div class="dz-message needsclick ng-star-inserted">
                                     <span class="note needsclick">
                                         (يمكن تحديد صورة تحتوي علي الامتدادات <strong>TIFF</strong> 
@@ -32,30 +28,19 @@
                                 </div>
                                 <br>
                                 
-                               <CFormLabel for="mainfile" style="border:1px solid #3b626414 ; margin: auto;border-radius: 5px;height: 55px; ">
-                                    <span class=" " style="position: relative; top:14px;  "> انقر هنا لتحميل الصورة الرئيسية <CIcon size="lg" icon="cil-cloud-upload" class="mx-2" style="vertical-align: middle;"/> </span> 
-                                    <CFormInput type="file" size="lg" id="mainfile" @change="onMainImageUpload" style="visibility: hidden; "/> 
+                               <CFormLabel  class="dp-label" for="mainfile" >
+                                    <span>  
+                                        <CSpinner class="dp-spinner" component="span" size="sm" aria-hidden="true" v-show="isLoading"/>
+                                        انقر هنا لتحميل الصورة الرئيسية 
+                                        <CIcon class="mx-2 dp-icon" size="lg" icon="cil-cloud-upload"/> </span> 
+                                       <CFormInput class="dp-input" type="file" size="lg" id="mainfile" @change="onMainImageUpload" style="visibility: hidden"/> 
                                </CFormLabel>
                                <p class="mt-2"> {{ blogCoverImageName }}</p>
-                               <CFormFeedback :class="{haveError: blogCoverImagePathError}" v-if="blogCoverImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
-                            </div>
+                             </div>
                         </div>
+                        <CFormFeedback :class="{haveError: blogCoverImagePathError}" v-if="blogCoverImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br> 
                     </CCol>
-
-
-                    <!-- <CCol :md="12">                
-                        <strong><label class="mb-1">رابط الصورة الرئيسية </label></strong> : 
-                        <input 
-                        id="blogCoverImagePath" 
-                        type="url"
-                        class="p-2" 
-                        :class="{onError: blogCoverImagePathError, 'form-control' : !blogCoverImagePathError}"
-                        v-model="blogCoverImagePath"
-                         
-                        />
-                        <CFormFeedback :class="{haveError: blogCoverImagePathError}" v-if="blogCoverImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>           
-                    </CCol> -->
-
+  
                     <CCol :md="12">                
                         <strong><label class="mb-1">العنوان </label></strong> : 
                         <input 
@@ -133,7 +118,38 @@
                         <CFormFeedback :class="{haveError: copiedTextError}" v-if="copiedTextError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>                  
                     </CCol>
                     <br><br>
+                 
+                    <CCol :md="12" v-if="bolgType==1">
+                        <p>تحميل صور قسم الوعي</p>
+                        <div>
+                           <div class="dropzone dz-clickable">
+                                <span v-for="blogImage in blogOtherImageShowPath" :key="blogImage" class="mx-2"> <img :src="'https://backend.fateen.info/public/'+blogImage" v-if="blogOtherImageShowPath.length!=0"  class="cover"/>  </span>  
+                                <div class="dz-message needsclick ng-star-inserted">
+                                    <span class="note needsclick">
+                                        (يمكن تحديد صور تحتوي علي الامتدادات <strong>TIFF</strong> 
+                                        ,<strong _ngcontent-vma-c163="">JPG</strong> , <strong>GIF</strong> ,
+                                        <strong _ngcontent-vma-c163="">PNG</strong> )
+                                    </span>
+                                </div>
+                                <br>
+                                
 
+                               <CFormLabel class="dp-label" for="otherfile">
+                                    <span class="px-2 mt-2"> 
+                                       <CSpinner class="dp-spinner"  component="span" size="sm" aria-hidden="true" v-show="isLoading"/>  انقر هنا لتحميل صور قسم الوعي     
+                                       <CIcon class="dp-icon mx-2" size="lg" icon="cil-cloud-upload"/>  
+                                    </span> 
+                                    <CFormInput class="dp-input" type="file" size="lg" id="otherfile" @change="otherBlogImagesUpload" style="visibility: hidden"/> 
+                              
+                               </CFormLabel>
+                               <p class="mt-2 uploaded-files"> 
+                                 <span v-for="name in blogOtherImageName" :key="name"> {{name}}</span>
+                              </p>
+                                          
+                            </div>
+                        </div>
+                        <CFormFeedback :class="{haveError: blogOtherImagePathError}" v-if="blogOtherImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br>     
+                    </CCol>
                 </CForm>
 
             </CCardBody>
@@ -154,7 +170,7 @@
  
   import axios from "axios"
   import env from '../../env'
-  
+  import placeholder from '../../assets/images/placeholder.png'
   const baseUrl = env.baseUrl
   
   const token = localStorage.token
@@ -169,7 +185,6 @@
       data(){
       
          return {
-            // currentBolgId: null,  
             types: [],
             categories:[],
             originals:[],
@@ -184,6 +199,7 @@
 
             blogOtherImagePath:[],
             blogOtherImageName:[],
+            blogOtherImageShowPath:[],
             blogOtherImagePathError:"",
             
             copiedText :"",
@@ -202,57 +218,115 @@
       methods: {
           addBlog(){
 
-            if(this.blogCoverImagePath == ""){
-            this.blogCoverImagePathError = true
+            if(this.blogCoverImagePath == placeholder){
+             this.blogCoverImagePathError = true
             }
-            if(this.blogCoverImagePath != ""){
-            this.blogCoverImagePathError = false
+            if(this.blogCoverImagePath != placeholder){
+             this.blogCoverImagePathError = false
+            }
+
+            if(this.blogTitle == ""){
+             this.titleError = true
+            }
+            if(this.blogTitle != ""){
+             this.titleError = false
             }
  
-            this.copiedText = document.getElementsByClassName('ql-editor')[0].innerHTML 
+            if(this.blogReferences == ""){
+             this.referenceError = true
+            }
+            if(this.blogReferences != ""){
+             this.referenceError = false
+            }
+
+            if(this.categoryId == ""){
+             this.categoryError = true
+            }
+            if(this.categoryId != ""){
+             this.categoryError = false
+            }
+
+            if(this.bolgType == ""){
+             this.typeError = true
+            }
+            if(this.bolgType != ""){
+             this.typeError = false
+            }
+
+            if(this.blogOriginalContent == ""){
+             this.originalContentError = true
+            }
+            if(this.blogOriginalContent != ""){
+             this.originalContentError = false
+            }
+
+            if(this.blogContent == ""){
+             this.contentError = true
+            }
+            if(this.blogContent != ""){
+             this.contentError = false
+            }
+
+            if(this.copiedText == ""){
+             this.copiedTextError = true
+            }
+            if(this.copiedText != ""){
+             this.copiedTextError = false
+            }
+ 
+            if(this.blogOtherImageShowPath[0]== placeholder){
+             this.blogOtherImagePathError = true
+            }
+            if(this.blogOtherImageShowPath[0] != placeholder){
+             this.blogOtherImagePathError = false
+            }
+
+           this.copiedText = document.getElementsByClassName('ql-editor')[0].innerHTML 
+            //this.isLoading = true
+            let requestBody = new FormData();
+            requestBody.append('title',this.blogTitle )
+            requestBody.append('category_id',this.categoryId )
+            requestBody.append('blog_type', this.bolgType)
+            requestBody.append('content',this.blogContent )
+
+            if(this.blogReferences!="" && this.bolgType==1) {
+            requestBody.append('references', this.blogReferences)
+            }
+
+            if(this.blogOriginalContent!="" && this.bolgType==1) { 
+            requestBody.append('original_content',  this.blogOriginalContent)
+            }
+
+            if(this.copiedText!="<p><br></p>") { 
+            requestBody.append('formatted_content', this.copiedText)    
+            }
             
-              this.isLoading = true
-              let requestBody = new FormData();
-
-              requestBody.append('title',this.blogTitle )
-              requestBody.append('category_id',this.categoryId )
-              requestBody.append('blog_type', this.bolgType)
-              requestBody.append('content',this.blogContent )
-
-              if(this.blogReferences!="" && this.bolgType==1) {
-                requestBody.append('references', this.blogReferences)
-              }
-
-              if(this.blogOriginalContent!="" && this.bolgType==1) { 
-                requestBody.append('original_content',  this.blogOriginalContent)
-              }
-
-              if(this.copiedText!="<p><br></p>") { 
-                requestBody.append('formatted_content', this.copiedText)    
-              }
-             
-              if(this.blogCoverImagePath!="" && this.bolgType==1) { 
-                requestBody.append('cover_image', this.blogCoverImagePath)
-              }                  
-           
-              axios.post(`${baseUrl}/admin/blog/create`, requestBody, config).then((response) => {
+            if(this.blogCoverImagePath!= placeholder && this.bolgType==1) { 
+              requestBody.append('cover_image', this.blogCoverImagePath)
+            }                  
+        
+            if(this.blogOtherImageShowPath[0]!= placeholder) { 
+                for (let i = 0; i < this.blogOtherImageShowPath.length; i++) {
+                    requestBody.append('blog_images[' + i + ']', this.blogOtherImageShowPath[i]);
+                }
+            }  
+ 
+            axios.post(`${baseUrl}/admin/blog/create`, requestBody, config).then((response) => {
                  if(response.data.status == false){                         
-                      this.isLoading = false
-                      this.$swal({
+                     this.$swal({
                           title: 'عذرا, هناك خطأ',
                           text: response.data.errors[0],
                           icon: 'error'
                       })
                   }else{
-                      this.isLoading = false
                       this.$swal({
                           title: 'تم الإضافة بنجاح',
                          icon: 'success'
                       })
                       this.$router.push('/awareness/all') 
                     }
-                  }).catch((error) =>{                                                
-                  // console.log(error);
+              }).catch((error) =>{                                                
+               // console.log(error);
               })
           },
 
@@ -261,14 +335,10 @@
             this.blogCoverImageName= event.target.files[0]?.name
             let requestBody = new FormData();
             requestBody.append('files[0]', event.target.files[0]);
-            // if (this.summaryFiles.length != 0) {
-            //     for (let i = 0; i < this.summaryFiles.length; i++) {
-              //  requestBody.append('files[0]', event.target.files[0]);
-            //     }
-            // }
-
-            axios.post(`${baseUrl}/upload/files`, requestBody)
-            .then((response) => {
+            this.isLoading = true
+            axios.post(`${baseUrl}/upload/files`, requestBody).then((response) => {
+            this.isLoading = false
+             
                 this.blogCoverImagePath = response.data.data[0]
                console.log("files",  this.blogCoverImagePath )
             }).catch((error)=> {
@@ -276,30 +346,35 @@
             }); 
           },
 
-         otherBlogImagesUpload(event) {
-            this.blogOtherImagePath.push(event.target.files[0])
-            this.blogCoverImageName.push(event.target.files[0]?.name)
+          otherBlogImagesUpload(event) { 
+            this.blogOtherImageShowPath = []
+            this.blogOtherImagePath.push(...event.target.files)
+            this.blogOtherImageName.push(event.target.files[0]?.name)
             let requestBody = new FormData();
             if (this.blogOtherImagePath.length != 0) {
                 for (let i = 0; i < this.blogOtherImagePath.length; i++) {
                  requestBody.append('files[' + i + ']', this.blogOtherImagePath[i]);
                 }
             }
-
-            axios.post(`${baseUrl}/upload/files`, requestBody)
-            .then((response) => {
-                this.blogOtherImagePath = response.data.data
-               console.log("other files",  this.blogOtherImagePath )
+            this.isLoading = true
+            axios.post(`${baseUrl}/upload/files`, requestBody).then((response) => {
+            this.isLoading = false
+                for (let y=0 ; y<response.data.data.length ; y++) {
+                    this.blogOtherImageShowPath.push(response.data.data[y])  
+                }
+               console.log("other files",  this.blogOtherImageShowPath)
             }).catch((error)=> {
             // console.log(error)
             }); 
           },
-
-          
-       },
+      },
   
       mounted(){
-        this.blogCoverImagePath="https://placehold.co/600x400" ,
+        // this.blogCoverImagePath=placeholder ;
+        // this.blogOtherImageShowPath[0]=placeholder ;
+        // "https://placehold.co/600x400" ,
+    
+
         this.types =[ 
             {id:1 , name_ar:'مقالات الإثرائيات'} ,
             {id:2 , name_ar:'مقالات تبادل الرأي'} ,
@@ -310,18 +385,17 @@
             {id:1 , name_ar:'أصلي '} ,  
         ]
  
-        axios.get(`${baseUrl}/category/all`, config)
-        .then((response) => {
-            this.categories = response.data.data
-            // console.log("categories",this.categories)
+        axios.get(`${baseUrl}/category/all`, config).then((response) => {
+          this.categories = response.data.data
+          // console.log("categories",this.categories)
         }).catch((error)=> {
-           // console.log(error)
+          // console.log(error)
         }); 
       }
    }
   </script>
   
-  <style scoped>
+  <style lang="scss" scoped>
     .dropzone.dz-clickable {
         /* cursor: pointer; */
         text-align: center;
@@ -354,5 +428,37 @@
         height:150px ;
         width:150px ;
         margin-bottom: 10px;
+        border-radius: 10px;
     }
+
+    .uploaded-files { 
+        span:not(:last-child) {
+            &::after  {
+              content:'/';
+              margin-left: 5px;
+              margin-right: 5px;
+            }
+        }
+    }
+ 
+    .dp-label {
+        border:1px solid #85a3a5 ;
+        margin: auto; 
+        border-radius: 5px;height: 55px;
+        span {
+            position: relative; 
+            top:14px;
+
+            .dp-spinner {
+              color: #3b6264;
+            }
+            .dp-icon {
+              vertical-align: middle;
+            }
+            
+        }
+        
+
+    }
+
   </style> 

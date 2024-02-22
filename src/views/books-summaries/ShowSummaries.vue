@@ -793,6 +793,8 @@ export default {
         span:not(:last-child) {
             &::after  {
               content:'/';
+              margin-left: 5px;
+              margin-right: 5px;
             }
         }
     }
