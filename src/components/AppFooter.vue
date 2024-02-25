@@ -3,7 +3,7 @@
     <div>
       <a href="https://coreui.io" target="_blank">CoreUI</a>
       <span class="ms-1"
-        >&copy; {{ new Date().getFullYear() }} creativeLabs.</span
+        >&copy; {{ new Date().getFullYear() }} creativeLabs. 1.0</span
       >
     </div>
     <div class="ms-auto">

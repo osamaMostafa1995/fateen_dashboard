@@ -114,33 +114,33 @@
                                     <CImage rounded thumbnail :src="this.blogCoverImagePath" width="100" height="100"/>
                                 </CTableDataCell>
                             </CCol> -->
-                            <CCol :md="12" v-if="bolgType==1">
-                        <p>تحميل الصورة الرئيسية</p>
-                        <div>
-                            <div class="dropzone dz-clickable">
-                                <img :src="blogCoverImagePath"  class="cover"/> 
-                                <div class="dz-message needsclick ng-star-inserted">
-                                    <span class="note needsclick">
-                                        (يمكن تحديد صورة تحتوي علي الامتدادات <strong>TIFF</strong> 
-                                        ,<strong _ngcontent-vma-c163="">JPG</strong> , <strong>GIF</strong> ,
-                                        <strong _ngcontent-vma-c163="">PNG</strong> )
-                                    </span>
+                            <CCol :md="12" v-show="bolgType==1">
+                                <p>تحميل الصورة الرئيسية</p>
+                                <div>
+                                    <div class="dropzone dz-clickable">
+                                        <img v-if="blogCoverImagePath" :src="blogCoverImagePath ==  this.defaultImage ? this.defaultImage : blogCoverImagePath " :key=" this.defaultImage " class="cover">
+                                        <div class="dz-message needsclick ng-star-inserted">
+                                            <span class="note needsclick">
+                                                (يمكن تحديد صورة تحتوي علي الامتدادات <strong>TIFF</strong> 
+                                                ,<strong _ngcontent-vma-c163="">JPG</strong> , <strong>GIF</strong> ,
+                                                <strong _ngcontent-vma-c163="">PNG</strong> )
+                                            </span>
+                                        </div>
+                                        <br>
+                                        
+                                    <CFormLabel  class="dp-label" for="mainfile" >
+                                            <span>  
+                                                <CSpinner class="dp-spinner" component="span" size="sm" aria-hidden="true" v-show="isLoading"/>
+                                                انقر هنا لتحميل الصورة الرئيسية 
+                                                <CIcon class="mx-2 dp-icon" size="lg" icon="cil-cloud-upload"/> 
+                                            </span> 
+                                            <CFormInput class="dp-input" type="file" size="lg" id="mainfile" @change="onMainImageUpload" style="visibility: hidden"/> 
+                                    </CFormLabel>
+                                    <p class="mt-2"> {{ blogCoverImageName }}</p>
+                                    </div>
                                 </div>
-                                <br>
-                                
-                               <CFormLabel  class="dp-label" for="mainfile" >
-                                    <span>  
-                                        <CSpinner class="dp-spinner" component="span" size="sm" aria-hidden="true" v-show="isLoading"/>
-                                        انقر هنا لتحميل الصورة الرئيسية 
-                                        <CIcon class="mx-2 dp-icon" size="lg" icon="cil-cloud-upload"/> </span> 
-                                       <CFormInput class="dp-input" type="file" size="lg" id="mainfile" @change="onMainImageUpload" style="visibility: hidden"/> 
-                               </CFormLabel>
-                               <p class="mt-2"> {{ blogCoverImageName }}</p>
-                             </div>
-                        </div>
-                        <CFormFeedback :class="{haveError: blogCoverImagePathError}" v-if="blogCoverImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br> 
-                    </CCol>
-
+                                <CFormFeedback :class="{haveError: blogCoverImagePathError}" v-if="blogCoverImagePathError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback><br> 
+                            </CCol>
 
                             <CCol :md="12">                
                                 <strong><label class="mb-1">العنوان </label></strong> : 
@@ -154,7 +154,7 @@
                                 <CFormFeedback :class="{haveError: titleError}" v-if="titleError">يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback> <br>           
                             </CCol>
 
-                            <CCol :md="12">                
+                            <CCol :md="12" v-show="bolgType==1">                
                                 <strong><label class="mb-1">المرجع </label></strong> : 
                                 <input 
                                 id="blogReferences" 
@@ -241,11 +241,18 @@
                             </CCol>
                             <br><br>
 
-                            <CCol :md="12" v-if="bolgType==1">
+                            <CCol :md="12" v-show="bolgType==2">
                             <p>تحميل صور قسم الوعي</p>
                             <div>
                             <div class="dropzone dz-clickable">
-                                    <span v-for="blogImage in blogOtherImageShowPath" :key="blogImage" class="mx-2"> <img :src="blogImage"  class="cover"/>  </span>  
+                                    <span v-for="(blogImage  , index) in blogOtherImageShowPath" :key="blogImage"> 
+                                        <div class="close" @click="deleteOtherImages(index)" v-show="blogOtherImageShowPath[0] !=  this.defaultImage"> 
+                                           <span>x</span>    
+                                        </div> 
+                                      <img v-if="blogOtherImageShowPath.length == 0" :src="this.defaultImage"  :key="this.defaultImage " class="cover">
+                                      <img v-else="blogOtherImageShowPath.length != 0" :src=" 'https://backend.fateen.info/public/'+blogImage" :key="blogImage" class="cover">
+                                        <!-- <img :src="blogImage"  class="cover"/>  -->
+                                     </span>  
                                     <div class="dz-message needsclick ng-star-inserted">
                                         <span class="note needsclick">
                                             (يمكن تحديد صور تحتوي علي الامتدادات <strong>TIFF</strong> 
@@ -264,9 +271,9 @@
                                         <CFormInput class="dp-input" type="file" size="lg" id="otherfile" @change="otherBlogImagesUpload" style="visibility: hidden"/> 
                                 
                                 </CFormLabel>
-                                <p class="mt-2 uploaded-files"> 
+                                <!-- <p class="mt-2 uploaded-files"> 
                                     <span v-for="name in blogOtherImageName" :key="name"> {{name}}</span>
-                                </p>
+                                </p> -->
                                             
                                 </div>
                             </div>
@@ -385,11 +392,8 @@
               currentPage: 1,
               lastPage: null,
 
-              defaultImage: "https://w7.pngwing.com/pngs/776/145/png-transparent-books-illustration-book-book-rectangle-presentation-desktop-wallpaper-thumbnail.png",
-
-
-
-              ///////////old /////////
+              defaultImage: "",
+             ///////////old /////////
 
               FromPageError :"",
               ToPageError :"",
@@ -427,15 +431,23 @@
                 this.blogContent = blogContent
                 this.blogOriginalContent = blogOriginalContent
                 this.blogReferences = blogReferences
-               
                 this.blogCoverImagePath = blogCoverImagePath
-                this.blogOtherImageShowPath = otherBlogImgs
+                // this.blogOtherImageShowPath = otherBlogImgs
                 this.blogHideLikesCount = blogHideLikesCount
                 this.blogStatusId = blogStatusId
                 this.copiedText=formattedContent
                 this.visibleEditModel = true
-                 
-                console.log("otherBlogImgs",otherBlogImgs)
+             
+              
+              
+                if( otherBlogImgs && otherBlogImgs.length!=0) {
+                    this.blogOtherImageShowPath=[]
+                    console.log("otherBlogImgs" ,otherBlogImgs )
+                    for (let i=0 ; i<otherBlogImgs.length ; i++) {
+                    this.blogOtherImageShowPath.push(otherBlogImgs[i]?.image)
+                 }
+                }
+                  
             },
 
             updateBlog(){
@@ -455,12 +467,16 @@
                 if(this.blogCoverImagePath!= placeholder && this.bolgType==1) { 
                    requestBody.append('cover_image', this.blogCoverImagePath)
                 }                  
-            
-                if(this.blogOtherImageShowPath[0]!= placeholder) { 
-                    for (let i = 0; i < this.blogOtherImageShowPath.length; i++) {
-                        requestBody.append('blog_images[' + i + ']', this.blogOtherImageShowPath[i]);
+             
+                if(this.bolgType!=1)  { 
+                    if(this.blogOtherImagePath.length!=0) { 
+                        for (let i = 0; i < this.blogOtherImageShowPath.length; i++) {
+                            requestBody.append('blog_images[' + i + ']', this.blogOtherImageShowPath[i]);
+                        }
+                    } else {
+                        
                     }
-                }  
+                } 
 
                 this.isLoading = true
 
@@ -481,6 +497,8 @@
 
                     this.savedPages = []
                     this.savedPagesIds = []
+                    this.blogOtherImagePath = []
+                    this.blogOtherImageShowPath = []
                     this.allBlogs(sessionStorage.getItem("awarenessCurrentPage"))
                 }
                 }).catch( (error)=> { 
@@ -523,36 +541,70 @@
             }).catch((error)=> {
             // console.log(error)
             }); 
-          },
+            },
+            // blogOtherImageShowPath
+            // otherBlogImagesUpload(event) { 
+            //     // this.blogOtherImageShowPath = [] 
+            //     this.blogOtherImagePath.push(...event.target.files)
+            //     this.blogOtherImageName.push(event.target.files[0]?.name)
+            //     let requestBody = new FormData();
+            //     if (this.blogOtherImagePath.length != 0) {
+            //         for (let i = 0; i < this.blogOtherImagePath.length; i++) {
+            //         requestBody.append('files[' + i + ']', this.blogOtherImagePath[i]);
+            //         }
+            //     }
+            //     this.isLoading = true
+            //     axios.post(`${baseUrl}/upload/files`, requestBody).then((response) => {
+            //     this.isLoading = false
+            //         for (let y=0 ; y<response.data.data.length ; y++) {
+            //             // this.blogOtherImageShowPath.push('https://backend.fateen.info/public/'+response.data.data[y])  
+            //             this.blogOtherImageShowPath.push(response.data.data[y])  
+            //         }
+            //     console.log("other files",  this.blogOtherImageShowPath) 
+            //     }).catch((error)=> {
+            //     // console.log(error)
+            //     }); 
+            // },
+            
 
-          otherBlogImagesUpload(event) { 
-            this.blogOtherImageShowPath = []
-            this.blogOtherImagePath.push(...event.target.files)
-            this.blogOtherImageName.push(event.target.files[0]?.name)
-            let requestBody = new FormData();
-            if (this.blogOtherImagePath.length != 0) {
-                for (let i = 0; i < this.blogOtherImagePath.length; i++) {
-                 requestBody.append('files[' + i + ']', this.blogOtherImagePath[i]);
+            otherBlogImagesUpload(event) { 
+               this.blogOtherImagePath = [] 
+                this.blogOtherImagePath.push(...event.target.files)
+                this.blogOtherImageName.push(event.target.files[0]?.name)
+                let requestBody = new FormData();
+                if (this.blogOtherImagePath.length != 0) {
+                    for (let i = 0; i < this.blogOtherImagePath.length; i++) {
+                    requestBody.append('files[' + i + ']', this.blogOtherImagePath[i]);
+                    }
                 }
+                this.isLoading = true
+                axios.post(`${baseUrl}/upload/files`, requestBody).then((response) => {
+                this.isLoading = false
+                    for (let y=0 ; y<response.data.data.length ; y++) {
+                      this.blogOtherImageShowPath.push(response.data.data[y])  
+                    }
+                // console.log("other files",  this.blogOtherImageShowPath) 
+                }).catch((error)=> {
+                // console.log(error)
+                }); 
+            },
+
+            
+            deleteOtherImages(index) {
+              console.log("index",index)
+              this.blogOtherImageShowPath.splice(index,1);
+              this.blogOtherImagePath.splice(index,1);
+            //  console.log( "blogOtherImageShowPath",this.blogOtherImageShowPath)
+            //  console.log("blogOtherImagePath",this.blogOtherImagePath)
             }
-            this.isLoading = true
-            axios.post(`${baseUrl}/upload/files`, requestBody).then((response) => {
-            this.isLoading = false
-                for (let y=0 ; y<response.data.data.length ; y++) {
-                    this.blogOtherImageShowPath.push('https://backend.fateen.info/public/'+response.data.data[y])  
-                }
-               console.log("other files",  this.blogOtherImageShowPath)
-            }).catch((error)=> {
-            // console.log(error)
-            }); 
-          },
 
       },
 
       mounted(){
+        this.defaultImage =placeholder
         this.blogCoverImagePath=placeholder ;
-        this.blogOtherImageShowPath[0]=placeholder ;
-
+        // this.blogOtherImageShowPath[0]=placeholder ;
+        
         this.types =[ 
             {id:1 , name_ar:'مقالات الإثرائيات'} ,
             {id:2 , name_ar:'مقالات تبادل الرأي'} ,
@@ -584,11 +636,11 @@
         
         }); 
 
-     }
+      }
   }
   </script>
   
-  <style scoped>
+  <style lang="scss" scoped>
     th:nth-of-type(1) ,  th:nth-of-type(2) {
        min-width: 130px  !important; 
     }
@@ -615,23 +667,46 @@
     }
 
     .dropzone {
-    margin-right: auto;
-    margin-left: auto;
-    padding: 50px;
-    border: 2px dashed var(--theme-deafult);
-    border-radius: 15px;
-    -o-border-image: none;
-    border-image: none;
-    background:#d0e2dc47;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    min-height: 150px;
-    position: relative;
+        margin-right: auto;
+        margin-left: auto;
+        padding: 50px;
+        border: 2px dashed var(--theme-deafult);
+        border-radius: 15px;
+        -o-border-image: none;
+        border-image: none;
+        background:#d0e2dc47;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        min-height: 150px;
+        position: relative;
+
+        .close {
+            color:#3b6264 ;
+            position: relative;
+            bottom: 75px;
+            right: 20px;
+            height: 20px;
+            width: 20px;
+            display: inline-block;
+            border: 1px solid #3b6264 ;
+            border-radius: 50%;
+            background: #fff;
+
+            span {
+                bottom: 5px;
+                position: relative;
+            }
+
+            &:hover {
+              color:#fff;
+              background:#3b6264;
+            }
+        }
     }
 
     img.cover {
-        height:150px ;
-        width:150px ;
+        height: 170px; 
+        width: 138px;
         margin-bottom: 10px;
         border-radius: 10px;
     }
@@ -653,18 +728,18 @@
         span {
             position: relative; 
             top:14px;
-
-            .dp-spinner {
-              color: #3b6264;
-            }
-            .dp-icon {
-              vertical-align: middle;
-            }
-            
+                .dp-spinner {
+                    color: #3b6264;
+                    position: relative;
+                    top: 2px;
+                    left: 6px; 
+                }
+        }
+        .dp-icon {
+            vertical-align: middle;
         }
         
-
     }
-
+        
   
   </style> 

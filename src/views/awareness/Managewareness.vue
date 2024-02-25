@@ -18,8 +18,8 @@
                         <p>تحميل الصورة الرئيسية</p>
                         <div>
                             <div class="dropzone dz-clickable">
-                                <img :src="'https://backend.fateen.info/public/'+blogCoverImagePath "  class="cover" v-if="blogCoverImagePath"/> 
-                                <div class="dz-message needsclick ng-star-inserted">
+                              <img :src="blogCoverImagePath ===  this.defaultImage  ?  this.defaultImage  : 'https://backend.fateen.info/public/'+blogCoverImagePath " :key=" this.defaultImage " class="cover">
+                               <div class="dz-message needsclick ng-star-inserted">
                                     <span class="note needsclick">
                                         (يمكن تحديد صورة تحتوي علي الامتدادات <strong>TIFF</strong> 
                                         ,<strong _ngcontent-vma-c163="">JPG</strong> , <strong>GIF</strong> ,
@@ -119,11 +119,17 @@
                     </CCol>
                     <br><br>
                  
-                    <CCol :md="12" v-if="bolgType==1">
+                    <CCol :md="12" v-if="bolgType==2">
                         <p>تحميل صور قسم الوعي</p>
                         <div>
                            <div class="dropzone dz-clickable">
-                                <span v-for="blogImage in blogOtherImageShowPath" :key="blogImage" class="mx-2"> <img :src="'https://backend.fateen.info/public/'+blogImage" v-if="blogOtherImageShowPath.length!=0"  class="cover"/>  </span>  
+                                <span v-for="(blogImage , index) in blogOtherImageShowPath" :key="blogImage" class="mx-2">
+                                    <div class="close" @click="deleteOtherImages(index)" v-show="blogOtherImageShowPath[0] !=  this.defaultImage"> 
+                                           <span>x</span>    
+                                        </div> 
+
+                                    <img :src="blogOtherImageShowPath[0] ===  this.defaultImage  ?  this.defaultImage  : 'https://backend.fateen.info/public/'+blogImage " :key=" this.defaultImage " class="cover"/> 
+                                </span>  
                                 <div class="dz-message needsclick ng-star-inserted">
                                     <span class="note needsclick">
                                         (يمكن تحديد صور تحتوي علي الامتدادات <strong>TIFF</strong> 
@@ -165,14 +171,13 @@
     </CRow>
   
   </template>
-  
+
   <script>
  
   import axios from "axios"
   import env from '../../env'
   import placeholder from '../../assets/images/placeholder.png'
   const baseUrl = env.baseUrl
-  
   const token = localStorage.token
   const config = {
       headers: { Authorization: `Bearer ${token}` }
@@ -212,7 +217,7 @@
             referenceError:"",
             copiedTextError:"",
             isLoading: false,
-            defaultImage: "https://w7.pngwing.com/pngs/776/145/png-transparent-books-illustration-book-book-rectangle-presentation-desktop-wallpaper-thumbnail.png",
+            defaultImage:"",
           }
       },
       methods: {
@@ -305,7 +310,7 @@
               requestBody.append('cover_image', this.blogCoverImagePath)
             }                  
         
-            if(this.blogOtherImageShowPath[0]!= placeholder) { 
+            if(this.blogOtherImageShowPath[0]!= placeholder && this.bolgType==2) { 
                 for (let i = 0; i < this.blogOtherImageShowPath.length; i++) {
                     requestBody.append('blog_images[' + i + ']', this.blogOtherImageShowPath[i]);
                 }
@@ -324,6 +329,11 @@
                          icon: 'success'
                       })
                       this.$router.push('/awareness/all') 
+                      this.blogOtherImageShowPath=[]
+                      this.blogOtherImagePath =[]
+                      this.blogOtherImageName=[]
+                      this.blogCoverImagePath = ""
+                      this.blogCoverImageName= ""
                     }
               }).catch((error) =>{                                                
                // console.log(error);
@@ -367,11 +377,19 @@
             // console.log(error)
             }); 
           },
+
+          deleteOtherImages(index) {
+              console.log("index",index)
+              this.blogOtherImageShowPath.splice(index,1);
+              this.blogOtherImagePath.splice(index,1);
+           }
+
       },
   
       mounted(){
-        // this.blogCoverImagePath=placeholder ;
-        // this.blogOtherImageShowPath[0]=placeholder ;
+        this.defaultImage =placeholder
+        this.blogCoverImagePath=placeholder ;
+        this.blogOtherImageShowPath[0]=placeholder ;
         // "https://placehold.co/600x400" ,
     
 
@@ -422,11 +440,34 @@
     box-sizing: border-box;
     min-height: 150px;
     position: relative;
+    .close {
+            color:#3b6264 ;
+            position: relative;
+            bottom: 75px;
+            right: 20px;
+            height: 20px;
+            width: 20px;
+            display: inline-block;
+            border: 1px solid #3b6264 ;
+            border-radius: 50%;
+            background: #fff;
+
+            span {
+                bottom: 5px;
+                position: relative;
+            }
+
+            &:hover {
+                color:#fff ;
+                background:#3b6264;
+            }
+        }
+
     }
 
     img.cover {
-        height:150px ;
-        width:150px ;
+        height: 170px; 
+        width: 138px;
         margin-bottom: 10px;
         border-radius: 10px;
     }
@@ -448,17 +489,20 @@
         span {
             position: relative; 
             top:14px;
-
-            .dp-spinner {
-              color: #3b6264;
-            }
-            .dp-icon {
-              vertical-align: middle;
-            }
-            
+                .dp-spinner {
+                    color: #3b6264;
+                    position: relative;
+                    top: 2px;
+                    left: 6px; 
+                }
+        }
+        .dp-icon {
+            vertical-align: middle;
         }
         
+   }
+        
 
-    }
+   
 
   </style> 
