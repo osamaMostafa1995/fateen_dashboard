@@ -50,6 +50,24 @@ export default [
   },
   {
     component: 'CNavGroup',
+    name: 'اللافتات الرئيسية',
+    to: '/banners/home',
+    icon: 'cilBook',
+      items: [
+        {
+          component: 'CNavItem',
+          name: 'الرئيسية',
+          to: '/banners/home',
+        },
+        {
+          component: 'CNavItem',
+          name: 'أضافة وسيله اجتماعيه',
+          to: '/landing-page/create',
+        },
+    ],
+  },
+  {
+    component: 'CNavGroup',
     name: 'باقات الإشتراك',
     to: '/subscription-plans/all',
     icon: 'cil-list',

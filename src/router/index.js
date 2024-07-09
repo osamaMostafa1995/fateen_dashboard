@@ -190,6 +190,27 @@ const routes = [
         ],
       },
       {
+        path: '/banners',
+        name: 'اللافتات الرئيسية',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        children: [
+          {
+            path: 'home',
+            name: 'الرئيسية',
+            component: () => import('@/views/banners/home'),
+          },
+          {
+            path: 'create',
+            name: 'أضافة وسيله اجتماعيه',
+            component: () => import('@/views/landing-page/createSocial'),
+          },
+        ],
+      },
+      {
         path: '/books-summaries',
         name: 'ملخصات الكتب',
         component: {
