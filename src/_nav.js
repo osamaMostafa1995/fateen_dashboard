@@ -82,7 +82,7 @@ export default [
       //   name: 'نسخ الملخصات',
       //   to: '/books-summaries/manage',
       // },
-    ],   
+    ],
   },
   {
     component: 'CNavGroup',
@@ -154,6 +154,24 @@ export default [
         name: 'إضافة جائزة',
         to: '/prizes/create',
       },
+    ],
+  },
+   {
+    component: 'CNavGroup',
+    name: 'الصفحة التعريفية',
+    to: '/landing-page/home',
+    icon: 'cilBook',
+      items: [
+        {
+          component: 'CNavItem',
+          name: 'الرئيسية',
+          to: '/landing-page/home',
+        },
+        {
+          component: 'CNavItem',
+          name: 'أضافة وسيله اجتماعيه',
+          to: '/landing-page/create',
+        },
     ],
   },
   {

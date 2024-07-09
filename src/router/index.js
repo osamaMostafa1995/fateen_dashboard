@@ -40,7 +40,7 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
         beforeEnter: guard,
-       
+
       },
       {
         path: '/cities',
@@ -165,6 +165,27 @@ const routes = [
             path: 'create',
             name: 'إضافة جائزة',
             component: () => import('@/views/prizes/CreatePrize'),
+          },
+        ],
+      },
+      {
+        path: '/landing-page',
+        name: 'الصفحه التعريفية',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        children: [
+          {
+            path: 'home',
+            name: 'الرئيسية',
+            component: () => import('@/views/landing-page/home'),
+          },
+          {
+            path: 'create',
+            name: 'أضافة وسيله اجتماعيه',
+            component: () => import('@/views/landing-page/createSocial'),
           },
         ],
       },

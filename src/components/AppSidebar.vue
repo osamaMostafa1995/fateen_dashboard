@@ -17,7 +17,7 @@
         :icon="logoNegative"
         :height="35"
       />  -->
-      <CCardImage class="logo" orientation="top" :src="mainLogo" style="  "/>  
+      <CCardImage class="logo" orientation="top" :src="mainLogo" style=""/>
        <h3 class="text-center mb-0"> فطين </h3>
       <!-- <CIcon
         custom-class-name="sidebar-brand-narrow"
@@ -36,13 +36,13 @@
 <style scoped>
  .logo {
   height: 40px;
-  width: 40px; 
+  width: 40px;
   /* margin-bottom: 10px;  */
   margin-left: 5px;
   filter: brightness(0) saturate(100%) invert(93%) sepia(9%) saturate(249%) hue-rotate(131deg) brightness(83%) contrast(83%);
  }
 
- 
+
 </style>
 <script>
 import { computed } from 'vue'
