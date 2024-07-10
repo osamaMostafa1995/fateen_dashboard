@@ -47,11 +47,12 @@
               <CTableHeaderCell scope="row">{{ summary.id }} </CTableHeaderCell>
 
               <CTableDataCell>{{
-                summary?.book?.book_name || '-'
+                summary?.title|| '-'
               }}</CTableDataCell>
 
               <CTableDataCell>{{
-                summary?.book?.author || '-'
+                summary?.writer_name
+|| '-'
               }}</CTableDataCell>
 
               <CTableDataCell>{{ summary.from_page }}</CTableDataCell>
@@ -1038,7 +1039,7 @@ export default {
     sessionStorage.setItem('summaryCurrentPage', this.currentPage)
     axios
       .get(
-        `${baseUrl}/admin/book-summaries/all?page=` +
+        `${baseUrl}/admin/summary/all?page=` +
           sessionStorage.getItem('summaryCurrentPage'),
         config,
       )

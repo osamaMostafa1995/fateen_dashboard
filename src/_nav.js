@@ -56,13 +56,31 @@ export default [
       items: [
         {
           component: 'CNavItem',
-          name: 'الرئيسية',
+          name: 'عرض اللافتات الرئيسية',
           to: '/banners/home',
         },
         {
           component: 'CNavItem',
-          name: 'أضافة وسيله اجتماعيه',
-          to: '/landing-page/create',
+          name: 'أضافة  لافتة رئيسية',
+          to: '/banners/create',
+        },
+    ],
+  },
+  {
+    component: 'CNavGroup',
+    name: 'أقسام الكتب الرئيسية',
+    to: '/book-categories/home',
+    icon: 'cilBook',
+      items: [
+        {
+          component: 'CNavItem',
+          name: 'عرض اقسام الكتب ',
+          to: '/book-categories/home',
+        },
+        {
+          component: 'CNavItem',
+          name: ' أضافة   قسم  جديد  ',
+          to: '/book-categories/create',
         },
     ],
   },

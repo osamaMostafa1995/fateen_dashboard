@@ -205,8 +205,29 @@ const routes = [
           },
           {
             path: 'create',
-            name: 'أضافة وسيله اجتماعيه',
-            component: () => import('@/views/landing-page/createSocial'),
+            name: 'أضافة  لافتة رئيسية',
+            component: () => import('@/views/banners/create'),
+          },
+        ],
+      },
+      {
+        path: '/book-categories',
+        name: 'أقسام الكتب الرئيسية',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        children: [
+          {
+            path: 'home',
+            name: 'عرض اقسام الكتب ',
+            component: () => import('@/views/book-categories/home'),
+          },
+          {
+            path: 'create',
+            name: 'أضافة   قسم  جديد ',
+            component: () => import('@/views/book-categories/create'),
           },
         ],
       },

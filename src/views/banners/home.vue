@@ -62,10 +62,9 @@
                     () =>
                       invokeEditModal(
                         blog.id,
-                        blog?.url,
                         blog?.name,
-                        blog?.logo_url,
-                        blog?.logo,
+                        blog?.image_url,
+                        blog?.image,
                       )
                   "
                 >
@@ -223,25 +222,7 @@
                   >
                   <br />
                 </CCol>
-                <CCol :md="12">
-                  <strong><label class="mb-1">الرابط </label></strong> :
-                  <input
-                    id="blogContent"
-                    type="text"
-                    class="p-2"
-                    :class="{
-                      onError: contentError,
-                      'form-control': !contentError,
-                    }"
-                    v-model="blogContent"
-                  />
-                  <CFormFeedback
-                    :class="{ haveError: titleError }"
-                    v-if="titleError"
-                    >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
-                  >
-                  <br />
-                </CCol>
+               
               </CForm>
             </CCardBody>
           </CModalBody>
@@ -353,14 +334,15 @@ export default {
       this.allBlogs()
     },
 
-    invokeEditModal(id, url, title, image , logo) {
-      this.currentBolgId = id
+    invokeEditModal(id,title, image , logo) {
+       this.currentBolgId = id
       this.blogTitle = title
-      this.blogContent = url
+    
 
       this.blogCoverImagePath = image
       this.logoPath = logo
-      this.visibleEditModel = true
+     this.visibleEditModel = true;
+    console.log(id, title, image , logo)
     },
 
     updateBlog() {
@@ -368,25 +350,24 @@ export default {
       // this.currentBolgId = id
       // this.blogTitle = title
       // this.blogContent = url
-      requestBody.append('platform_id', this.currentBolgId)
+      requestBody.append('banner_id', this.currentBolgId)
       // requestBody.append('category_id', this.categoryId)
       // requestBody.append('blog_type', this.bolgType)
-      requestBody.append('platform_name', this.blogTitle)
-      requestBody.append('platform_url', this.blogContent)
+      requestBody.append('name', this.blogTitle)
+     
       // requestBody.append('formatted_content', this.copiedText)
       // requestBody.append('original_content', this.blogOriginalContent)
       // requestBody.append('references', this.blogReferences)
       // requestBody.append('hide_likes_count', this.blogHideLikesCount)
       // requestBody.append('status_id', this.blogStatusId)
 
-      if (this.blogCoverImagePath != placeholder) {
-        requestBody.append('platform_logo', this.logoPath)
-      }
-
+   
+        requestBody.append('image', this.logoPath)
+      
       this.isLoading = true
 
       axios
-        .post(`${baseUrl}/admin/social-platform/edit`, requestBody, config)
+        .post(`${baseUrl}/admin/brief-banner/edit`, requestBody, config)
         .then((response) => {
           this.isLoading = false
           if (response.data.status == false) {
@@ -399,8 +380,11 @@ export default {
             this.$swal({
               title: 'تم التعديل بنجاح',
               icon: 'success',
-            })
-            this.blogs = response.data.data
+            });
+            let index = this.blogs.findIndex(item=>{
+            return item.id==response.data.data.id});
+          console.log(index);
+          this.blogs[index] = response.data.data
             this.savedPages = []
             this.savedPagesIds = []
             this.blogOtherImagePath = []
@@ -421,7 +405,7 @@ export default {
     //   this.isLoading = true
     //   this.listSpinner = true
     //   axios
-    //     .get(`${baseUrl}/admin/social-platform/all`, config)
+    //     .get(`${baseUrl}/brief-banner/all`, config)
     //     .then(() => {
     //       // this.isLoading = false
     //       // this.listSpinner=false
@@ -483,7 +467,7 @@ export default {
       console.log('id', id)
       this.$swal({
         title: 'الحذف',
-        text: 'هل تريد حذف الوسيلة ؟',
+        text: 'هل تريد حذف اللافتة ؟',
         type: 'warning',
         showCancelButton: true,
         cancelButtonColor: '#3085d6',
@@ -492,10 +476,10 @@ export default {
       }).then((isConfirm) => {
         if (isConfirm.value == true) {
           const params = new URLSearchParams()
-          params.append('platforms_ids[0]', id)
+          params.append('banners_ids[0]', id)
 
           axios
-            .delete(`${baseUrl}/admin/social-platform/remove`, {
+            .delete(`${baseUrl}/admin/brief-banner/remove`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -507,7 +491,11 @@ export default {
                   title: 'تم الحذف بنجاح',
                   icon: 'success',
                 })
-                this.blogs = response.data.data
+                let index = this.blogs.findIndex(item=>{
+            return item.id==id});
+          console.log(index);
+    this.blogs.splice(index,1);
+           console.log(this.blogs);
               } else {
                 this.$swal({
                   title: 'عذرا, هناك خطأ',
@@ -536,7 +524,7 @@ export default {
     this.isLoading = true
 
     axios
-      .get(`${baseUrl}/admin/brief-banner/all`, config)
+      .get(`${baseUrl}/brief-banner/all`, config)
       .then((response) => {
         console.log('blogs', response.data.data)
         this.isLoading = false
