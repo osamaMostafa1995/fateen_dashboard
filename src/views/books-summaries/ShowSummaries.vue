@@ -25,20 +25,20 @@
 
               <CTableHeaderCell scope="col">المؤلف</CTableHeaderCell>
 
-              <CTableHeaderCell scope="col">من الصفحة</CTableHeaderCell>
+              <CTableHeaderCell scope="col">عدد الصفحات</CTableHeaderCell>
 
-              <CTableHeaderCell scope="col">إلي الصفحة</CTableHeaderCell>
+              <CTableHeaderCell scope="col">  مدة الملف الصوتى</CTableHeaderCell>
 
               <CTableHeaderCell scope="col">صورة الغلاف</CTableHeaderCell>
 
-              <CTableHeaderCell scope="col">الحالة</CTableHeaderCell>
-              <CTableHeaderCell scope="col">الصفحة التعريفية </CTableHeaderCell>
+              <CTableHeaderCell scope="col">عدد التحميلات</CTableHeaderCell>
+         
 
               <CTableHeaderCell scope="col">تحميل الملفات</CTableHeaderCell>
 
               <CTableHeaderCell scope="col">إدارة الملخص</CTableHeaderCell>
 
-              <CTableHeaderCell scope="col">تنسيق الملخص</CTableHeaderCell>
+           
             </CTableRow>
           </CTableHead>
 
@@ -46,18 +46,14 @@
             <CTableRow v-for="summary in summaries" :key="summary">
               <CTableHeaderCell scope="row">{{ summary.id }} </CTableHeaderCell>
 
-              <CTableDataCell>{{
-                summary?.title|| '-'
-              }}</CTableDataCell>
+              <CTableDataCell>{{ summary?.title || '-' }}</CTableDataCell>
 
-              <CTableDataCell>{{
-                summary?.writer_name
-|| '-'
-              }}</CTableDataCell>
+              <CTableDataCell>{{ summary?.writer_name || '-' }}</CTableDataCell>
 
-              <CTableDataCell>{{ summary.from_page }}</CTableDataCell>
+              <CTableDataCell>{{ summary.page_count }}</CTableDataCell>
 
-              <CTableDataCell>{{ summary.to_page }}</CTableDataCell>
+              <CTableDataCell>{{ summary.audio_duration
+ }} ث</CTableDataCell>
 
               <CTableDataCell
                 v-if="!summary?.book?.book_cover_path.includes('null')"
@@ -65,7 +61,7 @@
                 <CImage
                   rounded
                   thumbnail
-                  :src="summary?.book?.book_cover_path"
+                  :src="summary?.cover_url"
                   onerror=" this.src=defaultImage"
                   width="50"
                   height="50"
@@ -82,43 +78,32 @@
                 />
               </CTableDataCell>
 
-              <CTableDataCell v-if="summary.status_id == 0">
-                معلق
-              </CTableDataCell>
-
-              <CTableDataCell v-if="summary.status_id == 1">
-                مقبول
-              </CTableDataCell>
-
-              <CTableDataCell v-if="summary.status_id == 2">
-                مرفوض
-              </CTableDataCell>
-              <CTableDataCell>
-                <span v-if="summary?.book == null"> - </span>
-                <CButton
-                  v-if="summary?.book != null"
-                  color="primary"
-                  variant="outline"
-                  @click="() => toggleWeb(summary?.book)"
-                >
-                  {{
-                    summary?.book == null
-                      ? '-'
-                      : !summary?.book?.is_shown_in_landing
-                      ? 'اظهار'
-                      : 'اخفاء'
-                  }}
-                </CButton>
-              </CTableDataCell>
-
+            
+     <CTableDataCell>
+     {{ summary.
+download_count
+ }}
+     </CTableDataCell>
               <CTableDataCell>
                 <CButton
                   color="primary"
                   variant="outline"
-                  @click="() => downloadSummaries(summary.summary_files_list)"
+                  @click="() => downloadSummaries(summary.content_url)"
                 >
-                  <CIcon icon="cil-cloud-download" size="lg" />
+                  <CIcon icon="cil-file" size="lg" />
+              
+                  
                 </CButton>
+                     <CButton
+                  color="primary"
+                  variant="outline"
+                  @click="() => downloadSummaries(summary.audio_url)"
+                >
+                  <CIcon icon="cil-media-play" size="lg" />
+              
+                  
+                </CButton>
+                   
               </CTableDataCell>
 
               <CTableDataCell>
@@ -129,42 +114,32 @@
                     () =>
                       invokeEditModal(
                         summary.id,
-                        summary?.book?.id,
-                        summary?.book?.author,
-                        summary?.from_page,
-                        summary?.to_page,
-                        summary?.book?.book_cover_path,
-                        summary?.status_id,
-                        summary?.user_data.name,
-                        summary?.user_data.email,
-                        summary?.user_data.phone,
-                        summary?.summary_files_list,
+                        summary.title,
+                        summary.writer_name,
+                        summary.brief_category_id,
+                        summary.cover_url,
+                        summary.audio_url,
+                        summary.audio_duration,
+                        summary.content_url,
+                        summary.page_count,
+                        summary.audio,
+                        summary.content,
+                        summary.cover,
                       )
                   "
                 >
                   <CIcon icon="cil-pencil" size="lg" />
                 </CButton>
-              </CTableDataCell>
-
-              <CTableDataCell>
-                <CButton
-                  color="success"
+                   <CButton
+                  color="danger"
                   variant="outline"
-                  @click="
-                    () =>
-                      invokeAddModal(
-                        summary.id,
-                        summary?.book?.book_name,
-                        summary?.book?.author,
-                        summary?.from_page,
-                        summary?.to_page,
-                        summary?.book?.book_cover_path,
-                      )
-                  "
+                  @click="deleteCity(city.id)"
                 >
-                  <CIcon icon="cil-book" size="lg" />
+                  <CIcon icon="cil-basket" size="lg" />
                 </CButton>
               </CTableDataCell>
+
+            
             </CTableRow>
           </CTableBody>
         </CTable>
@@ -186,7 +161,10 @@
           </CTableHead>
           <CTableBody>
             <CTableRow class="text-center" v-for="row in [].constructor(10)">
-              <CTableHeaderCell scope="col" v-for="column in [].constructor(10)">
+              <CTableHeaderCell
+                scope="col"
+                v-for="column in [].constructor(10)"
+              >
                 <div class="ph-item">
                   <div class="ph-col-12">
                     <div class="ph-row">
@@ -226,59 +204,17 @@
             <CCardBody>
               <CForm class="row g-3">
                 <h5 class="fw-bold">عرض بيانات الكتاب</h5>
-
                 <CCol :md="12">
-                  <CTableDataCell>
-                    <CImage
-                      rounded
-                      thumbnail
-                      :src="this.coverImage"
-                      width="50"
-                      height="50"
-                    />
-                  </CTableDataCell>
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span> اسم الكتاب</span></strong> :
-                  <span>{{ this.bookName }}</span>
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span>المؤلف</span></strong> :
-                  <span>{{ this.author }}</span>
-                </CCol>
-
-                <h5 class="fw-bold">عرض بيانات من قام بالتلخيص</h5>
-
-                <CCol :md="12">
-                  <strong><span>الأسم</span></strong> :
-                  <span>{{ this.userName }}</span> <br />
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span>رقم الهاتف</span></strong> :
-                  <span>{{ this.userPhone }}</span> <br />
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span>البريد الإلكتروني</span></strong> :
-                  <span>{{ this.userEmail }}</span> <br />
-                </CCol>
-                <hr />
-                <h5 class="fw-bold">إدارة الملخص</h5>
-
-                <CCol :md="12">
-                  <CFormLabel for="from_page">من الصفحة</CFormLabel>
+                  <CFormLabel > أسم الكتاب</CFormLabel>
                   <input
-                    id="from_page"
+                    
                     type="text"
                     class="p-2"
                     :class="{
                       onError: FromPageError,
                       'form-control': !FromPageError,
                     }"
-                    v-model="this.fromPage"
+                    v-model="this.bookName"
                   />
                   <CFormFeedback
                     :class="{ haveError: FromPageError }"
@@ -286,161 +222,228 @@
                     >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
                   ><br />
                 </CCol>
-
+               
                 <CCol :md="12">
-                  <CFormLabel for="to_page">إلي الصفحة</CFormLabel>
+                  <CFormLabel > أسم المؤلف</CFormLabel>
                   <input
-                    id="to_page"
+                    
                     type="text"
                     class="p-2"
                     :class="{
-                      onError: ToPageError,
-                      'form-control': !ToPageError,
+                      onError: FromPageError,
+                      'form-control': !FromPageError,
                     }"
-                    v-model="this.toPage"
+                    v-model="this.author"
                   />
                   <CFormFeedback
-                    :class="{ haveError: ToPageError }"
-                    v-if="ToPageError"
+                    :class="{ haveError: FromPageError }"
+                    v-if="FromPageError"
                     >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
                   ><br />
                 </CCol>
+             
 
+            
                 <CCol :md="12">
-                  <CFormLabel for="state">اختيار الحالة</CFormLabel>
-                  <CFormSelect v-model="statusId" id="state">
-                    <option value="1">قبول</option>
-                    <option value="2">رفض</option>
+                  <CFormLabel for="state">اختيار قسم الكتاب</CFormLabel>
+                  <CFormSelect v-model="this.bookId" id="state">
+                    <option :value="item.id" v-for="item in categories" :key="item">{{item.name_en}}</option>
+                   
                   </CFormSelect>
                 </CCol>
+               
 
-                <CCol class="mt-4" :md="12">
-                  <CFormLabel for="from_page"> ملفات الملخصات </CFormLabel>
-                  <a
-                    role="button"
-                    class="btn btn-outline-primary m-2"
-                    v-for="(item, index) in summaryFileList"
-                    :key="item"
-                    :href="item"
-                    target="_blank"
-                  >
-                    # الملف {{ index }}</a
-                  >
-                  <CFormLabel
-                    for="summaryFiles"
-                    style="
-                      border: 1px solid #3c6264;
-                      background: #3c6264;
-                      margin: auto;
-                      border-radius: 5px;
-                      width: 100%;
-                      height: 40px;
-                      color: #ececec;
-                    "
-                  >
-                    <span
-                      class=" "
-                      style="position: relative; top: 5px; right: 32%"
+              
+                <hr />
+                <h5 class="fw-bold">ملفات الملخصات </h5>
+                <CRow>
+                  <CCol class="mt-4 text-center" :lg="4">
+                    <CFormLabel for="from_page">  صورة الغلاف </CFormLabel>
+                    <br>
+                    <CImage
+                  rounded
+                  thumbnail
+                  :src="coverImage"
+                  
+               style="width: 100%; height: 200px"
+                />
+             
+                    <CFormLabel
+                 
+                      style="
+                        border: 1px solid #3c6264;
+                        background: #3c6264;
+                        margin: auto;
+                        border-radius: 5px;
+                        width: 100%;
+                        height: 40px;
+                        color: #ececec;
+                        text-align: center;
+                        margin-top:10px;
+                        padding-top:5px;
+                      "
                     >
-                      {{ 'انقر هنا لتحميل ملفات الملخصات' }}
-                      <CIcon
-                        size="lg"
-                        icon="cil-cloud-upload"
-                        class="mx-2"
-                        style="vertical-align: middle"
-                      />
-                    </span>
-                    <CFormInput
-                      type="file"
-                      size="lg"
-                      id="summaryFiles"
-                      @change="onMainImageUpload"
-                      style="visibility: hidden"
-                    />
-                    <p class="uploaded-files text-primary">
-                      <span v-for="file in summaryFilesName" :key="file">
-                        {{ file }}
-                      </span>
-                    </p>
-                  </CFormLabel>
-
-                  <CFormFeedback
-                    :class="{ haveError: summaryFilesError }"
-                    v-if="summaryFilesError"
-                    >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
-                  ><br />
-                </CCol>
-
-                <CCol :md="12" class="cdk-editor mb-5">
-                  <CFormLabel for="from_page"> تنسيق الملخصات </CFormLabel>
-                  <QuillEditor
-                    class="mb-5"
-                    v-model:content="copiedText"
-                    theme="snow"
-                    contentType="html"
-                    id="editor"
-                    :toolbar="[
-                      'bold',
-                      'italic',
-                      'underline',
-                      { list: 'ordered' },
-                      { list: 'bullet' },
-                      { direction: 'rtl' },
-                      { header: [1, 2, 3, 4, 5, 6, false] },
-                      { color: [] },
-                      { background: [] },
-                      { font: [] },
-                      { align: [] },
-                    ]"
-                  />
-                  <CFormFeedback
-                    :class="{ haveError: copiedTextError }"
-                    v-if="copiedTextError"
-                    >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
-                  ><br />
-                </CCol>
-
-                <CPagination class="cdk-paginator mt-5">
-                  <div class="d-flex">
-                    <div class="mx-1 my-2" v-if="cdkcurrentPage == 1">
-                      <CPaginationItem disabled>السابقة</CPaginationItem>
-                    </div>
-                    <div class="mx-1 my-2" v-else>
-                      <CPaginationItem
-                        class="paginated-style"
-                        @click="handleCdkEditPagination(cdkcurrentPage--)"
-                        >السابقة
-                      </CPaginationItem>
-                    </div>
-
-                    <div class="mx-1 my-2" v-if="cdkcurrentPage == cdklastPage">
-                      <CPaginationItem disabled>التالية </CPaginationItem>
-                    </div>
-                    <div class="mx-1 my-2" v-else>
-                      <CPaginationItem
-                        class="paginated-style"
-                        @click="handleCdkEditPagination(cdkcurrentPage++)"
-                        >التالية</CPaginationItem
+                      <span
+                        class=" "
+                        style="font-size:11px"
                       >
-                    </div>
-                  </div>
-                  <div class="my-2 mx-4 pt-2">
-                    <span v-if="editSpinner">
-                      جاري التحميل
-                      <CSpinner class="spinner" />
-                    </span>
+                        {{ 'انقر هنا لتحميل  صورة الغلاف' }}
+                        <CIcon
+                          size="lg"
+                          icon="cil-cloud-upload"
+                          class="mx-2"
+                          style="vertical-align: middle"
+                        />
+                      </span>
+                      <CFormInput
+                        type="file"
+                        size="lg"
+                       accept="image/*"
+                        @change="onMainImageUpload"
+                      hidden
+                      />
+                     
+                    </CFormLabel>
+  
+                    <CFormFeedback
+                      :class="{ haveError: summaryFilesError }"
+                      v-if="summaryFilesError"
+                      >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
+                    ><br />
+                  </CCol>
+                  <CCol class="mt-4 text-center" :lg="4">
+                    <CFormLabel for="from_page"> ملف نصى </CFormLabel>
+                    <p class="uploaded-files text-primary">
+                     
+                      {{content_url}}
+                   
+                  </p>
+                  <CFormLabel for="from_page"> عدد الصفحات </CFormLabel>
+                  <br>
+                  <input
+                      
+                  type="text"
+                  class="p-2"
+                  :class="{
+                    onError: FromPageError,
+                    'form-control': !FromPageError,
+                  }"
+                  v-model="this.page_count"
+                />
+                <br>
+                    <CFormLabel
+        
+                      style="
+                        border: 1px solid #3c6264;
+                        background: #3c6264;
+                        margin: auto;
+                        border-radius: 5px;
+                        width: 100%;
+                        height: 40px;
+                        color: #ececec;
+                        text-align: center;
+                        padding-top:5px;
+                      "
+                    >
+               
+                      <span
+                        class=" "
+                        style="font-size:11px"
+                      >
+                        {{ 'انقر هنا لتحميل الملف النصى ' }}
+                        <CIcon
+                          size="lg"
+                          icon="cil-cloud-upload"
+                          class="mx-2"
+                          style="vertical-align: middle"
+                        />
+                      </span>
+                   
+                      <CFormInput
+                        type="file"
+                        size="lg"
+                        
+                        @change="onMainPdfUpload"
+                        hidden
+                      />
+                  
+                    </CFormLabel>
+  
+                    <CFormFeedback
+                      :class="{ haveError: summaryFilesError }"
+                      v-if="summaryFilesError"
+                      >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
+                    ><br />
+                  </CCol>
+                  <CCol class="mt-4 text-center" :lg="4">
+                    <CFormLabel for="from_page">  ملف صوتى </CFormLabel>
+                 <br>
+                 <p class="uploaded-files text-primary">
+                {{audio_url}}
+                </p>
+                <CFormLabel for="from_page">  حجم الملف </CFormLabel>
+                <br>
+                <input
+                    
+                type="text"
+                class="p-2"
+                :class="{
+                  onError: FromPageError,
+                  'form-control': !FromPageError,
+                }"
+                v-model="this.audio_duration"
+              />
+              <br>
+                    <CFormLabel
+                     
+                      style="
+                        border: 1px solid #3c6264;
+                        background: #3c6264;
+                        margin: auto;
+                        border-radius: 5px;
+                        width: 100%;
+                        height: 40px;
+                        color: #ececec;
+                        text-align: center;
+                        padding-top:5px;
+                        margin-top:10px
+                      "
+                    >
+                      <span
+                        class=" "
+                        style="font-size:11px"
+                      >
+                        {{ 'انقر هنا لتحميل  الملف الصوتى' }}
+                        <CIcon
+                          size="lg"
+                          icon="cil-cloud-upload"
+                          class="mx-2"
+                          style="vertical-align: middle"
+                        />
+                      </span>
+                      <CFormInput
+                        type="file"
+                        size="lg"
+                        accept="audio/*"
+                        
+                        @change="onMainAudioUpload"
+                       hidden
+                      />
+                   
+                    </CFormLabel>
+  
+                    <CFormFeedback
+                      :class="{ haveError: summaryFilesError }"
+                      v-if="summaryFilesError"
+                      >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
+                    ><br />
+                  </CCol>
+                </CRow>
+              
 
-                    <span v-else="!editSpinner">
-                      رقم الصفحة {{ cdkcurrentPage }}
-                    </span>
-                  </div>
-                  <CButton
-                    class="btn btn-outline-primary py-2 px-3"
-                    @click="() => handleCdkEditPagination('save')"
-                  >
-                    حفظ الصفحة</CButton
-                  >
-                </CPagination>
+               
+
+         
 
                 <br /><br />
               </CForm>
@@ -451,194 +454,6 @@
             <CButton color="primary" @click="updateSummary">تعديل</CButton>
           </CModalFooter>
         </CModal>
-
-        <CModal
-          size="lg"
-          :visible="visibleAddModel"
-          @close="
-            () => {
-              visibleAddModel = false
-            }
-          "
-        >
-          <CModalHeader>
-            <CModalTitle> تنسيق الملخص </CModalTitle>
-          </CModalHeader>
-
-          <CButton disabled v-show="isLoading">
-            <CSpinner
-              component="span"
-              size="sm"
-              variant="grow"
-              aria-hidden="true"
-            />
-            جاري التحميل ...
-          </CButton>
-
-          <CModalBody>
-            <CCardBody>
-              <CForm class="row g-3">
-                <h5 class="fw-bold">عرض بيانات الكتاب</h5>
-
-                <CCol :md="12">
-                  <CTableDataCell>
-                    <CImage
-                      rounded
-                      thumbnail
-                      :src="this.coverImage"
-                      width="50"
-                      height="50"
-                    />
-                  </CTableDataCell>
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span> اسم الكتاب</span></strong> :
-                  <span>{{ this.bookName }}</span>
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span>اسم المؤلف </span></strong> :
-                  <span>{{ this.author }}</span>
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span>من الصفحة</span></strong> :
-                  <span>{{ this.fromPage }}</span>
-                </CCol>
-
-                <CCol :md="12">
-                  <strong><span>إلي الصفحة </span></strong> :
-                  <span>{{ this.toPage }}</span>
-                </CCol>
-
-                <CCol :md="12" class="my-5">
-                  <h5 class="fw-bold mb-4">تنسيق ملخص الكتاب</h5>
-
-                  <QuillEditor
-                    v-model:content="copiedTextManage"
-                    theme="snow"
-                    contentType="html"
-                    id="editor"
-                    :toolbar="[
-                      'bold',
-                      'italic',
-                      'underline',
-                      { list: 'ordered' },
-                      { list: 'bullet' },
-                      { direction: 'rtl' },
-                      { header: [1, 2, 3, 4, 5, 6, false] },
-                      { color: [] },
-                      { background: [] },
-                      { font: [] },
-                      { align: [] },
-                    ]"
-                  />
-                  <CFormFeedback
-                    class="my-2"
-                    :class="{ haveError: copiedTextManageError }"
-                    v-if="copiedTextManageError"
-                    >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
-                  >
-                  <br />
-                </CCol>
-
-                <CPagination class="pt-5 cdk-paginator">
-                  <div class="d-flex my-2">
-                    <div v-if="cdkcurrentManagePage == 0" class="mx-1">
-                      <CPaginationItem disabled>
-                        الصفحة السابقة</CPaginationItem
-                      >
-                    </div>
-                    <div v-else class="mx-1">
-                      <CPaginationItem
-                        class="paginated-style"
-                        @click="handleCdkAddPagination('sub')"
-                      >
-                        الصفحة السابقة</CPaginationItem
-                      >
-                    </div>
-                    <div
-                      v-if="cdkcurrentManagePage == cdklastManagePage"
-                      class="mx-1"
-                    >
-                      <CPaginationItem disabled> صفحة جديدة</CPaginationItem>
-                    </div>
-                    <div v-else class="mx-1">
-                      <CPaginationItem
-                        class="paginated-style"
-                        @click="handleCdkAddPagination('add')"
-                      >
-                        صفحة جديدة
-                      </CPaginationItem>
-                    </div>
-                  </div>
-                  <!-- <div class="my-2 py-2"> رقم الصفحة {{cdkcurrentManagePage}}</div> -->
-                  <div class="my-2 mx-4 pt-2">
-                    <span v-if="addSpinner">
-                      جاري التحميل
-                      <CSpinner class="spinner" />
-                    </span>
-
-                    <span v-else="!addSpinner">
-                      رقم الصفحة {{ cdkcurrentManagePage }}
-                    </span>
-                  </div>
-
-                  <CButton
-                    color="primary"
-                    variant="outline"
-                    class="py-2 px-3"
-                    @click="() => handleCdkAddPagination('save')"
-                  >
-                    حفظ الصفحة</CButton
-                  >
-                </CPagination>
-              </CForm>
-            </CCardBody>
-          </CModalBody>
-
-          <CModalFooter>
-            <div class="modal-footer">
-              <CButton @click="addFormattedSummary" class="px-5" color="primary"
-                >إضافة</CButton
-              >
-            </div>
-          </CModalFooter>
-        </CModal>
-
-        <CPagination class="cdk-paginator">
-          <div class="d-flex my-2">
-            <div class="mx-1 my-2" v-if="currentPage == 1">
-              <CPaginationItem disabled>السابقة</CPaginationItem>
-            </div>
-            <div class="mx-1 my-2" v-else>
-              <CPaginationItem
-                class="paginated-style"
-                @click="handleListPagePagination(currentPage--)"
-                >السابقة</CPaginationItem
-              >
-            </div>
-
-            <div class="mx-1 my-2" v-if="currentPage == lastPage">
-              <CPaginationItem disabled>التالية</CPaginationItem>
-            </div>
-            <div class="mx-1 my-2" v-else>
-              <CPaginationItem
-                class="paginated-style"
-                @click="handleListPagePagination(currentPage++)"
-                >التالية</CPaginationItem
-              >
-            </div>
-          </div>
-          <div class="my-2 mx-4 pt-2">
-            <span v-if="listSpinner">
-              جاري التحميل
-              <CSpinner class="spinner" />
-            </span>
-            <span v-else="!listSpinner"> رقم الصفحة {{ currentPage }} </span>
-          </div>
-        </CPagination>
       </CCard>
     </CCol>
   </CRow>
@@ -648,6 +463,7 @@
 import { CButton } from '@coreui/vue'
 import axios from 'axios'
 import env from '../../env'
+import { setTransitionHooks } from 'vue'
 
 const baseUrl = env.baseUrl
 
@@ -662,6 +478,16 @@ export default {
   name: 'Summaries',
   data() {
     return {
+      ch_cover:false,
+      ch_audio:false,
+      ch_file:false,
+      coverName:'',
+      audio_url:'',
+      audio_name:'',
+      audio_duration:'',
+      page_count:'',
+      content_url:'',
+      file_name:'',
       summaryFiles: [],
       summaryFileList: [],
       summaryFilesName: [],
@@ -684,6 +510,7 @@ export default {
       visibleEditModel: false,
       visibleAddModel: false,
       summaries: [],
+      categories:[],
       bookName: '',
       bookId: '',
       author: '',
@@ -719,180 +546,77 @@ export default {
     }
   },
   methods: {
-    toggleWeb(book) {
-      this.isLoading = true
-      this.listSpinner = true
-      axios
-      let requestBody = new FormData()
+  
 
-      requestBody.append('book_id', book.id)
-      axios
-        .post(`${baseUrl}/admin/landing/book/toggle`, requestBody, config)
-        .then((response) => {
-          this.listSpinner = false
-          this.isLoading = false
-          book.is_shown_in_landing = !book.is_shown_in_landing
-          this.$swal({
-            title: 'نجاح',
-            text: response.data.message,
-            icon: 'success',
-          })
-        })
-        .catch((error) => {
-          this.isLoading = false
-        })
-    },
-
-    handleListPagePagination(currentPage) {
-      sessionStorage.setItem('summaryCurrentPage', this.currentPage)
-      this.allBookSummaries(this.currentPage)
-    },
+ 
 
     invokeEditModal(
       id,
-      bookId,
+     title,
       author,
-      fromPage,
-      toPage,
-      bookCoverPath,
-      statusId,
-      userName,
-      userEmail,
-      userPhone,
-      summaryFileList,
+      bookId,
+      coverImage,
+      audio_url,
+      audio_duration,
+      content_url,
+      page_count,
+      audio,
+content,
+cover
     ) {
-      ;(this.summaryFiles = []),
-        (this.summaryFileList = summaryFileList),
-        (this.summaryFilesName = []),
+      axios.get(`${baseUrl}/brief-category/all`, config).then((response) => {
+            this.isLoading = false
+            this.categories = response.data.data   
+            }).catch((error)=> {
+                this.isLoading = false
+                this.$swal({
+                    title: 'عذرا, هناك خطأ',
+                    text: error.errors[0],
+                    icon: 'error',
+                    confirmButtonColor:'#eb2b2b'
+               })
+            }); 
+      ;
         (this.currentSummaryId = id)
-      this.bookId = bookId
+      this.bookName = title
       this.author = author
-      this.fromPage = fromPage
-      this.toPage = toPage
-      this.coverImage = bookCoverPath
-      this.statusId = statusId
-      this.userName = userName
-      this.userEmail = userEmail
-      this.userPhone = userPhone
-      this.visibleEditModel = true
-      axios
-        .get(
-          `${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`,
-          config,
-        )
-        .then((response) => {
-          if (response.data.data.data.length != 0) {
-            this.cdkType = 'edit'
-            document.getElementsByClassName('ql-editor')[0].innerHTML =
-              response?.data?.data?.data[0]?.page_content || ''
-            document
-              .getElementsByClassName('ql-editor')[0]
-              .setAttribute('id', response?.data?.data?.data[0]?.id)
-          } else {
-            this.cdkType = 'add'
-            document.getElementsByClassName('cdk-paginator')[0].style.display =
-              'none'
-            document.getElementsByClassName('cdk-editor')[0].style.display =
-              'none'
-          }
-        })
-        .catch((error) => {
-          // console.log(error)
-        })
+      this.bookId= bookId
+ this.audio_url= audio_url
+      this.coverImage = coverImage
+    this.audio_duration=audio_duration
+     this.content_url= content_url
+     this.page_count= page_count
+     this.audio_name=audio
+     this.file_name=content
+     this.coverName=cover
+     this.visibleEditModel=true
+     
     },
 
-    handleCdkEditPagination(Editpage) {
-      this.editSpinner = true
-      axios
-        .get(
-          `${baseUrl}/admin/book-summary/page/show?book_summary_id=${this.currentSummaryId}&page=${this.cdkcurrentPage}`,
-          config,
-        )
-        .then((response) => {
-          this.editSpinner = false
-          this.cdklastPage = response?.data?.data.last_page
-          if (Editpage == 'save') {
-            this.savedPages.push(
-              document.getElementsByClassName('ql-editor')[0].innerHTML,
-            )
-            this.savedPagesIds.push(
-              document.getElementsByClassName('ql-editor')[0].id,
-            )
-            let requestBody = new FormData()
-            requestBody.append('book_summary_id', this.currentSummaryId)
-            for (let i = 0; i < this.savedPages.length; i++) {
-              requestBody.append(
-                'formatted_pages[' + i + ']',
-                this.savedPages[i],
-              )
-            }
-            for (let i = 0; i < this.savedPagesIds.length; i++) {
-              requestBody.append('pages_ids[' + i + ']', this.savedPagesIds[i])
-            }
-            axios
-              .post(`${baseUrl}/admin/book-summary/update`, requestBody, config)
-              .then((response) => {
-                if (response.data.status == false) {
-                  // this.$swal({
-                  //     title: 'عذرا, هناك خطأ',
-                  //     text: response.data.errors[0],
-                  //     icon: 'error'
-                  // })
-                } else {
-                  // this.$swal({
-                  //     title: 'تم حفظ الصفحة بنجاح',
-                  //     icon: 'success',
-                  // })
-                }
-              })
-              .catch((error) => {
-                // this.$swal({
-                //     title: 'عذرا, هناك خطأ',
-                //     text: response.data.errors[0],
-                //     icon: 'error'
-                // })
-              })
-          } else {
-            document.getElementsByClassName('ql-editor')[0].innerHTML =
-              response?.data?.data?.data[0]?.page_content
-            document.getElementsByClassName('ql-editor')[0].id =
-              response?.data?.data?.data[0]?.id
-          }
-        })
-        .catch((error) => {
-          this.$swal({
-            title: 'عذرا, هناك خطأ',
-            text: error.errors[0],
-            icon: 'error',
-          })
-        })
-    },
-
+ 
     updateSummary() {
       let requestBody = new FormData()
-      requestBody.append('book_summary_id', this.currentSummaryId)
-      requestBody.append('book_id', this.bookId)
-      requestBody.append('from_page', this.fromPage)
-      requestBody.append('to_page', this.toPage)
-      requestBody.append('status_id', this.statusId)
-      if (this.summaryFiles.length != 0) {
-        for (let i = 0; i < this.summaryFiles.length; i++) {
-          requestBody.append('summary_files[' + i + ']', this.summaryFiles[i])
-        }
+      requestBody.append('summary_id', this.currentSummaryId)
+      requestBody.append('category_id', this.bookId)
+      requestBody.append('writer_name', this.author)
+      if(this.ch_cover){
+        requestBody.append('cover', this.coverName)
       }
-      if (this.savedPages.length != 0) {
-        for (let i = 0; i < this.savedPages.length; i++) {
-          requestBody.append('formatted_pages[' + i + ']', this.savedPages[i])
-        }
+      if(this.ch_audio){
+        requestBody.append('audio', this.audio_name)
       }
-      if (this.savedPagesIds.length != 0) {
-        for (let i = 0; i < this.savedPagesIds.length; i++) {
-          requestBody.append('pages_ids[' + i + ']', this.savedPagesIds[i])
-        }
+      if(this.ch_file){
+        requestBody.append('content', this.file_name)
       }
+      
+      requestBody.append('page_count', this.page_count)
+     
+      requestBody.append('duration', this.audio_duration)
+        requestBody.append('title', this.bookName)
+   
       this.isLoading = true
       axios
-        .post(`${baseUrl}/admin/book-summary/update`, requestBody, config)
+        .post(`${baseUrl}/admin/brief/edit`, requestBody, config)
         .then((response) => {
           this.isLoading = false
           if (response.data.status == false) {
@@ -906,9 +630,27 @@ export default {
               title: 'تم التعديل بنجاح',
               icon: 'success',
             })
-            this.savedPages = []
-            this.savedPagesIds = []
-            this.allBookSummaries(sessionStorage.getItem('summaryCurrentPage'))
+          this.ch_audio=false
+          this.ch_file=false
+          this.ch_cover=false
+          this.isLoading = true
+    sessionStorage.setItem('summaryCurrentPage', this.currentPage)
+    axios
+      .get(
+        `${baseUrl}/admin/brief/all?page=` +
+          sessionStorage.getItem('summaryCurrentPage'),
+        config,
+      )
+      .then((response) => {
+        this.isLoading = false
+        this.summaries = response.data.data.data
+        this.currentPage = response.data.data.current_page
+        this.lastPage = response.data.data.last_page
+        console.log('summaries', this.summaries)
+      })
+      .catch((error) => {
+        this.isLoading = false
+      })
           }
         })
         .catch((error) => {
@@ -921,116 +663,75 @@ export default {
         })
     },
 
-    invokeAddModal(id, book_name, author, fromPage, toPage, coverImage) {
-      this.bookName = book_name
-      this.author = author
-      this.fromPage = fromPage
-      this.toPage = toPage
-      this.coverImage = coverImage
-      this.currentAddSummaryId = id
-      this.cdkcurrentManagePage = 1
-      this.visibleAddModel = true
-    },
+  
 
-    handleCdkAddPagination(page) {
-      if (page == 'save') {
-        if (this.copiedTextManage != '<p><br></p>') {
-          if (
-            this.pagesContent.length != 0 &&
-            this.pagesContent.length - 1 == this.cdkcurrentManagePage - 1
-          )
-            console.log(
-              'handleCdkAddPagination',
-              this.pagesContent[this.cdkcurrentManagePage - 1],
-            )
-          this.pagesContent[this.cdkcurrentManagePage - 1] =
-            this.copiedTextManage
-        }
-        //   document.getElementsByClassName('ql-editor')[0].innerHTML  = ""
-      } else if (page == 'sub') {
-        if (this.cdkcurrentManagePage - 1 > 0) {
-          this.cdkcurrentManagePage -= 1
-          console.log('prev', this.cdkcurrentManagePage)
-          if (this.pagesContent[this.cdkcurrentManagePage - 1]) {
-            document.getElementsByClassName('ql-editor')[0].innerHTML =
-              this.pagesContent[this.cdkcurrentManagePage - 1]
-          } else {
-            document.getElementsByClassName('ql-editor')[0].innerHTML = ''
-          }
-        }
-      } else if (page == 'add') {
-        if (this.cdkcurrentManagePage != this.cdklastManagePage) {
-          this.cdkcurrentManagePage += 1
-          if (this.pagesContent[this.cdkcurrentManagePage - 1]) {
-            document.getElementsByClassName('ql-editor')[0].innerHTML =
-              this.pagesContent[this.cdkcurrentManagePage - 1]
-          } else {
-            document.getElementsByClassName('ql-editor')[0].innerHTML = ''
-          }
-          console.log('next', this.cdkcurrentManagePage.length)
-        }
-      }
-      console.log('this.pagesContent', this.pagesContent)
-      var filteredPages = this.pagesContent.filter(function (el) {
-        if (el) {
-          return el != null
-        }
-      })
-      console.log('filteredPages', filteredPages)
-    },
+  
 
-    addFormattedSummary() {
-      let requestBody = new FormData()
-      requestBody.append('book_summary_id', this.currentAddSummaryId)
-      if (this.pagesContent.length != 0) {
-        for (let i = 0; i < this.pagesContent.length; i++) {
-          requestBody.append('formatted_pages[' + i + ']', this.pagesContent[i])
-        }
-      }
-      axios
-        .post(`${baseUrl}/admin/book-summary/page/add`, requestBody, config)
-        .then((response) => {
-          if (response.data.status == false) {
-            this.isLoading = false
-            console.log('error')
-            this.$swal({
-              title: 'عذرا, هناك خطأ',
-              text: response.data.errors[0],
-              icon: 'error',
-            })
-          } else {
-            this.isLoading = false
-            this.$swal({
-              title: 'تم إضافة التنسيق بنجاح',
-              icon: 'success',
-            })
-            this.pagesContent = []
-            document.getElementsByClassName('ql-editor')[0].innerHTML = ' '
-            this.allBookSummaries(this.currentPage)
-          }
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    },
-
-    downloadSummaries(files) {
-      if (files.length > 0) {
-        for (let i = 0; i < files.length; i++) {
-          window.open(files[i], 'w' + i)
-        }
-      }
+ 
+    downloadSummaries(file) {
+      
+       
+          window.open(file,'_blank')
+        
+      
     },
 
     onMainImageUpload(event) {
-      if (this.summaryFiles.length == 0) {
-        this.summaryFilesError == true
-      } else {
-        this.summaryFilesError == false
-      }
       console.log('files', event.target.files[0])
-      this.summaryFiles.push(event.target.files[0])
-      this.summaryFilesName.push(event.target.files[0]?.name)
+      let requestBody = new FormData()
+      requestBody.append('files[0]', event.target.files[0])
+      this.isLoading = true
+      axios
+        .post(`${baseUrl}/upload/files`, requestBody)
+        .then((response) => {
+          this.ch_cover=true
+          this.isLoading = false
+this.coverName=response.data.data[0]
+          this.coverImage= 'https://backend.fateen.info/public/'+response.data.data[0]
+          console.log('files', this.coverImage)
+        })
+        .catch((error) => {
+          // console.log(error)
+        })
+
+    },
+    onMainAudioUpload(event) {
+      console.log('files', event.target.files[0])
+      let requestBody = new FormData()
+      requestBody.append('files[0]', event.target.files[0])
+      this.isLoading = true
+      axios
+        .post(`${baseUrl}/upload/files`, requestBody)
+        .then((response) => {
+          this.isLoading = false
+          this.ch_audio=true
+this.audio_name=response.data.data[0]
+          this.audio_url= 'https://backend.fateen.info/public/'+response.data.data[0]
+          console.log('files', this.coverImage)
+        })
+        .catch((error) => {
+          // console.log(error)
+        })
+
+    },
+    onMainPdfUpload(event) {
+      console.log('files', event.target.files[0])
+      let requestBody = new FormData()
+      requestBody.append('files[0]', event.target.files[0])
+      this.isLoading = true
+      axios
+        .post(`${baseUrl}/upload/files`, requestBody)
+        .then((response) => {
+          this.isLoading = false
+this.file_name=response.data.data[0]
+this.ch_file=true
+          this.content_url= 'https://backend.fateen.info/public/'+response.data.data[0]
+          console.log('files', this.coverImage)
+        })
+        .catch((error) => {
+          // console.log(error)
+        })
+
     },
   },
 
@@ -1039,7 +740,7 @@ export default {
     sessionStorage.setItem('summaryCurrentPage', this.currentPage)
     axios
       .get(
-        `${baseUrl}/admin/summary/all?page=` +
+        `${baseUrl}/admin/brief/all?page=` +
           sessionStorage.getItem('summaryCurrentPage'),
         config,
       )
@@ -1059,6 +760,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+button{
+margin-right: 5px;
+}
 .paginated-style {
   cursor: pointer;
 }
@@ -1080,7 +784,7 @@ th:nth-of-type(2) {
 
 th:nth-of-type(8),
 th:nth-of-type(10) {
-  min-width: 150px !important;
+  min-width: 190px !important;
 }
 
 .cdk-paginator ul.pagination button {
