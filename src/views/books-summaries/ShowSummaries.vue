@@ -133,7 +133,7 @@ download_count
                    <CButton
                   color="danger"
                   variant="outline"
-                  @click="deleteCity(city.id)"
+                  @click="deleteCity(summary.id)"
                 >
                   <CIcon icon="cil-basket" size="lg" />
                 </CButton>
@@ -283,18 +283,27 @@ download_count
                         padding-top:5px;
                       "
                     >
-                      <span
-                        class=" "
-                        style="font-size:11px"
-                      >
-                        {{ 'انقر هنا لتحميل  صورة الغلاف' }}
-                        <CIcon
-                          size="lg"
-                          icon="cil-cloud-upload"
-                          class="mx-2"
-                          style="vertical-align: middle"
-                        />
-                      </span>
+                    <span
+                    v-if="!coverloading"
+                      class=" "
+                      style="font-size:11px"
+                    >
+                      {{ 'انقر هنا لتحميل  صورة الغلاف' }}
+                      <CIcon
+                        size="lg"
+                        icon="cil-cloud-upload"
+                        class="mx-2"
+                        style="vertical-align: middle"
+                      />
+                    </span>
+                    <span
+                    v-if="coverloading"
+                      class=" "
+                      style="font-size:11px"
+                    >
+                     يرجى الانتظار حتى يتم التحميل
+                   
+                    </span>
                       <CFormInput
                         type="file"
                         size="lg"
@@ -346,18 +355,27 @@ download_count
                       "
                     >
                
-                      <span
-                        class=" "
-                        style="font-size:11px"
-                      >
-                        {{ 'انقر هنا لتحميل الملف النصى ' }}
-                        <CIcon
-                          size="lg"
-                          icon="cil-cloud-upload"
-                          class="mx-2"
-                          style="vertical-align: middle"
-                        />
-                      </span>
+                    <span
+                    v-if="!fileloading"
+                      class=" "
+                      style="font-size:11px"
+                    >
+                      {{ 'انقر هنا لتحميل   ملف نصى ' }}
+                      <CIcon
+                        size="lg"
+                        icon="cil-cloud-upload"
+                        class="mx-2"
+                        style="vertical-align: middle"
+                      />
+                    </span>
+                    <span
+                    v-if="fileloading"
+                      class=" "
+                      style="font-size:11px"
+                    >
+                     يرجى الانتظار حتى يتم التحميل
+                   
+                    </span>
                    
                       <CFormInput
                         type="file"
@@ -409,18 +427,27 @@ download_count
                         margin-top:10px
                       "
                     >
-                      <span
-                        class=" "
-                        style="font-size:11px"
-                      >
-                        {{ 'انقر هنا لتحميل  الملف الصوتى' }}
-                        <CIcon
-                          size="lg"
-                          icon="cil-cloud-upload"
-                          class="mx-2"
-                          style="vertical-align: middle"
-                        />
-                      </span>
+                    <span
+                    v-if="!audioloading"
+                      class=" "
+                      style="font-size:11px"
+                    >
+                      {{ 'انقر هنا لتحميل   ملف صوتى  ' }}
+                      <CIcon
+                        size="lg"
+                        icon="cil-cloud-upload"
+                        class="mx-2"
+                        style="vertical-align: middle"
+                      />
+                    </span>
+                    <span
+                    v-if="audioloading"
+                      class=" "
+                      style="font-size:11px"
+                    >
+                     يرجى الانتظار حتى يتم التحميل
+                   
+                    </span>
                       <CFormInput
                         type="file"
                         size="lg"
@@ -454,6 +481,43 @@ download_count
             <CButton color="primary" @click="updateSummary">تعديل</CButton>
           </CModalFooter>
         </CModal>
+        <CPagination class="cdk-paginator">
+          <div class="d-flex my-2">
+            <div class="mx-1 my-2" v-if="currentPage == 1">
+              <CPaginationItem disabled>السابقة</CPaginationItem>
+            </div>
+
+            <div class="mx-1 my-2" v-else>
+              <CPaginationItem
+                class="paginated-style"
+                @click="handleListPagePagination(currentPage--)"
+                >السابقة</CPaginationItem
+              >
+            </div>
+
+            <div class="mx-1 my-2" v-if="currentPage == lastPage">
+              <CPaginationItem disabled>التالية</CPaginationItem>
+            </div>
+            <div class="mx-1 my-2" v-else>
+              <CPaginationItem
+                class="paginated-style"
+                @click="handleListPagePagination(currentPage++)"
+                >التالية</CPaginationItem
+              >
+            </div>
+          </div>
+
+          <!-- <div class="my-2 mx-4 pt-2"> رقم الصفحة {{currentPage}}</div> -->
+
+          <div class="my-2 mx-4 pt-2">
+            <span v-if="listSpinner">
+              جاري التحميل
+              <CSpinner class="spinner" />
+            </span>
+
+            <span v-else="!listSpinner"> رقم الصفحة {{ currentPage }} </span>
+          </div>
+        </CPagination>
       </CCard>
     </CCol>
   </CRow>
@@ -525,6 +589,9 @@ export default {
       FromPageError: '',
       ToPageError: '',
       isLoading: false,
+      fileloading:false,
+      audioloading:false,
+      coverloading:false,
       currentPage: 1,
       lastPage: null,
       cdkcurrentPage: 1,
@@ -548,8 +615,78 @@ export default {
   methods: {
   
 
- 
+    handleListPagePagination(currentPage) {
+      console.log(currentPage);
+      sessionStorage.setItem('booksCurrentPage',this.currentPage)
+    axios
+      .get(
+        `${baseUrl}/admin/brief/all?page=` +
+          sessionStorage.getItem('booksCurrentPage'),
+        config,
+      )
+      .then((response) => {
+        this.isLoading = false
+        this.summaries = response.data.data.data
+        this.currentPage = response.data.data.current_page
+        this.lastPage = response.data.data.last_page
+        console.log('summaries', this.summaries)
+      })
+      .catch((error) => {
+        this.isLoading = false
+      })
+    
+    },
+    deleteCity(id) {
+      console.log('id', id)
+      this.$swal({
+        title: 'الحذف',
+        text: 'هل تريد حذف الملخص ؟',
+        type: 'warning',
+        showCancelButton: true,
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'حذف',
+        cancelButtonText: 'إلغاء',
+      }).then((isConfirm) => {
+        if (isConfirm.value == true) {
+          const params = new URLSearchParams()
+          params.append('summary_id', id)
 
+          axios
+            .delete(`${baseUrl}/admin/brief/remove`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              data: params,
+            })
+            .then((response) => {
+              if (response.data.status == true) {
+                this.$swal({
+                  title: 'تم الحذف بنجاح',
+                  icon: 'success',
+                })
+                let index = this.summaries.findIndex(item=>{
+            return item.id==id});
+          console.log(index);
+    this.summaries.splice(index,1);
+          
+              } else {
+                this.$swal({
+                  title: 'عذرا, هناك خطأ',
+                  text: response.data.errors[0],
+                  icon: 'error',
+                })
+              }
+            })
+            .catch((error) => {
+              this.$swal({
+                title: 'عذرا, هناك خطأ',
+                text: error.errors[0],
+                icon: 'error',
+              })
+            })
+        }
+      })
+    },
     invokeEditModal(
       id,
      title,
@@ -611,7 +748,7 @@ cover
       
       requestBody.append('page_count', this.page_count)
      
-      requestBody.append('duration', this.audio_duration)
+      requestBody.append('audio_duration', this.audio_duration)
         requestBody.append('title', this.bookName)
    
       this.isLoading = true
@@ -634,7 +771,7 @@ cover
           this.ch_file=false
           this.ch_cover=false
           this.isLoading = true
-    sessionStorage.setItem('summaryCurrentPage', this.currentPage)
+    sessionStorage.setItem('bookCurrentPage', this.currentPage)
     axios
       .get(
         `${baseUrl}/admin/brief/all?page=` +
@@ -680,12 +817,12 @@ cover
       console.log('files', event.target.files[0])
       let requestBody = new FormData()
       requestBody.append('files[0]', event.target.files[0])
-      this.isLoading = true
+      this.coverloading = true
       axios
         .post(`${baseUrl}/upload/files`, requestBody)
         .then((response) => {
           this.ch_cover=true
-          this.isLoading = false
+          this.coverloading = false
 this.coverName=response.data.data[0]
           this.coverImage= 'https://backend.fateen.info/public/'+response.data.data[0]
           console.log('files', this.coverImage)
@@ -699,11 +836,11 @@ this.coverName=response.data.data[0]
       console.log('files', event.target.files[0])
       let requestBody = new FormData()
       requestBody.append('files[0]', event.target.files[0])
-      this.isLoading = true
+      this.audioloading = true
       axios
         .post(`${baseUrl}/upload/files`, requestBody)
         .then((response) => {
-          this.isLoading = false
+          this.audioloading = false
           this.ch_audio=true
 this.audio_name=response.data.data[0]
           this.audio_url= 'https://backend.fateen.info/public/'+response.data.data[0]
@@ -718,11 +855,11 @@ this.audio_name=response.data.data[0]
       console.log('files', event.target.files[0])
       let requestBody = new FormData()
       requestBody.append('files[0]', event.target.files[0])
-      this.isLoading = true
+      this.fileloading = true
       axios
         .post(`${baseUrl}/upload/files`, requestBody)
         .then((response) => {
-          this.isLoading = false
+          this.fileloading = false
 this.file_name=response.data.data[0]
 this.ch_file=true
           this.content_url= 'https://backend.fateen.info/public/'+response.data.data[0]
@@ -737,11 +874,11 @@ this.ch_file=true
 
   mounted() {
     this.isLoading = true
-    sessionStorage.setItem('summaryCurrentPage', this.currentPage)
+    sessionStorage.setItem('booksCurrentPage', this.currentPage)
     axios
       .get(
         `${baseUrl}/admin/brief/all?page=` +
-          sessionStorage.getItem('summaryCurrentPage'),
+          sessionStorage.getItem('booksCurrentPage'),
         config,
       )
       .then((response) => {

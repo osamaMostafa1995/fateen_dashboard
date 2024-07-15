@@ -113,11 +113,11 @@ export default [
         name: 'عرض الملخصات',
         to: '/books-summaries/all',
       },
-      // {
-      //   component: 'CNavItem',
-      //   name: 'نسخ الملخصات',
-      //   to: '/books-summaries/manage',
-      // },
+      {
+        component: 'CNavItem',
+        name: 'أضافة ملخص جديد',
+        to: '/books-summaries/add',
+      },
     ],
   },
   {

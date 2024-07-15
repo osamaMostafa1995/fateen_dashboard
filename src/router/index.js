@@ -245,11 +245,11 @@ const routes = [
             name: 'عرض الملخصات',
             component: () => import('@/views/books-summaries/ShowSummaries'),
           },
-          // {
-          //   path: 'manage',
-          //   name: 'نسخ الملخصات',
-          //   component: () => import('@/views/books-summaries/ManageSummary'),
-          // },
+           {
+            path: 'add',
+            name: 'أضافة ملخص جديد',
+            component: () => import('@/views/books-summaries/ManageSummary'),
+           },
         ],
       },
       {
