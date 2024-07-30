@@ -27,18 +27,15 @@
 
               <CTableHeaderCell scope="col">عدد الصفحات</CTableHeaderCell>
 
-              <CTableHeaderCell scope="col">  مدة الملف الصوتى</CTableHeaderCell>
+              <CTableHeaderCell scope="col"> مدة الملف الصوتى</CTableHeaderCell>
 
               <CTableHeaderCell scope="col">صورة الغلاف</CTableHeaderCell>
 
               <CTableHeaderCell scope="col">عدد التحميلات</CTableHeaderCell>
-         
 
               <CTableHeaderCell scope="col">تحميل الملفات</CTableHeaderCell>
 
               <CTableHeaderCell scope="col">إدارة الملخص</CTableHeaderCell>
-
-           
             </CTableRow>
           </CTableHead>
 
@@ -46,14 +43,17 @@
             <CTableRow v-for="summary in summaries" :key="summary">
               <CTableHeaderCell scope="row">{{ summary.id }} </CTableHeaderCell>
 
-              <CTableDataCell>{{ summary?.title || '-' }}</CTableDataCell>
+              <CTableDataCell
+                style="cursor: pointer"
+                @click="navigateToPage(summary)"
+                >{{ summary?.title || '-' }}</CTableDataCell
+              >
 
               <CTableDataCell>{{ summary?.writer_name || '-' }}</CTableDataCell>
 
               <CTableDataCell>{{ summary.page_count }}</CTableDataCell>
 
-              <CTableDataCell>{{ summary.audio_duration
- }} ث</CTableDataCell>
+              <CTableDataCell>{{ summary.audio_duration }} ث</CTableDataCell>
 
               <CTableDataCell
                 v-if="!summary?.book?.book_cover_path.includes('null')"
@@ -62,7 +62,7 @@
                   rounded
                   thumbnail
                   :src="summary?.cover_url"
-                  onerror=" this.src=defaultImage"
+                  :onerror="(this.src = defaultImage)"
                   width="50"
                   height="50"
                 />
@@ -78,12 +78,9 @@
                 />
               </CTableDataCell>
 
-            
-     <CTableDataCell>
-     {{ summary.
-download_count
- }}
-     </CTableDataCell>
+              <CTableDataCell>
+                {{ summary.download_count }}
+              </CTableDataCell>
               <CTableDataCell>
                 <CButton
                   color="primary"
@@ -91,19 +88,14 @@ download_count
                   @click="() => downloadSummaries(summary.content_url)"
                 >
                   <CIcon icon="cil-file" size="lg" />
-              
-                  
                 </CButton>
-                     <CButton
+                <CButton
                   color="primary"
                   variant="outline"
                   @click="() => downloadSummaries(summary.audio_url)"
                 >
                   <CIcon icon="cil-media-play" size="lg" />
-              
-                  
                 </CButton>
-                   
               </CTableDataCell>
 
               <CTableDataCell>
@@ -125,12 +117,13 @@ download_count
                         summary.audio,
                         summary.content,
                         summary.cover,
+                        summary.categories,
                       )
                   "
                 >
                   <CIcon icon="cil-pencil" size="lg" />
                 </CButton>
-                   <CButton
+                <CButton
                   color="danger"
                   variant="outline"
                   @click="deleteCity(summary.id)"
@@ -138,8 +131,6 @@ download_count
                   <CIcon icon="cil-basket" size="lg" />
                 </CButton>
               </CTableDataCell>
-
-            
             </CTableRow>
           </CTableBody>
         </CTable>
@@ -205,9 +196,8 @@ download_count
               <CForm class="row g-3">
                 <h5 class="fw-bold">عرض بيانات الكتاب</h5>
                 <CCol :md="12">
-                  <CFormLabel > أسم الكتاب</CFormLabel>
+                  <CFormLabel> أسم الكتاب</CFormLabel>
                   <input
-                    
                     type="text"
                     class="p-2"
                     :class="{
@@ -222,11 +212,10 @@ download_count
                     >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
                   ><br />
                 </CCol>
-               
+
                 <CCol :md="12">
-                  <CFormLabel > أسم المؤلف</CFormLabel>
+                  <CFormLabel> أسم المؤلف</CFormLabel>
                   <input
-                    
                     type="text"
                     class="p-2"
                     :class="{
@@ -241,35 +230,38 @@ download_count
                     >يجب ألا يكون الحقل المطلوب فارغاً.</CFormFeedback
                   ><br />
                 </CCol>
-             
 
-            
                 <CCol :md="12">
                   <CFormLabel for="state">اختيار قسم الكتاب</CFormLabel>
-                  <CFormSelect v-model="this.bookId" id="state">
-                    <option :value="item.id" v-for="item in categories" :key="item">{{item.name_en}}</option>
-                   
-                  </CFormSelect>
+                  <div class="row">
+                    <div class="col-md-3 mb-2" v-for="item in categories">
+                      <p
+                        @click="catsArray(item)"
+                        class="catogry_card text-center"
+                        v-bind:class="{
+                          'text-danger': this.category_ids?.includes(item.id),
+                        }"
+                      >
+                        {{ item.name_en }}
+                      </p>
+                    </div>
+                  </div>
                 </CCol>
-               
 
-              
                 <hr />
-                <h5 class="fw-bold">ملفات الملخصات </h5>
+                <h5 class="fw-bold">ملفات الملخصات</h5>
                 <CRow>
                   <CCol class="mt-4 text-center" :lg="4">
-                    <CFormLabel for="from_page">  صورة الغلاف </CFormLabel>
-                    <br>
+                    <CFormLabel for="from_page"> صورة الغلاف </CFormLabel>
+                    <br />
                     <CImage
-                  rounded
-                  thumbnail
-                  :src="coverImage"
-                  
-               style="width: 100%; height: 200px"
-                />
-             
+                      rounded
+                      thumbnail
+                      :src="coverImage"
+                      style="width: 100%; height: 200px"
+                    />
+
                     <CFormLabel
-                 
                       style="
                         border: 1px solid #3c6264;
                         background: #3c6264;
@@ -279,41 +271,39 @@ download_count
                         height: 40px;
                         color: #ececec;
                         text-align: center;
-                        margin-top:10px;
-                        padding-top:5px;
+                        margin-top: 10px;
+                        padding-top: 5px;
                       "
                     >
-                    <span
-                    v-if="!coverloading"
-                      class=" "
-                      style="font-size:11px"
-                    >
-                      {{ 'انقر هنا لتحميل  صورة الغلاف' }}
-                      <CIcon
-                        size="lg"
-                        icon="cil-cloud-upload"
-                        class="mx-2"
-                        style="vertical-align: middle"
-                      />
-                    </span>
-                    <span
-                    v-if="coverloading"
-                      class=" "
-                      style="font-size:11px"
-                    >
-                     يرجى الانتظار حتى يتم التحميل
-                   
-                    </span>
+                      <span
+                        v-if="!coverloading"
+                        class=" "
+                        style="font-size: 11px"
+                      >
+                        {{ 'انقر هنا لتحميل صورة الغلاف' }}
+                        <CIcon
+                          size="lg"
+                          icon="cil-cloud-upload"
+                          class="mx-2"
+                          style="vertical-align: middle"
+                        />
+                      </span>
+                      <span
+                        v-if="coverloading"
+                        class=" "
+                        style="font-size: 11px"
+                      >
+                        يرجى الانتظار حتى يتم التحميل
+                      </span>
                       <CFormInput
                         type="file"
                         size="lg"
-                       accept="image/*"
+                        accept="image/*"
                         @change="onMainImageUpload"
-                      hidden
+                        hidden
                       />
-                     
                     </CFormLabel>
-  
+
                     <CFormFeedback
                       :class="{ haveError: summaryFilesError }"
                       v-if="summaryFilesError"
@@ -323,25 +313,21 @@ download_count
                   <CCol class="mt-4 text-center" :lg="4">
                     <CFormLabel for="from_page"> ملف نصى </CFormLabel>
                     <p class="uploaded-files text-primary">
-                     
-                      {{content_url}}
-                   
-                  </p>
-                  <CFormLabel for="from_page"> عدد الصفحات </CFormLabel>
-                  <br>
-                  <input
-                      
-                  type="text"
-                  class="p-2"
-                  :class="{
-                    onError: FromPageError,
-                    'form-control': !FromPageError,
-                  }"
-                  v-model="this.page_count"
-                />
-                <br>
+                      {{ content_url }}
+                    </p>
+                    <CFormLabel for="from_page"> عدد الصفحات </CFormLabel>
+                    <br />
+                    <input
+                      type="text"
+                      class="p-2"
+                      :class="{
+                        onError: FromPageError,
+                        'form-control': !FromPageError,
+                      }"
+                      v-model="this.page_count"
+                    />
+                    <br />
                     <CFormLabel
-        
                       style="
                         border: 1px solid #3c6264;
                         background: #3c6264;
@@ -351,42 +337,38 @@ download_count
                         height: 40px;
                         color: #ececec;
                         text-align: center;
-                        padding-top:5px;
+                        padding-top: 5px;
                       "
                     >
-               
-                    <span
-                    v-if="!fileloading"
-                      class=" "
-                      style="font-size:11px"
-                    >
-                      {{ 'انقر هنا لتحميل   ملف نصى ' }}
-                      <CIcon
-                        size="lg"
-                        icon="cil-cloud-upload"
-                        class="mx-2"
-                        style="vertical-align: middle"
-                      />
-                    </span>
-                    <span
-                    v-if="fileloading"
-                      class=" "
-                      style="font-size:11px"
-                    >
-                     يرجى الانتظار حتى يتم التحميل
-                   
-                    </span>
-                   
+                      <span
+                        v-if="!fileloading"
+                        class=" "
+                        style="font-size: 11px"
+                      >
+                        {{ 'انقر هنا لتحميل ملف نصى ' }}
+                        <CIcon
+                          size="lg"
+                          icon="cil-cloud-upload"
+                          class="mx-2"
+                          style="vertical-align: middle"
+                        />
+                      </span>
+                      <span
+                        v-if="fileloading"
+                        class=" "
+                        style="font-size: 11px"
+                      >
+                        يرجى الانتظار حتى يتم التحميل
+                      </span>
+
                       <CFormInput
                         type="file"
                         size="lg"
-                        
                         @change="onMainPdfUpload"
                         hidden
                       />
-                  
                     </CFormLabel>
-  
+
                     <CFormFeedback
                       :class="{ haveError: summaryFilesError }"
                       v-if="summaryFilesError"
@@ -394,26 +376,24 @@ download_count
                     ><br />
                   </CCol>
                   <CCol class="mt-4 text-center" :lg="4">
-                    <CFormLabel for="from_page">  ملف صوتى </CFormLabel>
-                 <br>
-                 <p class="uploaded-files text-primary">
-                {{audio_url}}
-                </p>
-                <CFormLabel for="from_page">  حجم الملف </CFormLabel>
-                <br>
-                <input
-                    
-                type="text"
-                class="p-2"
-                :class="{
-                  onError: FromPageError,
-                  'form-control': !FromPageError,
-                }"
-                v-model="this.audio_duration"
-              />
-              <br>
+                    <CFormLabel for="from_page"> ملف صوتى </CFormLabel>
+                    <br />
+                    <p class="uploaded-files text-primary">
+                      {{ audio_url }}
+                    </p>
+                    <CFormLabel for="from_page"> حجم الملف </CFormLabel>
+                    <br />
+                    <input
+                      type="text"
+                      class="p-2"
+                      :class="{
+                        onError: FromPageError,
+                        'form-control': !FromPageError,
+                      }"
+                      v-model="this.audio_duration"
+                    />
+                    <br />
                     <CFormLabel
-                     
                       style="
                         border: 1px solid #3c6264;
                         background: #3c6264;
@@ -423,42 +403,39 @@ download_count
                         height: 40px;
                         color: #ececec;
                         text-align: center;
-                        padding-top:5px;
-                        margin-top:10px
+                        padding-top: 5px;
+                        margin-top: 10px;
                       "
                     >
-                    <span
-                    v-if="!audioloading"
-                      class=" "
-                      style="font-size:11px"
-                    >
-                      {{ 'انقر هنا لتحميل   ملف صوتى  ' }}
-                      <CIcon
-                        size="lg"
-                        icon="cil-cloud-upload"
-                        class="mx-2"
-                        style="vertical-align: middle"
-                      />
-                    </span>
-                    <span
-                    v-if="audioloading"
-                      class=" "
-                      style="font-size:11px"
-                    >
-                     يرجى الانتظار حتى يتم التحميل
-                   
-                    </span>
+                      <span
+                        v-if="!audioloading"
+                        class=" "
+                        style="font-size: 11px"
+                      >
+                        {{ 'انقر هنا لتحميل ملف صوتى ' }}
+                        <CIcon
+                          size="lg"
+                          icon="cil-cloud-upload"
+                          class="mx-2"
+                          style="vertical-align: middle"
+                        />
+                      </span>
+                      <span
+                        v-if="audioloading"
+                        class=" "
+                        style="font-size: 11px"
+                      >
+                        يرجى الانتظار حتى يتم التحميل
+                      </span>
                       <CFormInput
                         type="file"
                         size="lg"
                         accept="audio/*"
-                        
                         @change="onMainAudioUpload"
-                       hidden
+                        hidden
                       />
-                   
                     </CFormLabel>
-  
+
                     <CFormFeedback
                       :class="{ haveError: summaryFilesError }"
                       v-if="summaryFilesError"
@@ -466,11 +443,6 @@ download_count
                     ><br />
                   </CCol>
                 </CRow>
-              
-
-               
-
-         
 
                 <br /><br />
               </CForm>
@@ -491,8 +463,8 @@ download_count
               <CPaginationItem
                 class="paginated-style"
                 @click="handleListPagePagination(currentPage--)"
-                >السابقة</CPaginationItem
-              >
+                >السابقة
+              </CPaginationItem>
             </div>
 
             <div class="mx-1 my-2" v-if="currentPage == lastPage">
@@ -502,8 +474,8 @@ download_count
               <CPaginationItem
                 class="paginated-style"
                 @click="handleListPagePagination(currentPage++)"
-                >التالية</CPaginationItem
-              >
+                >التالية
+              </CPaginationItem>
             </div>
           </div>
 
@@ -542,16 +514,16 @@ export default {
   name: 'Summaries',
   data() {
     return {
-      ch_cover:false,
-      ch_audio:false,
-      ch_file:false,
-      coverName:'',
-      audio_url:'',
-      audio_name:'',
-      audio_duration:'',
-      page_count:'',
-      content_url:'',
-      file_name:'',
+      ch_cover: false,
+      ch_audio: false,
+      ch_file: false,
+      coverName: '',
+      audio_url: '',
+      audio_name: '',
+      audio_duration: '',
+      page_count: '',
+      content_url: '',
+      file_name: '',
       summaryFiles: [],
       summaryFileList: [],
       summaryFilesName: [],
@@ -574,7 +546,8 @@ export default {
       visibleEditModel: false,
       visibleAddModel: false,
       summaries: [],
-      categories:[],
+      categories: [],
+      category_ids: [],
       bookName: '',
       bookId: '',
       author: '',
@@ -589,9 +562,9 @@ export default {
       FromPageError: '',
       ToPageError: '',
       isLoading: false,
-      fileloading:false,
-      audioloading:false,
-      coverloading:false,
+      fileloading: false,
+      audioloading: false,
+      coverloading: false,
       currentPage: 1,
       lastPage: null,
       cdkcurrentPage: 1,
@@ -613,28 +586,40 @@ export default {
     }
   },
   methods: {
-  
-
+    navigateToPage(item) {
+      this.$router.push({ name: 'عرض تفاصيل الملخص', params: { id: item.id } })
+    },
+    catsArray(item) {
+      const index = this.category_ids.indexOf(item.id)
+      console.log(index)
+      if (index > -1) {
+        // Number is in the array, remove it
+        this.category_ids.splice(index, 1)
+      } else {
+        // Number is not in the array, add it
+        this.category_ids.push(item.id)
+      }
+      console.log(this.category_ids)
+    },
     handleListPagePagination(currentPage) {
-      console.log(currentPage);
-      sessionStorage.setItem('booksCurrentPage',this.currentPage)
-    axios
-      .get(
-        `${baseUrl}/admin/brief/all?page=` +
-          sessionStorage.getItem('booksCurrentPage'),
-        config,
-      )
-      .then((response) => {
-        this.isLoading = false
-        this.summaries = response.data.data.data
-        this.currentPage = response.data.data.current_page
-        this.lastPage = response.data.data.last_page
-        console.log('summaries', this.summaries)
-      })
-      .catch((error) => {
-        this.isLoading = false
-      })
-    
+      console.log(currentPage)
+      sessionStorage.setItem('booksCurrentPage', this.currentPage)
+      axios
+        .get(
+          `${baseUrl}/admin/brief/all?page=` +
+            sessionStorage.getItem('booksCurrentPage'),
+          config,
+        )
+        .then((response) => {
+          this.isLoading = false
+          this.summaries = response.data.data.data
+          this.currentPage = response.data.data.current_page
+          this.lastPage = response.data.data.last_page
+          console.log('summaries', this.summaries)
+        })
+        .catch((error) => {
+          this.isLoading = false
+        })
     },
     deleteCity(id) {
       console.log('id', id)
@@ -664,11 +649,11 @@ export default {
                   title: 'تم الحذف بنجاح',
                   icon: 'success',
                 })
-                let index = this.summaries.findIndex(item=>{
-            return item.id==id});
-          console.log(index);
-    this.summaries.splice(index,1);
-          
+                let index = this.summaries.findIndex((item) => {
+                  return item.id == id
+                })
+                console.log(index)
+                this.summaries.splice(index, 1)
               } else {
                 this.$swal({
                   title: 'عذرا, هناك خطأ',
@@ -689,7 +674,7 @@ export default {
     },
     invokeEditModal(
       id,
-     title,
+      title,
       author,
       bookId,
       coverImage,
@@ -698,59 +683,63 @@ export default {
       content_url,
       page_count,
       audio,
-content,
-cover
+      content,
+      cover,
+      categories,
     ) {
-      axios.get(`${baseUrl}/brief-category/all`, config).then((response) => {
-            this.isLoading = false
-            this.categories = response.data.data   
-            }).catch((error)=> {
-                this.isLoading = false
-                this.$swal({
-                    title: 'عذرا, هناك خطأ',
-                    text: error.errors[0],
-                    icon: 'error',
-                    confirmButtonColor:'#eb2b2b'
-               })
-            }); 
-      ;
-        (this.currentSummaryId = id)
+      axios
+        .get(`${baseUrl}/brief-category/all`, config)
+        .then((response) => {
+          this.isLoading = false
+          this.categories = response.data.data
+        })
+        .catch((error) => {
+          this.isLoading = false
+          this.$swal({
+            title: 'عذرا, هناك خطأ',
+            text: error.errors[0],
+            icon: 'error',
+            confirmButtonColor: '#eb2b2b',
+          })
+        })
+      this.currentSummaryId = id
       this.bookName = title
       this.author = author
-      this.bookId= bookId
- this.audio_url= audio_url
+      this.bookId = bookId
+      this.audio_url = audio_url
       this.coverImage = coverImage
-    this.audio_duration=audio_duration
-     this.content_url= content_url
-     this.page_count= page_count
-     this.audio_name=audio
-     this.file_name=content
-     this.coverName=cover
-     this.visibleEditModel=true
-     
+      this.audio_duration = audio_duration
+      this.content_url = content_url
+      this.page_count = page_count
+      this.audio_name = audio
+      this.file_name = content
+      this.coverName = cover
+      this.category_ids = categories.map((c) => c.id)
+      this.visibleEditModel = true
     },
 
- 
     updateSummary() {
       let requestBody = new FormData()
       requestBody.append('summary_id', this.currentSummaryId)
-      requestBody.append('category_id', this.bookId)
+      for (let index = 0; index < this.category_ids.length; index++) {
+        requestBody.append(`category_ids[${index}]`, this.category_ids[index])
+      }
       requestBody.append('writer_name', this.author)
-      if(this.ch_cover){
+      if (this.ch_cover) {
         requestBody.append('cover', this.coverName)
       }
-      if(this.ch_audio){
+      if (this.ch_audio) {
         requestBody.append('audio', this.audio_name)
       }
-      if(this.ch_file){
+      if (this.ch_file) {
         requestBody.append('content', this.file_name)
       }
-      
+
       requestBody.append('page_count', this.page_count)
-     
+
       requestBody.append('audio_duration', this.audio_duration)
-        requestBody.append('title', this.bookName)
-   
+      requestBody.append('title', this.bookName)
+
       this.isLoading = true
       axios
         .post(`${baseUrl}/admin/brief/edit`, requestBody, config)
@@ -767,27 +756,27 @@ cover
               title: 'تم التعديل بنجاح',
               icon: 'success',
             })
-          this.ch_audio=false
-          this.ch_file=false
-          this.ch_cover=false
-          this.isLoading = true
-    sessionStorage.setItem('bookCurrentPage', this.currentPage)
-    axios
-      .get(
-        `${baseUrl}/admin/brief/all?page=` +
-          sessionStorage.getItem('summaryCurrentPage'),
-        config,
-      )
-      .then((response) => {
-        this.isLoading = false
-        this.summaries = response.data.data.data
-        this.currentPage = response.data.data.current_page
-        this.lastPage = response.data.data.last_page
-        console.log('summaries', this.summaries)
-      })
-      .catch((error) => {
-        this.isLoading = false
-      })
+            this.ch_audio = false
+            this.ch_file = false
+            this.ch_cover = false
+            this.isLoading = true
+            sessionStorage.setItem('bookCurrentPage', this.currentPage)
+            axios
+              .get(
+                `${baseUrl}/admin/brief/all?page=` +
+                  sessionStorage.getItem('summaryCurrentPage'),
+                config,
+              )
+              .then((response) => {
+                this.isLoading = false
+                this.summaries = response.data.data.data
+                this.currentPage = response.data.data.current_page
+                this.lastPage = response.data.data.last_page
+                console.log('summaries', this.summaries)
+              })
+              .catch((error) => {
+                this.isLoading = false
+              })
           }
         })
         .catch((error) => {
@@ -800,17 +789,8 @@ cover
         })
     },
 
-  
-
-  
-
- 
     downloadSummaries(file) {
-      
-       
-          window.open(file,'_blank')
-        
-      
+      window.open(file, '_blank')
     },
 
     onMainImageUpload(event) {
@@ -821,16 +801,16 @@ cover
       axios
         .post(`${baseUrl}/upload/files`, requestBody)
         .then((response) => {
-          this.ch_cover=true
+          this.ch_cover = true
           this.coverloading = false
-this.coverName=response.data.data[0]
-          this.coverImage= 'https://backend.fateen.info/public/'+response.data.data[0]
+          this.coverName = response.data.data[0]
+          this.coverImage =
+            'https://backend.fateen.info/public/' + response.data.data[0]
           console.log('files', this.coverImage)
         })
         .catch((error) => {
           // console.log(error)
         })
-
     },
     onMainAudioUpload(event) {
       console.log('files', event.target.files[0])
@@ -841,15 +821,15 @@ this.coverName=response.data.data[0]
         .post(`${baseUrl}/upload/files`, requestBody)
         .then((response) => {
           this.audioloading = false
-          this.ch_audio=true
-this.audio_name=response.data.data[0]
-          this.audio_url= 'https://backend.fateen.info/public/'+response.data.data[0]
+          this.ch_audio = true
+          this.audio_name = response.data.data[0]
+          this.audio_url =
+            'https://backend.fateen.info/public/' + response.data.data[0]
           console.log('files', this.coverImage)
         })
         .catch((error) => {
           // console.log(error)
         })
-
     },
     onMainPdfUpload(event) {
       console.log('files', event.target.files[0])
@@ -860,15 +840,15 @@ this.audio_name=response.data.data[0]
         .post(`${baseUrl}/upload/files`, requestBody)
         .then((response) => {
           this.fileloading = false
-this.file_name=response.data.data[0]
-this.ch_file=true
-          this.content_url= 'https://backend.fateen.info/public/'+response.data.data[0]
+          this.file_name = response.data.data[0]
+          this.ch_file = true
+          this.content_url =
+            'https://backend.fateen.info/public/' + response.data.data[0]
           console.log('files', this.coverImage)
         })
         .catch((error) => {
           // console.log(error)
         })
-
     },
   },
 
@@ -897,12 +877,26 @@ this.ch_file=true
 </script>
 
 <style lang="scss" scoped>
-button{
-margin-right: 5px;
+.catogry_card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
 }
+.text-danger {
+  color: #fff !important;
+  background: rgb(60, 98, 100) !important;
+}
+
+button {
+  margin-right: 5px;
+}
+
 .paginated-style {
   cursor: pointer;
 }
+
 .icard-header {
   padding: var(--cui-card-cap-padding-y) var(--cui-card-cap-padding-x);
   margin-bottom: 0;
@@ -910,6 +904,7 @@ margin-right: 5px;
   background-color: var(--cui-card-cap-bg);
   border-bottom: var(--cui-card-border-width) solid var(--cui-card-border-color);
 }
+
 .icard-header::before,
 .icard-header::after {
   box-sizing: content-box;

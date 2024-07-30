@@ -1,22 +1,21 @@
 import { h, resolveComponent } from 'vue'
-import { createRouter, createWebHistory  } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout'
 
-
-function guest(to, from, next){
+function guest(to, from, next) {
   // console.log(localStorage.isAuthenticated)
-  if(localStorage.isAuthenticated){
-      next({name: "الرئيسية"})
-  }else{
+  if (localStorage.isAuthenticated) {
+    next({ name: 'الرئيسية' })
+  } else {
     next()
   }
 }
 
-function guard(to, from, next){
-  if(localStorage.isAuthenticated){
-      next()
-  }else{
-    next({name: "الدخول"})
+function guard(to, from, next) {
+  if (localStorage.isAuthenticated) {
+    next()
+  } else {
+    next({ name: 'الدخول' })
   }
 }
 
@@ -40,7 +39,6 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
         beforeEnter: guard,
-
       },
       {
         path: '/cities',
@@ -96,12 +94,14 @@ const routes = [
           {
             path: 'all',
             name: 'عرض الباقات',
-            component: () => import('@/views/subscription-plans/ShowSubscriptionPlans'),
+            component: () =>
+              import('@/views/subscription-plans/ShowSubscriptionPlans'),
           },
           {
             path: 'create',
             name: 'إضافه باقة إشتراك',
-            component: () => import('@/views/subscription-plans/CreateSubscriptionPlan'),
+            component: () =>
+              import('@/views/subscription-plans/CreateSubscriptionPlan'),
           },
         ],
       },
@@ -245,11 +245,16 @@ const routes = [
             name: 'عرض الملخصات',
             component: () => import('@/views/books-summaries/ShowSummaries'),
           },
-           {
+          {
             path: 'add',
             name: 'أضافة ملخص جديد',
             component: () => import('@/views/books-summaries/ManageSummary'),
-           },
+          },
+          {
+            path: 'book_details/:id',
+            name: 'عرض تفاصيل الملخص',
+            component: () => import('@/views/books-summaries/book_details'),
+          },
         ],
       },
       {
@@ -271,21 +276,21 @@ const routes = [
             name: 'إضافة قسم وعي ',
             component: () => import('@/views/awareness/Managewareness'),
           },
-        ]
-      }
+        ],
+      },
     ],
   },
   {
     path: '/login',
     name: 'الدخول',
     component: () => import('@/views/pages/Login'),
-    beforeEnter: guest
+    beforeEnter: guest,
   },
   {
     path: '/logout',
     name: 'الخروج',
     component: () => import('@/views/pages/Logout'),
-    beforeEnter: guard
+    beforeEnter: guard,
   },
   {
     path: '/pages',
@@ -311,7 +316,7 @@ const routes = [
         path: 'register',
         name: 'Register',
         component: () => import('@/views/pages/Register'),
-      }
+      },
     ],
   },
   {
