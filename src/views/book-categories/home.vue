@@ -26,7 +26,7 @@
                     <CTableHeaderCell scope="col">اسم الفئة باللغة العربية</CTableHeaderCell>
 
                     <CTableHeaderCell scope="col">اسم الفئة باللغة الإنجليزية</CTableHeaderCell>
-
+                    <CTableHeaderCell scope="col">عدد الكتب المرتبطة</CTableHeaderCell>
                     <CTableHeaderCell scope="col">الإعدادات</CTableHeaderCell>
 
                 </CTableRow>
@@ -42,7 +42,7 @@
                   <CTableDataCell>{{category.name_ar}}</CTableDataCell>
 
                   <CTableDataCell>{{category.name_en}}</CTableDataCell>
-
+                  <CTableDataCell style="cursor: pointer;"  @click="gotobooks(category.id)">{{category.summaries_count}}</CTableDataCell>
                   <CTableDataCell>
 
                    <CButton color="warning" variant="outline" @click="() => invokeModal(category.id,  category.name_ar ,category.name_en )">    <CIcon icon="cil-pencil" size="lg" />   </CButton>
@@ -65,7 +65,7 @@
           </CTableHead> 
           <CTableBody>  
             <CTableRow class="text-center" v-for=" row in [].constructor(4)"> 
-                <CTableHeaderCell scope="col" v-for="  column in [].constructor(4)"> 
+                <CTableHeaderCell scope="col" v-for="  column in [].constructor(5)"> 
                     <div class="ph-item">
                         <div class="ph-col-12">
                             <div class="ph-row">
@@ -158,7 +158,7 @@
       name: 'Categories',
       data(){
           return {
-              header:['الرقم التعريفي' , 'اسم الفئة باللغة العربية ' , 'اسم الفئة باللغة الإنجليزية' , ' إعدادات'],
+              header:['الرقم التعريفي' , 'اسم الفئة باللغة العربية ' , 'اسم الفئة باللغة الإنجليزية' , 'عدد الكتب المرتبطة',' إعدادات'],
               visibleLiveDemo: false,
               categories: [],
               name_ar:"",
@@ -171,6 +171,9 @@
        },
 
        methods: {
+        gotobooks(item){
+            this.$router.push({path: '/books-summaries/all', query: {category_id: item} });
+        },
             invokeModal(id, name_ar, name_en ){
                 this.currentCategoryId = id
                 this.name_ar = name_ar
@@ -257,7 +260,7 @@
 
             allCategories() {
                 this.isLoading = true
-          axios.get(`${baseUrl}/brief-category/all`, config).then((response) => {
+          axios.get(`${baseUrl}/admin/brief-category/all`, config).then((response) => {
             this.isLoading = false
             this.categories = response.data.data   
             }).catch((error)=> {
@@ -274,7 +277,7 @@
 
        mounted(){
           this.isLoading = true
-          axios.get(`${baseUrl}/brief-category/all`, config).then((response) => {
+          axios.get(`${baseUrl}/admin/brief-category/all`, config).then((response) => {
             this.isLoading = false
             this.categories = response.data.data   
             }).catch((error)=> {

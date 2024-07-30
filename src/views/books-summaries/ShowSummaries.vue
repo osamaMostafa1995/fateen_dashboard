@@ -500,7 +500,7 @@ import { CButton } from '@coreui/vue'
 import axios from 'axios'
 import env from '../../env'
 import { setTransitionHooks } from 'vue'
-
+import { useRoute } from 'vue-router';
 const baseUrl = env.baseUrl
 
 const token = localStorage.token
@@ -512,6 +512,10 @@ sessionStorage.setItem('currentSummaryId', 1)
 
 export default {
   name: 'Summaries',
+  setup() {
+            const route = useRoute();
+            return { route };
+        },
   data() {
     return {
       ch_cover: false,
@@ -583,6 +587,7 @@ export default {
       cdklastManagePage: 50,
       pageNum: 0,
       pagesContent: [],
+      queryParams: '',
     }
   },
   methods: {
@@ -605,11 +610,12 @@ export default {
       console.log(currentPage)
       sessionStorage.setItem('booksCurrentPage', this.currentPage)
       axios
-        .get(
-          `${baseUrl}/admin/brief/all?page=` +
-            sessionStorage.getItem('booksCurrentPage'),
-          config,
-        )
+      .get(
+        this.queryParams == undefined ?  `${baseUrl}/admin/brief/all?page=` +
+          sessionStorage.getItem('booksCurrentPage'):`${baseUrl}/admin/brief/all?category_id=${this.queryParams}&page=` +
+          sessionStorage.getItem('booksCurrentPage'),
+        config,
+      )
         .then((response) => {
           this.isLoading = false
           this.summaries = response.data.data.data
@@ -762,11 +768,12 @@ export default {
             this.isLoading = true
             sessionStorage.setItem('bookCurrentPage', this.currentPage)
             axios
-              .get(
-                `${baseUrl}/admin/brief/all?page=` +
-                  sessionStorage.getItem('summaryCurrentPage'),
-                config,
-              )
+            .get(
+        this.queryParams == undefined ?  `${baseUrl}/admin/brief/all?page=` +
+          sessionStorage.getItem('booksCurrentPage'):`${baseUrl}/admin/brief/all?category_id=${this.queryParams}&page=` +
+          sessionStorage.getItem('booksCurrentPage'),
+        config,
+      )
               .then((response) => {
                 this.isLoading = false
                 this.summaries = response.data.data.data
@@ -853,11 +860,14 @@ export default {
   },
 
   mounted() {
+    this.queryParams = this.route.query.category_id;
+    console.log(this.queryParams );
     this.isLoading = true
     sessionStorage.setItem('booksCurrentPage', this.currentPage)
     axios
       .get(
-        `${baseUrl}/admin/brief/all?page=` +
+        this.queryParams == undefined ?  `${baseUrl}/admin/brief/all?page=` +
+          sessionStorage.getItem('booksCurrentPage'):`${baseUrl}/admin/brief/all?category_id=${this.queryParams}&page=` +
           sessionStorage.getItem('booksCurrentPage'),
         config,
       )
